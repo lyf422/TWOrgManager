@@ -15,9 +15,9 @@ let appSetting = {
         subtitle: "",
         title: ""
     },
-    dashboard: { name: "UserManager" },
+    dashboard: { name: "OrgManager" },
     ueditor: {
-        serverUrl: "http://item.ricebird.cn/ueditor/process",
+        serverUrl: "http://stgl.ricebird.cn/ueditor/process",
         topOffset: 64,
         zIndex: 9,
         UEDITOR_HOME_URL: process.env.NODE_ENV === "production" ? "/web/third/" : "/static/"

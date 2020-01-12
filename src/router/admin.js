@@ -20,11 +20,6 @@ const components = {
     layout: "login",
     component: () => import(/* webpackChunkName: "setting" */"@p/UCenter/Register")
   },
-  Dashboard: {
-    path: "/manage/dashboard",
-    layout: "admin",
-    component: () => import(/* webpackChunkName: "security" */"@p/Dashboard")
-  },
   UserManager: {
     path: "/manage/usermanager",
     layout: "admin",

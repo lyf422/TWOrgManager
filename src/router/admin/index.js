@@ -1,12 +1,7 @@
 module.exports = {
-    BuildingManager: {
-        path: "/manage/building/buildingmanager",
+    OrgManage: {
+        path: "/manage/dashboard",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "itemmanager" */"@p/Modules/BuildingManager")
-    },
-    LabManager: {
-        path: "/manage/building/labmanager",
-        layout: "admin",
-        component: () => import(/* webpackChunkName: "itemmanager" */"@p/Modules/LabManager")
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager")
     }
 };

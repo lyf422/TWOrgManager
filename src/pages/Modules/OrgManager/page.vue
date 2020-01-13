@@ -53,8 +53,7 @@
             之后，由其是在“修改社团信息”页面中，所有相关的选项都应当使用这个东西。比如“政治面貌”，“社团类型”，“指导老师类型”或者“社交媒体”等。
             具体使用哪一个，我会有下发的需求卡中有说明。
         -->
-        <dic-select dic="政治面貌" v-model="face"/>
-    </i-card>
+        </i-card>
     </i-row>
 </template>
 
@@ -127,8 +126,9 @@ export default {
     methods: {
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
-                this.data = msg.data;
+                this.data = msg;
             });
+            console.log(this.data.DepartType);
         },
         judgeTime () {
             var day2 = new Date();

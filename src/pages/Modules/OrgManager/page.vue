@@ -20,6 +20,7 @@ export default {
     },
     mounted () {
         app.title = "社团管理";
+        this.$router.push({name: 'OrgDetail'});
     }
 }
 </script>

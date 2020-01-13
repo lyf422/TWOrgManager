@@ -46,8 +46,7 @@
                 子部门:{{data.children}}
             </i-row>
         </i-col>
-    </i-row>
-    <i-card>
+        <i-card>
         <!--
             这个组件很得重要，他就是iView里的select控件，只不过多一个选项。选项内容进入后台“系统配置”->“数据字典配置”，里面的“字典归属”。
             比如在下面的示例中，dic为“政治面貌”那么就相当于在后台那里，“字典归属”为“政治面貌”的值的集合。
@@ -56,10 +55,11 @@
         -->
         <dic-select dic="政治面貌" v-model="face"/>
     </i-card>
+    </i-row>
 </template>
 
 <script>
-import Axios from 'axios';
+import axios from 'axios';
 var app = require("@/config");
 export default {
     data () {
@@ -114,7 +114,7 @@ export default {
                     url: "",
                     icon: "md-information"
                 }
-            ]
+            ],
             face: "群众"
         };
     },
@@ -126,7 +126,7 @@ export default {
     },
     methods: {
         getDashBoard () {
-            Axios.post("/api/org/GetDashboard", {}, msg => {
+            axios.post("/api/org/GetDashboard", {}, msg => {
                 this.data = msg.data;
             });
         },
@@ -141,7 +141,7 @@ export default {
             else if (s2 < 24) this.time = "晚上";
         },
         getPending () {
-            Axios.post("/api/workflow/pending", {}, msg => {
+            axios.post("/api/workflow/pending", {}, msg => {
                 this.messageNum = msg.totalRow;
                 this.message = msg.data;
             })

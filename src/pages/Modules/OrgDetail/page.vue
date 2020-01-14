@@ -94,7 +94,7 @@
                             社团成员<i-badge :count="10"></i-badge>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input />
+                            <i-input search enter-button placeholder="Enter something..."  />
                         </i-col>
                         <i-col span="2" push="15">
                             <i-button type="primary" @click="modifyMember()">添加成员</i-button>
@@ -110,7 +110,7 @@
                             子部门<i-badge :count="9"></i-badge>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input />
+                            <i-input search enter-button placeholder="Enter something..."  />
                         </i-col>
                         <i-col span="2" push="15">
                             <i-button type="primary">添加部门</i-button>
@@ -125,7 +125,7 @@
                             指导老师<i-badge :count="1"></i-badge>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input />
+                            <i-input search enter-button placeholder="Enter something..."  />
                         </i-col>
                         <i-col span="2" push="15">
                             <i-button type="primary">添加老师</i-button>
@@ -141,7 +141,7 @@
                             管理员<i-badge :count="1"></i-badge>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input />
+                            <i-input search enter-button placeholder="Enter something..."  />
                         </i-col>
                         <i-col span="2" push="15">
                             <i-button type="primary">添加管理员</i-button>
@@ -157,7 +157,7 @@
                             社团活动<i-badge :count="1"></i-badge>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input />
+                            <i-input search enter-button placeholder="Enter something..."  />
                         </i-col>
                         <i-col span="2" push="15">
                             <i-button type="primary">添加活动</i-button>

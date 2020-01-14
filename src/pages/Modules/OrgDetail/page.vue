@@ -63,7 +63,7 @@
                             <i-input />
                         </i-col>
                         <i-col span="2" push="15">
-                            <i-button type="primary">添加成员</i-button>
+                            <i-button type="primary" @click="modifyMember()">添加成员</i-button>
                         </i-col>
                     </i-row>
                     <i-row>
@@ -135,15 +135,92 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
+        <i-modal v-model="modalShow" title="添加/修改成员" @on-ok="submit()" @on-cancel="cancel()">
+            <i-form ref="Form" :model="modal" :rules="rules">
+                <i-form-item label="姓名" prop="Name">
+                    <i-input v-model="modal.Name"/>
+                </i-form-item>
+                <i-form-item label="学号" prop="Number">
+                    <i-input v-model="modal.Number"/>
+                </i-form-item>
+                <i-form-item label="电话" prop="Telephone">
+                    <i-input v-model="modal.Telephone"/>
+                </i-form-item>
+                <i-form-item label="邮箱" prop="Email">
+                    <i-input v-model="modal.Email"/>
+                </i-form-item>
+                <i-form-item label="生源地" prop="Location">
+                    <i-input v-model="modal.Location"/>
+                </i-form-item>
+            </i-form>
+        </i-modal>
     </i-row>
 </template>
 
 <script>
+const regex = require("@/regex.js");
 let app = require("@/config");
 export default {
+    methods: {
+        modifyMember () {
+            this.modalShow = true;
+        },
+        submit () {
+            let formMember = this.$refs["Form"];
+            formMember.validate(v => {
+                if (!v) {
+                    this.$Modal.error({
+                        title: "表单有误",
+                        content: "请正确填写表单"
+                    });
+                }
+            });
+        },
+        cancel () {
+        }
+    },
     data () {
         return {
-            app
+            app,
+            modal: {
+                Name: "",
+                Number: "",
+                Telephone: "",
+                Email: "",
+                Location: ""
+            },
+            modalShow: false,
+            rules: {
+                Name: [
+                   {
+                        required: true,
+                        message: "必须填写姓名",
+                        trigger: "blur"
+                   }
+                ],
+                Number: [
+                   {
+                        required: true,
+                        message: "必须填写学号",
+                        trigger: "blur"
+                   }
+                ],
+                Telephone: [
+                   {
+                        type: "string",
+                        pattern: regex.mobile,
+                        message: "电话格式不正确",
+                        trigger: "blur"
+                   }
+                ],
+                Location: [
+                   {
+                        required: true,
+                        message: "必须填写生源地",
+                        trigger: "blur"
+                   }
+                ]
+            }
         };
     }
 }

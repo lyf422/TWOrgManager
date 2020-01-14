@@ -11,44 +11,51 @@
         </i-card>
         <i-divider/>
         <i-card>
-            <i-tabs value="name1">
+            <i-tabs :value="tabSelect">
                 <i-tab-pane label="基本信息" name="name1">
                     <i-row>
+                        <i-spin fix size="large" v-show="spinShow"></i-spin>
                         <i-col span="19">
                             <i-form>
                                 <i-row>
                                     <i-form-item label="社团名称">
                                         <i-input v-model="orgInfo.Name"/>
                                     </i-form-item>
+                                    <i-form-item label="部门代码">
+                                        <i-input v-model="orgInfo.Code"/>
+                                    </i-form-item>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
                                     <i-form-item label="社团类型">
-                                        <i-input v-model="orgInfo.DepartType"/>
+                                        <dic-select dic="社团类型" v-model="orgInfo.DepartType"/>
                                     </i-form-item>
                                     <i-form-item label="成立时间">
                                         <i-input v-model="orgInfo.BirthTime"/>
                                     </i-form-item>
                                     <i-form-item label="是否有章程">
-                                            <Checkbox v-model="orgInfo.HaveDepartRule"></Checkbox>
-                                            <i-input :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-input>
+                                        <i-checkbox v-model="orgInfo.HaveDepartRule"></i-checkbox>
+                                        <i-input :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-input>
                                     </i-form-item>
                                     <i-form-item label="是否成立团支部">
-                                            <Checkbox v-model="HaveLeagueBranch"></Checkbox>
-                                            <i-input :disabled="!HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-input>
+                                        <i-checkbox v-model="orgInfo.HaveLeagueBranch"></i-checkbox>
+                                        <i-input :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-input>
                                     </i-form-item>
                                     <i-form-item label="是否有党支部">
-                                        <Checkbox v-model="HaveCPCBranch"></Checkbox>
-                                        <i-input :disabled="!HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-input>
-                                    </i-form-item>
-                                    <i-form-item label="党支部类型">
-                                        <i-input v-model="orgInfo.CPCBranchType"/>
+                                        <i-checkbox v-model="orgInfo.HaveCPCBranch"></i-checkbox>
+                                        <i-input :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-input>
                                     </i-form-item>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
+                                    <i-form-item label="党支部类型">
+                                        <dic-select dic="党支部类型" v-model="orgInfo.CPCBranchType"/>
+                                    </i-form-item>
+                                    <i-form-item label="挂靠单位">
+                                        <i-input v-model="orgInfo.Affiliated"/>
+                                    </i-form-item>
                                     <i-form-item label="排序号(升序)" v-if="level>=2">
                                         <i-input v-model="orgInfo.Sort" :disabled="(level <= 3-orgInfo.Type)"/>
                                     </i-form-item>
-                                    <i-form-item label="排序号(降序)" v-if="level<2">
+                                    <i-form-item label="排序号(降序)" v-else-if="level<2">
                                         <i-input v-model="orgInfo.Sort" :disabled="(level <= 3-orgInfo.Type)"/>
                                     </i-form-item>
                                     <i-form-item label="部门电话">
@@ -79,7 +86,7 @@
                                     <i-input v-model="orgInfo.Remark"/>
                                 </i-form-item>
                             </i-form>
-                            <i-button @click="saveOrgDetails()">保存</i-button>
+                            <i-button @click="saveOrgDetail()">保存</i-button>
                         </i-col>
                         <i-col span="4" offset="1">
                             <List>
@@ -213,42 +220,37 @@ export default {
         },
         cancel () {
         },
-        saveOrgDetails () {
-            console.log(this.orgInfo);
-            let param = this.orgInfo;
-            param.Code = "002";
-            param.CategoryName = "软件学社2";
-            param.Affiliated = "厦门大学";
-            param.HaveCPCBranch = String(this.HaveLeagueBranch);
-            param.HaveLeagueBranch = String(this.HaveLeagueBranch);
-            axios.post("/api/security/SaveDepartV2", param, msg => {
+        saveOrgDetail () {
+            axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
                     this.$Message.success("保存成功");
-                    this.getOrgDetail(param.ID);
+                    this.getOrgDetail();
                 } else {
                     this.$Message.warning(msg.msg);
                 }
             })
         },
         getOrgDetail () {
+            this.spinShow = true;
             axios.post("/api/security/GetOrgDetail", {}, msg => {
                 if (msg.success) {
                     this.orgInfo = msg.data;
-                    this.level = msg.level;
                     this.changeLogs = msg.changeLogs;
-                    console.log(msg);
-                     this.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
-                     this.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                    this.level = msg.level;
                 }
+                this.spinShow = false;
             })
         }
     },
     mounted () {
+        this.tabSelect = this.$route.params.tabSelect;
         this.getOrgDetail();
     },
     data () {
         return {
             app,
+            tabSelect: "",
+            spinShow: false,
             modal: {
                 Name: "",
                 Number: "",
@@ -256,11 +258,9 @@ export default {
                 Email: "",
                 Location: ""
             },
-            orgInfo: {},
-            HaveLeagueBranch: false,
-            HaveCPCBranch: false,
-            changeLogs: {},
             level: 0,
+            orgInfo: {},
+            changeLogs: {},
             modalShow: false,
             rules: {
                 Name: [

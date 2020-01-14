@@ -8,7 +8,7 @@
             </template>
         </Alert>
         <i-row class="searcher" type="flex">
-            <i-col span="2" class="add-btn-area">
+            <i-col span="2">
                 <i-button size="large" type="primary" @click="toEdit('', '', '')">新建数据</i-button>
             </i-col>
             <i-col span="6">

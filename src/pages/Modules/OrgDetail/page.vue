@@ -18,38 +18,72 @@
                             <i-form>
                                 <i-row>
                                     <i-form-item label="社团名称">
-                                        <i-input />
+                                        <i-input v-model="orgInfo.Name"/>
                                     </i-form-item>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
                                     <i-form-item label="社团类型">
-                                        <i-input />
+                                        <i-input v-model="orgInfo.DepartType"/>
                                     </i-form-item>
                                     <i-form-item label="成立时间">
-                                        <i-input />
+                                        <i-input v-model="orgInfo.BirthTime"/>
                                     </i-form-item>
                                     <i-form-item label="是否有章程">
-                                    <i-input />
-                                </i-form-item>
-                                <i-form-item label="是否成立团支部">
-                                    <i-input />
-                                </i-form-item>
-                                <i-form-item label="是否有党支部">
-                                    <i-input />
-                                </i-form-item>
-                                <i-form-item label="党支部类型">
-                                    <i-input />
-                                </i-form-item>
+                                            <Checkbox v-model="orgInfo.HaveDepartRule"></Checkbox>
+                                            <i-input :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-input>
+                                    </i-form-item>
+                                    <i-form-item label="是否成立团支部">
+                                            <Checkbox v-model="HaveLeagueBranch"></Checkbox>
+                                            <i-input :disabled="!HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-input>
+                                    </i-form-item>
+                                    <i-form-item label="是否有党支部">
+                                        <Checkbox v-model="HaveCPCBranch"></Checkbox>
+                                        <i-input :disabled="!HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-input>
+                                    </i-form-item>
+                                    <i-form-item label="党支部类型">
+                                        <i-input v-model="orgInfo.CPCBranchType"/>
+                                    </i-form-item>
                                 </i-row>
-                                <i-form-item label="备注" type="textarea">
-                                    <i-input />
+                                <i-row type="flex" justify="space-between">
+                                    <i-form-item label="排序号(升序)" v-if="level>=2">
+                                        <i-input v-model="orgInfo.Sort" :disabled="(level <= 3-orgInfo.Type)"/>
+                                    </i-form-item>
+                                    <i-form-item label="排序号(降序)" v-if="level<2">
+                                        <i-input v-model="orgInfo.Sort" :disabled="(level <= 3-orgInfo.Type)"/>
+                                    </i-form-item>
+                                    <i-form-item label="部门电话">
+                                        <i-input v-model="orgInfo.Phone"/>
+                                    </i-form-item>
+                                </i-row>
+                                <i-row type="flex" justify="space-between">
+                                    <i-form-item label="社交媒体">
+                                        <i-input v-model="orgInfo.SocialMedia"/>
+                                    </i-form-item>
+                                    <i-form-item label="社交媒体粉丝数">
+                                        <i-input v-model="orgInfo.SocialMediaFans"/>
+                                    </i-form-item>
+                                    <i-form-item label="经费类型">
+                                        <i-input v-model="orgInfo.FundsCategory"/>
+                                    </i-form-item>
+                                    <i-form-item label="经费来源">
+                                        <i-input v-model="orgInfo.ChannelForFunds"/>
+                                    </i-form-item>
+                                </i-row>
+                                <i-form-item label="部门描述">
+                                        <i-input v-model="orgInfo.Description"/>
+                                    </i-form-item>
+                                <i-form-item label="备注1">
+                                    <i-input v-model="orgInfo.Memo"/>
+                                </i-form-item>
+                                <i-form-item label="备注2">
+                                    <i-input v-model="orgInfo.Remark"/>
                                 </i-form-item>
                             </i-form>
+                            <i-button @click="saveOrgDetails()">保存</i-button>
                         </i-col>
                         <i-col span="4" offset="1">
                             <List>
-                                <ListItem>&lt;时间&gt;，&lt;用户&gt;修改了&lt;内容&gt;</ListItem>
-                                <ListItem>&lt;时间&gt;，&lt;用户&gt;修改了&lt;内容&gt;</ListItem>
+                                <ListItem v-for="(item,index) in changeLogs.data" :key="index">{{item.Abstract}}</ListItem>
                             </List>
                         </i-col>
                     </i-row>
@@ -70,7 +104,7 @@
                         <i-table></i-table>
                     </i-row>
                 </i-tab-pane>
-                <i-tab-pane v-if="app.departType===0" label="子部门" name="name3">
+                <i-tab-pane v-if="orgInfo.Type===0" label="子部门" name="name3">
                     <i-row>
                         <i-col span="3">
                             子部门<i-badge :count="9"></i-badge>
@@ -85,7 +119,7 @@
                     <i-row>
                         <i-table></i-table>
                     </i-row></i-tab-pane>
-                <i-tab-pane v-else-if="app.departType===1" label="指导老师" name="name3">
+                <i-tab-pane v-else-if="orgInfo.Type===1" label="指导老师" name="name3">
                     <i-row>
                         <i-col span="3">
                             指导老师<i-badge :count="1"></i-badge>
@@ -160,6 +194,7 @@
 <script>
 const regex = require("@/regex.js");
 let app = require("@/config");
+const axios = require("axios");
 export default {
     methods: {
         modifyMember () {
@@ -177,7 +212,39 @@ export default {
             });
         },
         cancel () {
+        },
+        saveOrgDetails () {
+            console.log(this.orgInfo);
+            let param = this.orgInfo;
+            param.Code = "002";
+            param.CategoryName = "软件学社2";
+            param.Affiliated = "厦门大学";
+            param.HaveCPCBranch = String(this.HaveLeagueBranch);
+            param.HaveLeagueBranch = String(this.HaveLeagueBranch);
+            axios.post("/api/security/SaveDepartV2", param, msg => {
+                if (msg.success) {
+                    this.$Message.success("保存成功");
+                    this.getOrgDetail(param.ID);
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
+        },
+        getOrgDetail () {
+            axios.post("/api/security/GetOrgDetail", {}, msg => {
+                if (msg.success) {
+                    this.orgInfo = msg.data;
+                    this.level = msg.level;
+                    this.changeLogs = msg.changeLogs;
+                    console.log(msg);
+                     this.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
+                     this.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                }
+            })
         }
+    },
+    mounted () {
+        this.getOrgDetail();
     },
     data () {
         return {
@@ -189,6 +256,11 @@ export default {
                 Email: "",
                 Location: ""
             },
+            orgInfo: {},
+            HaveLeagueBranch: false,
+            HaveCPCBranch: false,
+            changeLogs: {},
+            level: 0,
             modalShow: false,
             rules: {
                 Name: [

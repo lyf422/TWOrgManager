@@ -46,6 +46,7 @@
                 子部门:{{data.children}}
             </i-row>
         </i-col>
+        <i-button @click="navTo()">跳转</i-button>
     </i-row>
 </template>
 
@@ -113,7 +114,7 @@ export default {
         this.getDashBoard();
         this.judgeTime();
         this.getPending();
-        this.$router.push({name: 'OrgDetail'});
+        // this.$router.push({name: 'OrgDetail'});
     },
     methods: {
         getDashBoard () {
@@ -142,7 +143,7 @@ export default {
 
         },
         navTo (url) {
-
+            this.$router.push({name: 'OrgDetail'});
         }
     }
 }

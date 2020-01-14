@@ -33,7 +33,7 @@
                 </i-row>
             </i-row>
         </i-col>
-        <i-col span="8" class="">
+        <i-col span="8">
             <i-row class="title">社团名称</i-row>
             <i-row>成员:人</i-row>
             <i-row v-if="data.DepartType==1">
@@ -123,9 +123,9 @@ export default {
             });
         },
         judgeTime () {
-            var day2 = new Date();
+            let day2 = new Date();
             day2.setTime(day2.getTime());
-            var s2 = day2.getHours();
+            let s2 = day2.getHours();
             if (s2 < 6) this.time = "午夜";
             else if (s2 < 12) this.time = "上午";
             else if (s2 < 14) this.time = "中午";

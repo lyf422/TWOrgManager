@@ -21,38 +21,13 @@
                                     <i-form-item label="社团名称">
                                         <i-input v-model="orgInfo.Name"/>
                                     </i-form-item>
-                                    <i-form-item label="部门代码">
-                                        <i-input v-model="orgInfo.Code"/>
-                                    </i-form-item>
-                                    <i-form-item label="成立时间">
-                                        <i-date-picker type="date" v-model="orgInfo.BirthTime" />
-                                    </i-form-item>
+                                </i-row>
+                                <i-row type="flex" justify="space-between">
                                     <i-form-item label="社团类型" style="width: 210px">
                                         <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
                                     </i-form-item>
-                                </i-row>
-                                <i-row type="flex" justify="space-between">
-                                </i-row>
-                                <i-row type="flex" justify="space-between">
-                                    <i-form-item label="是否有章程">
-                                        <i-checkbox v-model="orgInfo.HaveDepartRule"></i-checkbox>
-                                        <i-input :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-input>
-                                    </i-form-item>
-                                    <i-form-item label="是否成立团支部">
-                                        <i-checkbox v-model="orgInfo.HaveLeagueBranch"></i-checkbox>
-                                        <i-input :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-input>
-                                    </i-form-item>
-                                    <i-form-item label="是否有党支部">
-                                        <i-checkbox v-model="orgInfo.HaveCPCBranch"></i-checkbox>
-                                        <i-input :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-input>
-                                    </i-form-item>
-                                    <i-form-item label="党支部类型" style="width: 210px">
-                                        <dic-select dic="党支部类型" v-model="orgInfo.CPCBranchType"/>
-                                    </i-form-item>
-                                </i-row>
-                                <i-row type="flex" justify="space-between">
-                                    <i-form-item label="挂靠单位">
-                                        <i-input v-model="orgInfo.Affiliated"/>
+                                    <i-form-item label="成立时间">
+                                        <i-date-picker type="date" v-model="orgInfo.BirthTime" />
                                     </i-form-item>
                                     <i-form-item label="排序号(升序)" v-if="level>=2">
                                         <i-input v-model="orgInfo.Sort" :disabled="(level <= 3-orgInfo.Type)"/>
@@ -60,17 +35,46 @@
                                     <i-form-item label="排序号(降序)" v-else-if="level<2">
                                         <i-input v-model="orgInfo.Sort" :disabled="(level <= 3-orgInfo.Type)"/>
                                     </i-form-item>
+                                </i-row>
+                                <i-row type="flex" justify="start">
                                     <i-form-item label="部门电话">
                                         <i-input v-model="orgInfo.Phone"/>
                                     </i-form-item>
+                                    <i-form-item label="挂靠单位" style="margin-left:80px;">
+                                        <org-selector v-model="orgInfo.ParentId"/>
+                                    </i-form-item>
+                                </i-row>
+                                <i-form-item label="部门描述">
+                                        <textarea v-model="orgInfo.Description" cols="100"/>
+                                </i-form-item>
+                                <i-row type="flex" justify="space-between">
+                                    <i-form-item label="是否有章程">
+                                        <i-checkbox v-model="orgInfo.HaveDepartRule"></i-checkbox>
+                                        <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
+                                    </i-form-item>
+                                    <i-form-item label="是否成立团支部">
+                                        <i-checkbox v-model="orgInfo.HaveLeagueBranch"></i-checkbox>
+                                        <i-date-picker :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
+                                    </i-form-item>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
-                                    <i-form-item label="社交媒体">
-                                        <i-input v-model="orgInfo.SocialMedia"/>
+                                    <i-form-item label="是否有党支部">
+                                        <i-checkbox v-model="orgInfo.HaveCPCBranch"></i-checkbox>
+                                        <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
+                                    </i-form-item>
+                                    <i-form-item label="党支部类型" style="width: 210px">
+                                        <dic-select dic="党支部类型" v-model="orgInfo.CPCBranchType"/>
+                                    </i-form-item>
+                                </i-row>
+                                <i-row type="flex" justify="space-between">
+                                    <i-form-item label="社交媒体" style="width: 210px">
+                                        <dic-select dic="社交媒体" v-model="orgInfo.SocialMedia"/>
                                     </i-form-item>
                                     <i-form-item label="社交媒体粉丝数">
                                         <i-input v-model="orgInfo.SocialMediaFans"/>
                                     </i-form-item>
+                                </i-row>
+                                <i-row type="flex" justify="space-between">
                                     <i-form-item label="经费类型">
                                         <i-input v-model="orgInfo.FundsCategory"/>
                                     </i-form-item>
@@ -78,14 +82,11 @@
                                         <i-input v-model="orgInfo.ChannelForFunds"/>
                                     </i-form-item>
                                 </i-row>
-                                <i-form-item label="部门描述">
-                                        <i-input v-model="orgInfo.Description"/>
-                                    </i-form-item>
                                 <i-form-item label="备注1">
-                                    <i-input v-model="orgInfo.Memo"/>
+                                    <textarea v-model="orgInfo.Memo" cols="100"/>
                                 </i-form-item>
                                 <i-form-item label="备注2">
-                                    <i-input v-model="orgInfo.Remark"/>
+                                    <textarea v-model="orgInfo.Remark" cols="100"/>
                                 </i-form-item>
                             </i-form>
                             <i-button @click="saveOrgDetail()">保存</i-button>

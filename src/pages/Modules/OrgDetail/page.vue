@@ -134,14 +134,14 @@
                     </i-row>
                 </i-tab-pane>
                 <i-tab-pane label="成员管理" name="name2">
-                    <i-row>
+                    <i-row style="margin-top:20px;">
                         <i-col span="3">
-                            社团成员<i-badge :count="10"></i-badge>
+                            <i-row style="font-size:20px;">社团成员<i-badge :count="10" style="margin-left:15px;"></i-badge></i-row>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input search enter-button placeholder="Enter something..."  />
+                            <i-input prefix="ios-search" placeholder="搜索成员"  />
                         </i-col>
-                        <i-col span="2" push="15">
+                        <i-col span="2" push="15" style="margin-left:10px;">
                             <i-button type="primary" @click="modifyMember()">添加成员</i-button>
                         </i-col>
                     </i-row>
@@ -150,14 +150,14 @@
                     </i-row>
                 </i-tab-pane>
                 <i-tab-pane v-if="app.departType===0" label="子部门" name="name3">
-                    <i-row>
+                    <i-row style="margin-top:20px;">
                         <i-col span="3">
-                            子部门<i-badge :count="9"></i-badge>
+                            <i-row style="font-size:20px;">子部门<i-badge :count="9" style="margin-left:15px;"></i-badge></i-row>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input search enter-button placeholder="Enter something..."  />
+                            <i-input search enter-button placeholder="搜索部门"  />
                         </i-col>
-                        <i-col span="2" push="15">
+                        <i-col span="2" push="15" style="margin-left:10px;">
                             <i-button type="primary">添加部门</i-button>
                         </i-col>
                     </i-row>
@@ -165,14 +165,14 @@
                         <i-table></i-table>
                     </i-row></i-tab-pane>
                 <i-tab-pane v-else-if="app.departType===1" label="指导老师" name="name3">
-                    <i-row>
+                    <i-row style="margin-top:20px;">
                         <i-col span="3">
-                            指导老师<i-badge :count="1"></i-badge>
+                            <i-row style="font-size:20px;">指导老师<i-badge :count="1" style="margin-left:15px;"></i-badge></i-row>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input search enter-button placeholder="Enter something..."  />
+                            <i-input search enter-button placeholder="搜索指导老师"  />
                         </i-col>
-                        <i-col span="2" push="15">
+                        <i-col span="2" push="15" style="margin-left:10px;">
                             <i-button type="primary">添加老师</i-button>
                         </i-col>
                     </i-row>
@@ -181,14 +181,14 @@
                     </i-row>
                 </i-tab-pane>
                 <i-tab-pane label="管理员" name="name4">
-                    <i-row>
+                    <i-row style="margin-top:20px;">
                         <i-col span="3">
-                            管理员<i-badge :count="1"></i-badge>
+                            <i-row style="font-size:20px;">管理员<i-badge :count="1" style="margin-left:15px;"></i-badge></i-row>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input search enter-button placeholder="Enter something..."  />
+                            <i-input search enter-button placeholder="搜索管理员"  />
                         </i-col>
-                        <i-col span="2" push="15">
+                        <i-col span="2" push="15" style="margin-left:8px;">
                             <i-button type="primary">添加管理员</i-button>
                         </i-col>
                     </i-row>
@@ -197,14 +197,14 @@
                     </i-row>
                 </i-tab-pane>
                 <i-tab-pane label="社团活动" name="name5">
-                    <i-row>
+                    <i-row style="margin-top:20px;">
                         <i-col span="3">
-                            社团活动<i-badge :count="1"></i-badge>
+                            <i-row style="font-size:20px;">社团活动<i-badge :count="1" style="margin-left:15px;"></i-badge></i-row>
                         </i-col>
                         <i-col span="4" push="15">
-                            <i-input search enter-button placeholder="Enter something..."  />
+                            <i-input search enter-button placeholder="搜索社团活动"  />
                         </i-col>
-                        <i-col span="2" push="15">
+                        <i-col span="2" push="15" style="margin-left:10px;">
                             <i-button type="primary">添加活动</i-button>
                         </i-col>
                     </i-row>

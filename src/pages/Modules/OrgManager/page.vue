@@ -1,10 +1,10 @@
 <template>
-    <i-row  :gutter="16">
+    <i-row>
         <i-col span="16">
             <i-row>
                 <div class="title">{{time}}好，{{userInfo.realName}}</div>
                 <div v-if="messageNum>0">您有{{messageNum}}条消息</div>
-                <div v-else class="tip">待办已经全部完成</div>
+                <div v-else class="tip">您目前没有待办事项</div>
             </i-row>
             <i-row v-if="messageNum>0">
                 <i-row v-for="(item,index) in message" @click="dealWorkflow(item.instanceId,item.stepId)" :key="index">
@@ -15,38 +15,39 @@
                 图片
             </i-row>
             <Divider />
-            <i-row>
-                <div class="title">常用入口</div>
-                <div v-if="data.DepartType==1">
-                    <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index" @click="navTo(item.url)">
-                        <card class="margin layout-con">
-                            <Avatar class="margin" :icon="item.icon" />{{item.title}}
-                        </card>
+            <div class="title">常用入口</div>
+            <i-row type="flex" justify="space-between">
+                <template v-if="dashBoard.DepartType===1">
+                    <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index">
+                        <i-card class="layout-con" :to="item.routerTo">
+                            <i-icon class="margin" :type="item.icon" />{{item.title}}
+                        </i-card>
                     </i-col>
-                </div>
-                <i-row v-else-if="data.DepartType==0">
-                    <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index" @click="navTo(item.url)">
-                        <card class="margin layout-con">
-                            <Avatar class="margin" :icon="item.icon" />{{item.title}}
-                        </card>
+                </template>
+                <template v-else-if="dashBoard.DepartType===0">
+                    <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index">
+                        <i-card class="layout-con" :to="item.routerTo">
+                            <i-icon class="margin" :type="item.icon" />{{item.title}}
+                        </i-card>
                     </i-col>
-                </i-row>
+                </template>
             </i-row>
         </i-col>
-        <i-col span="8">
-            <i-row class="title">社团名称</i-row>
-            <i-row>成员:人</i-row>
-            <i-row v-if="data.DepartType==1">
-                指导老师:{{data.teachers.length()}}
-                <i-row v-for="(item,index) in data.teachers" :key="index">
-                    {{item}}
+        <i-col span="7" offset="1">
+            <i-card :title="dashBoard.Name||'请设置社团名称'">
+                <i-row>现有成员:{{dashBoard.users}}人</i-row>
+                <i-row v-if="dashBoard.DepartType===1">
+                    指导老师:{{dashBoard.teachers.length?dashBoard.teachers.length:"无"}}
+                    <i-row v-for="(item,index) in dashBoard.teachers" :key="index">
+                        {{item}}
+                    </i-row>
                 </i-row>
-            </i-row>
-            <i-row v-else-if="data.DepartType==0&&data.children>0">
-                子部门:{{data.children}}
-            </i-row>
+                <i-row v-else-if="dashBoard.DepartType===0">
+                    子部门:{{dashBoard.children?dashBoard.children:"无"}}
+                </i-row>
+                <i-button @click="navTo()">跳转至详细页</i-button>
+            </i-card>
         </i-col>
-        <i-button @click="navTo()">跳转</i-button>
     </i-row>
 </template>
 
@@ -59,51 +60,87 @@ export default {
             messageNum: 0,
             message: [],
             time: "早上",
-            data: {
+            dashBoard: {
                 users: 0,
                 teachers: [],
-                children: [],
+                children: 0,
                 StrType: 0,
                 DepartType: 0,
-                BirthTime: ""
+                BirthTime: "",
+                Name: ""
             },
             userInfo: app.userInfo,
             entrForStudent: [
                 {
                     title: "添加成员",
-                    url: "",
+                    routerTo: {
+                        name: "OrgDetail",
+                        params: {
+                            tabSelect: "name2"
+                        }
+                    },
                     icon: "md-person-add"
                 },
                 {
                     title: "申请活动",
-                    url: "",
+                    routerTo: {
+                        name: "OrgDetail",
+                        params: {
+                            tabSelect: "name5"
+                        }
+                    },
                     icon: "logo-buffer"
                 },
                 {
                     title: "基本信息",
-                    url: "",
+                    routerTo: {
+                        name: "OrgDetail",
+                        params: {
+                            tabSelect: "name1"
+                        }
+                    },
                     icon: "md-information"
                 }
             ],
             entrForTeacher: [
                 {
                     title: "添加成员",
-                    url: "",
+                    routerTo: {
+                        name: "OrgDetail",
+                        params: {
+                            tabSelect: "name2"
+                        }
+                    },
                     icon: "md-person-add"
                 },
                 {
                     title: "添加社团",
-                    url: "",
+                    routerTo: {
+                        name: "OrgDetail",
+                        params: {
+                            tabSelect: "name3"
+                        }
+                    },
                     icon: "md-add"
                 },
                 {
                     title: "申请活动",
-                    url: "",
+                    routerTo: {
+                        name: "OrgDetail",
+                        params: {
+                            tabSelect: "name5"
+                        }
+                    },
                     icon: "logo-buffer"
                 },
                 {
                     title: "基本信息",
-                    url: "",
+                    routerTo: {
+                        name: "OrgDetail",
+                        params: {
+                            tabSelect: "name1"
+                        }
+                    },
                     icon: "md-information"
                 }
             ]
@@ -119,7 +156,8 @@ export default {
     methods: {
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
-                this.data = msg;
+                console.log(msg);
+                this.dashBoard = msg;
                 app.departType = msg.DepartType;
             });
         },
@@ -167,8 +205,7 @@ export default {
         margin: 10px;
     }
     .layout-con {
-        position: relative;
-        overflow: hidden;
         text-align: center;
+        color: black;
     }
 </style>

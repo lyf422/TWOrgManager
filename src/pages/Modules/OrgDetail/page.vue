@@ -11,27 +11,29 @@
                     </i-row>
                 </i-col>
             </i-row>
-            <i-tabs :value="tabSelect" style="margin-top:50px;">
+            <i-tabs :value="tabSelect" style="margin: 50px 0px 0px 200px">
                 <i-tab-pane label="基本信息" name="name1">
                     <i-row>
                         <i-spin fix size="large" v-show="spinShow"></i-spin>
-                        <i-col span="17" offset="3">
+                        <i-col span="17" >
                             <i-form>
-                                <i-row>
+                                <i-row type="flex" justify="space-between">
                                     <i-form-item label="社团名称">
                                         <i-input v-model="orgInfo.Name"/>
                                     </i-form-item>
                                     <i-form-item label="部门代码">
                                         <i-input v-model="orgInfo.Code"/>
                                     </i-form-item>
+                                    <i-form-item label="成立时间">
+                                        <i-date-picker type="date" v-model="orgInfo.BirthTime" />
+                                    </i-form-item>
+                                    <i-form-item label="社团类型" style="width: 210px">
+                                        <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
+                                    </i-form-item>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
-                                    <i-form-item label="社团类型">
-                                        <dic-select dic="社团类型" v-model="orgInfo.DepartType"  style="width:280px;height:25px;"/>
-                                    </i-form-item>
-                                    <i-form-item label="成立时间">
-                                        <i-input v-model="orgInfo.BirthTime"/>
-                                    </i-form-item>
+                                </i-row>
+                                <i-row type="flex" justify="space-between">
                                     <i-form-item label="是否有章程">
                                         <i-checkbox v-model="orgInfo.HaveDepartRule"></i-checkbox>
                                         <i-input :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-input>
@@ -44,11 +46,11 @@
                                         <i-checkbox v-model="orgInfo.HaveCPCBranch"></i-checkbox>
                                         <i-input :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-input>
                                     </i-form-item>
+                                    <i-form-item label="党支部类型" style="width: 210px">
+                                        <dic-select dic="党支部类型" v-model="orgInfo.CPCBranchType"/>
+                                    </i-form-item>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
-                                    <i-form-item label="党支部类型">
-                                        <dic-select dic="党支部类型" v-model="orgInfo.CPCBranchType" style="width:280px;height:25px;"/>
-                                    </i-form-item>
                                     <i-form-item label="挂靠单位">
                                         <i-input v-model="orgInfo.Affiliated"/>
                                     </i-form-item>
@@ -88,7 +90,7 @@
                             </i-form>
                             <i-button @click="saveOrgDetail()">保存</i-button>
                         </i-col>
-                        <i-col span="4">
+                        <i-col span="5">
                             <List>
                                 <ListItem v-for="(item,index) in changeLogs.data" :key="index">{{item.Abstract}}</ListItem>
                             </List>
@@ -243,7 +245,7 @@ export default {
         }
     },
     mounted () {
-        this.tabSelect = this.$route.params.tabSelect;
+        this.tabSelect = this.$route.params.tabSelect || "name1";
         this.getOrgDetail();
     },
     data () {
@@ -299,17 +301,4 @@ export default {
 </script>
 
 <style lang="less">
-.ivu-form-item{
-    margin-bottom:60px;
-}
-.ivu-form-label{
-    padding-bottom:25px;
-}
-.ivu-tabs-nav-scroll{
-    padding-left:160px;
-}
-.ivu-input{
-    width:280px;
-    height:25px;
-}
 </style>

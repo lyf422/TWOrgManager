@@ -1,23 +1,23 @@
 <template>
     <i-row>
-        <i-card>
-            <i-row style="margin: 50px 0px 0px 100px">
-                <i-col span="2">
-                    <img :src="app.webInfo.avatar" style="width:80px;height:80px;"/>
+        <i-card :padding="100">
+            <i-row type="flex" style="margin: -50px 0px 40px 0px" align="middle">
+                <i-col span="3">
+                    <i-avatar :src="app.webInfo.avatar" size="120"/>
                 </i-col>
-                <i-col span="18">
-                    <i-row style="font-size:30px; margin-bottom:10px">社团名称</i-row>
+                <i-col span="21">
+                    <i-row style="font-size:30px; margin-bottom:10px">{{orgInfo.Name ? orgInfo.Name : "正在加载中"}}</i-row>
                     <i-row>
                         <i-col span="3">成员人数</i-col>
                         <i-col span="3">指导老师</i-col>
                     </i-row>
                 </i-col>
             </i-row>
-            <i-tabs :value="tabSelect" style="padding: 50px 0px 0px 200px">
+            <i-tabs :value="tabSelect">
                 <i-tab-pane label="基本信息" name="name1">
                     <i-row>
                         <i-spin fix size="large" v-show="spinShow"></i-spin>
-                        <i-col span="17" >
+                        <i-col span="16" >
                             <i-form>
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="10">
@@ -34,15 +34,12 @@
                                     </i-col>
                                     <i-col span="6">
                                         <i-form-item label="成立时间">
-                                            <i-date-picker type="date" v-model="orgInfo.BirthTime" />
+                                            <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="6">
-                                        <i-form-item label="排序号(升序)" v-if="level>=2">
-                                            <i-input v-model="orgInfo.Sort" :disabled="(level <= 3-orgInfo.Type)"/>
-                                        </i-form-item>
-                                        <i-form-item label="排序号(降序)" v-else-if="level<2">
-                                            <i-input v-model="orgInfo.Sort" :disabled="(level <= 3-orgInfo.Type)"/>
+                                        <i-form-item label="排序号(升序)">
+                                            <i-input v-model="orgInfo.Sort" :disabled="(level < 3-orgInfo.Type)"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -119,12 +116,20 @@
                                     <i-input type="textarea" v-model="orgInfo.Remark"/>
                                 </i-form-item>
                             </i-form>
-                            <i-button @click="saveOrgDetail()">保存</i-button>
+                            <i-button type="primary" @click="saveOrgDetail()">保存</i-button>
                         </i-col>
-                        <i-col span="5">
-                            <List>
-                                <ListItem v-for="(item,index) in changeLogs.data" :key="index">{{item.Abstract}}</ListItem>
-                            </List>
+                        <i-col span="5" offset="3">
+                            <i-timeline>
+                                <!--TimelineItem v-for="(item,index) in changeLogs.data" :key="index">{{item.Abstract}}</TimelineItem-->
+                                <TimelineItem>
+                                    <p class="time">1976年</p>
+                                    <p class="content">Apple I 问世</p>
+                                </TimelineItem>
+                                <TimelineItem>
+                                    <p class="time">1976年</p>
+                                    <p class="content">Apple I 问世</p>
+                                </TimelineItem>
+                            </i-timeline>
                         </i-col>
                     </i-row>
                 </i-tab-pane>
@@ -254,6 +259,8 @@ export default {
         cancel () {
         },
         saveOrgDetail () {
+            this.orgInfo.Affiliated = "789";
+            this.orgInfo.Code = "789";
             axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
                     this.$Message.success("保存成功");
@@ -268,6 +275,9 @@ export default {
             axios.post("/api/security/GetOrgDetail", {}, msg => {
                 if (msg.success) {
                     this.orgInfo = msg.data;
+                    this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
+                    this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                    this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                     this.changeLogs = msg.changeLogs;
                     this.level = msg.level;
                 }

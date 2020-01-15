@@ -1,13 +1,15 @@
 <template>
     <i-row>
         <i-card>
-            <i-row>
-                <i-col span="4">图片</i-col>
-                <i-col span="20">
-                    <i-row style="font-size:40px; margin-bottom:10px">社团名称</i-row>
+            <i-row style="margin: 50px 0px 0px 100px">
+                <i-col span="2">
+                    <img :src="app.webInfo.avatar" style="width:80px;height:80px;"/>
+                </i-col>
+                <i-col span="18">
+                    <i-row style="font-size:30px; margin-bottom:10px">社团名称</i-row>
                     <i-row>
-                        <i-col span="5">成员人数</i-col>
-                        <i-col>指导老师</i-col>
+                        <i-col span="3">成员人数</i-col>
+                        <i-col span="3">指导老师</i-col>
                     </i-row>
                 </i-col>
             </i-row>

@@ -4,18 +4,18 @@
             <i-row>
                 <i-col span="4">图片</i-col>
                 <i-col span="20">
-                    <i-row>社团名称</i-row>
-                    <i-row>成员人数/指导老师</i-row>
+                    <i-row style="font-size:40px; margin-bottom:10px">社团名称</i-row>
+                    <i-row>
+                        <i-col span="5">成员人数</i-col>
+                        <i-col>指导老师</i-col>
+                    </i-row>
                 </i-col>
             </i-row>
-        </i-card>
-        <i-divider/>
-        <i-card>
-            <i-tabs :value="tabSelect">
+            <i-tabs :value="tabSelect" style="margin-top:50px;">
                 <i-tab-pane label="基本信息" name="name1">
                     <i-row>
                         <i-spin fix size="large" v-show="spinShow"></i-spin>
-                        <i-col span="19">
+                        <i-col span="17" offset="3">
                             <i-form>
                                 <i-row>
                                     <i-form-item label="社团名称">
@@ -27,7 +27,7 @@
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
                                     <i-form-item label="社团类型">
-                                        <dic-select dic="社团类型" v-model="orgInfo.DepartType"/>
+                                        <dic-select dic="社团类型" v-model="orgInfo.DepartType"  style="width:280px;height:25px;"/>
                                     </i-form-item>
                                     <i-form-item label="成立时间">
                                         <i-input v-model="orgInfo.BirthTime"/>
@@ -47,7 +47,7 @@
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
                                     <i-form-item label="党支部类型">
-                                        <dic-select dic="党支部类型" v-model="orgInfo.CPCBranchType"/>
+                                        <dic-select dic="党支部类型" v-model="orgInfo.CPCBranchType" style="width:280px;height:25px;"/>
                                     </i-form-item>
                                     <i-form-item label="挂靠单位">
                                         <i-input v-model="orgInfo.Affiliated"/>
@@ -88,7 +88,7 @@
                             </i-form>
                             <i-button @click="saveOrgDetail()">保存</i-button>
                         </i-col>
-                        <i-col span="4" offset="1">
+                        <i-col span="4">
                             <List>
                                 <ListItem v-for="(item,index) in changeLogs.data" :key="index">{{item.Abstract}}</ListItem>
                             </List>
@@ -111,7 +111,7 @@
                         <i-table></i-table>
                     </i-row>
                 </i-tab-pane>
-                <i-tab-pane v-if="orgInfo.Type===0" label="子部门" name="name3">
+                <i-tab-pane v-if="app.departType===0" label="子部门" name="name3">
                     <i-row>
                         <i-col span="3">
                             子部门<i-badge :count="9"></i-badge>
@@ -126,7 +126,7 @@
                     <i-row>
                         <i-table></i-table>
                     </i-row></i-tab-pane>
-                <i-tab-pane v-else-if="orgInfo.Type===1" label="指导老师" name="name3">
+                <i-tab-pane v-else-if="app.departType===1" label="指导老师" name="name3">
                     <i-row>
                         <i-col span="3">
                             指导老师<i-badge :count="1"></i-badge>
@@ -299,5 +299,17 @@ export default {
 </script>
 
 <style lang="less">
-
+.ivu-form-item{
+    margin-bottom:60px;
+}
+.ivu-form-label{
+    padding-bottom:25px;
+}
+.ivu-tabs-nav-scroll{
+    padding-left:160px;
+}
+.ivu-input{
+    width:280px;
+    height:25px;
+}
 </style>

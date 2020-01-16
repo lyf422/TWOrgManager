@@ -140,16 +140,16 @@
                                 社团成员
                             </i-col>
                             <i-col>
-                                <i-badge :count="10"></i-badge>
+                                <i-badge :count="tableData.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
                                 <i-input prefix="ios-search" placeholder="搜索成员"  />
                             </i-col>
                             <i-col span="2" push="16">
-                                <i-button type="primary" @click="modifyMember()">添加成员</i-button>
+                                <i-button style="width: 100%" type="primary" @click="modifyMember()">添加成员</i-button>
                             </i-col>
                         </i-row>
-                        <i-table :columns="tableCol.member" :data="tableData">
+                        <i-table stripe :columns="tableCol.member" :data="tableData">
                             <template slot="Action" slot-scope="{index}">
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
@@ -297,7 +297,7 @@ export default {
             this.tableData = testData.member;
         },
         delTableItem (index) {
-            this.tableData.splice(index);
+            this.tableData.splice(index, 1);
         }
     },
     mounted () {

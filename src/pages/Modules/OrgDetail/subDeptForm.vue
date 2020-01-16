@@ -9,7 +9,7 @@
         </i-row>
         <i-row type="flex" justify="space-between">
             <i-col span="11">
-                <i-form-item label="社团类型" style="width: 365px">
+                <i-form-item label="社团类型">
                     <dic-select dic="社团类型" v-model="modalData.DepartType" />
                 </i-form-item>
             </i-col>

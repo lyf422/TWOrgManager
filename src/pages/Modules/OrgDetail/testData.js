@@ -2,61 +2,104 @@ let testData = {
     member: [
         {
             RealName: '岳皓',
-            Code: '25136',
+            Code: '1001',
             Mobile: '135132648756',
             Email: 'yuehao@163.com',
             Source: '大陆'
         },
         {
             RealName: '宋润涵',
-            Code: '132323',
+            Code: '2002',
             Mobile: '151254425789',
             Email: 'sh963852741@163.com',
+            Source: '大陆'
+        },
+        {
+            RealName: '邵良颖',
+            Code: '3004',
+            Mobile: '15290830957',
+            Email: 'liangyinshao@163.com',
             Source: '大陆'
         }
     ],
     subDept: [
         {
-            title: '姓名',
-            key: ''
+            Name: '办公部',
+            Type: '思想政治类',
+            ParentId: '信息学院团委',
+            Time: '2018年5月4日'
         },
         {
-            title: '类型',
-            key: ''
+            Name: '文娱部',
+            Type: '文化艺术类',
+            ParentId: '信息学院团委',
+            Time: '2018年6月4日'
         },
         {
-            title: '挂靠单位',
-            key: ''
-        },
-        {
-            title: '成立时间',
-            key: ''
-        },
-        {
-            title: '操作',
-            slot: ''
+            Name: '外联部',
+            Type: '社会实践类',
+            ParentId: '信息学院团委',
+            Time: '2018年7月5日'
         }
     ],
     tutor: [
         {
-            title: '姓名',
-            key: ''
+            Name: '张某某',
+            Code: '001',
+            Category: '辅导员',
+            Status: '中共党员',
+            Company: '厦门大学'
         },
         {
-            title: '类型',
-            key: ''
+            Name: '王某某',
+            Code: '002',
+            Category: '实验教辅',
+            Status: '群众',
+            Company: '厦门大学'
         },
         {
-            title: '挂靠单位',
-            key: ''
+            Name: '李某某',
+            Code: '003',
+            Category: '专业教师',
+            Status: '民主党派',
+            Company: '厦门大学'
+        }
+    ],
+    manager: [
+        {
+            Name: '黄某某',
+            Mobile: '15103353774',
+            Email: 'mouhuang@163.com'
         },
         {
-            title: '成立时间',
-            key: ''
+            Name: '方某某',
+            Mobile: '13884239590',
+            Email: 'moufang@163.com'
         },
         {
-            title: '操作',
-            slot: ''
+            Name: '范某某',
+            Mobile: '13995466723',
+            Email: 'moufan@163.com'
+        }
+    ],
+    activity: [
+        {
+            Name: '部门例会',
+            Category: '思想政治类',
+            Time: '2019年8月1日16:00至18:00',
+            Location: '学生公寓201'
+        },
+        {
+            Name: '社团纳新',
+            Category: '文化艺术类',
+            Time: '2019年10月15日8:00至12:00',
+            Location: '学生公寓305'
+        },
+        {
+            Name: '外出比赛',
+            Category: '科学理论类',
+            Time: '2019年12月11日至2019年12月15日',
+            Location: '福建福州'
         }
     ]
 };

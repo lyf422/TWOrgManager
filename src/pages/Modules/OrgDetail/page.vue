@@ -152,6 +152,58 @@
                         </i-table>
                     </i-card>
                 </i-tab-pane>
+                <i-tab-pane :disabled="orgInfo.Type===0" label="子部门" name="subDept">
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                子部门
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="tableData.length"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="16">
+                                <i-input prefix="ios-search" placeholder="搜索部门"/>
+                            </i-col>
+                            <i-col span="2" push="16">
+                                <i-button style="width: 100%" type="primary">添加部门</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-row>
+                        <i-table stripe :columns="tableCol.subDept" :data="tableData">
+                            <template slot="Action" slot-scope="{index}">
+                                <i-button @click="delTableItem(index)">管理</i-button>
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
+                        </i-row>
+                    </i-card>
+                </i-tab-pane>
+                <i-tab-pane :disabled="orgInfo.Type===1" label="指导老师" name="tutor">
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                指导老师
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="tableData.length"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="15">
+                                <i-input prefix="ios-search" placeholder="搜索指导老师"/>
+                            </i-col>
+                            <i-col span="3" push="15">
+                                <i-button style="width: 100%" type="primary">添加指导老师</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-row>
+                        <i-table stripe :columns="tableCol.tutor" :data="tableData">
+                            <template slot="Action" slot-scope="{index, row}">
+                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
+                        </i-row>
+                    </i-card>
+                </i-tab-pane>
                 <i-tab-pane label="管理员" name="manager">
                     <i-card dis-hover>
                         <i-row type="flex" align="middle" :gutter="16" slot="title">
@@ -203,74 +255,26 @@
                         </i-row>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane v-if="orgInfo.Type===0" label="子部门" name="subDept">
-                    <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
-                            <i-col>
-                                子部门
-                            </i-col>
-                            <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索部门"/>
-                            </i-col>
-                            <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary">添加部门</i-button>
-                            </i-col>
-                        </i-row>
-                        <i-row>
-                        <i-table stripe :columns="tableCol.subDept" :data="tableData">
-                            <template slot="Action" slot-scope="{index}">
-                                <i-button @click="delTableItem(index)">管理</i-button>
-                                <i-button @click="delTableItem(index)">删除</i-button>
-                            </template>
-                        </i-table>
-                        </i-row>
-                    </i-card>
-                </i-tab-pane>
-                <i-tab-pane v-if="orgInfo.Type===1" label="指导老师" name="tutor">
-                    <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
-                            <i-col>
-                                指导老师
-                            </i-col>
-                            <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="15">
-                                <i-input prefix="ios-search" placeholder="搜索指导老师"/>
-                            </i-col>
-                            <i-col span="3" push="15">
-                                <i-button style="width: 100%" type="primary">添加指导老师</i-button>
-                            </i-col>
-                        </i-row>
-                        <i-row>
-                        <i-table stripe :columns="tableCol.tutor" :data="tableData">
-                            <template slot="Action" slot-scope="{index}">
-                                <i-button @click="delTableItem(index)">修改</i-button>
-                                <i-button @click="delTableItem(index)">删除</i-button>
-                            </template>
-                        </i-table>
-                        </i-row>
-                    </i-card>
-                </i-tab-pane>
             </i-tabs>
         </i-card>
         <i-modal v-model="modalShow" title="添加/修改成员" @on-ok="submit()" @on-cancel="cancel()">
-            <my-form ref="Form" :modalData="recordData" :type="tabSelect"></my-form>
+            <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData" ></component>
         </i-modal>
     </i-row>
 </template>
 
 <script>
-import myForm from "./my-form"
+import memberForm from "./memberForm"
+import tutorForm from "./tutorForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
 const testData = require("./testData");
 const axios = require("axios");
 export default {
-    components: {"my-form": myForm},
+    components: {
+        "member-form": memberForm,
+        "tutor-form": tutorForm
+    },
     methods: {
         modifyRecord () {
             this.modalShow = true;
@@ -325,7 +329,6 @@ export default {
     mounted () {
         this.tabSelect = this.$route.params.tabSelect || "basicInfo";
         this.getOrgDetail();
-        this.getTable();
     },
     data () {
         return {
@@ -338,7 +341,12 @@ export default {
             orgInfo: {},
             changeLogs: {},
             tableData: [],
-            modalShow: false
+            modalShow: false,
+            componentDic: {
+                member: "member-form",
+                tutor: "tutor-form",
+                subDept: "subDept-form"
+            }
         };
     }
 }

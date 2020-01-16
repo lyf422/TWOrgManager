@@ -156,68 +156,105 @@
                         </i-table>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane v-if="orgInfo.Type===0" label="子部门" name="name3">
-                    <i-row style="margin-top:20px;">
-                        <i-col span="3">
-                           子部门   <i-badge :count="9"></i-badge>
-                        </i-col>
-                        <i-col span="4" push="15">
-                            <i-input search enter-button placeholder="搜索部门"  />
-                        </i-col>
-                        <i-col span="2" push="15" style="margin-left:10px;">
-                            <i-button type="primary">添加部门</i-button>
-                        </i-col>
-                    </i-row>
-                    <i-row>
-                        <i-table stripe></i-table>
-                    </i-row></i-tab-pane>
-                <i-tab-pane v-else-if="orgInfo.Type===1" label="指导老师" name="name3">
-                    <i-row style="margin-top:20px;">
-                        <i-col span="3">
-                            指导老师    <i-badge :count="1"></i-badge>
-                        </i-col>
-                        <i-col span="4" push="15">
-                            <i-input search enter-button placeholder="搜索指导老师"  />
-                        </i-col>
-                        <i-col span="2" push="15" style="margin-left:10px;">
-                            <i-button type="primary">添加老师</i-button>
-                        </i-col>
-                    </i-row>
-                    <i-row>
-                        <i-table stripe></i-table>
-                    </i-row>
+                <i-tab-pane v-if="orgInfo.DepartType===0" label="子部门" name="name3">
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                子部门
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="tableData.length"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="16">
+                                <i-input prefix="ios-search" placeholder="搜索部门"/>
+                            </i-col>
+                            <i-col span="2" push="16">
+                                <i-button style="width: 100%" type="primary">添加部门</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-row>
+                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                            <template slot="Action" slot-scope="{index}">
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
+                        </i-row>
+                    </i-card>
+                </i-tab-pane>
+                <i-tab-pane v-else-if="orgInfo.DepartType===1" label="指导老师" name="name3">
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                指导老师
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="tableData.length"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="16">
+                                <i-input prefix="ios-search" placeholder="搜索指导老师"/>
+                            </i-col>
+                            <i-col span="2" push="16">
+                                <i-button style="width: 100%" type="primary">添加指导老师</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-row>
+                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                            <template slot="Action" slot-scope="{index}">
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
+                        </i-row>
+                    </i-card>
                 </i-tab-pane>
                 <i-tab-pane label="管理员" name="name4">
-                    <i-row class="rowStyle">
-                        <i-col span="3">
-                            管理员    <i-badge :count="1"></i-badge>
-                        </i-col>
-                        <i-col span="4" push="15">
-                            <i-input search enter-button placeholder="搜索管理员"  />
-                        </i-col>
-                        <i-col span="2" push="15" style="margin-left:8px;">
-                            <i-button type="primary">添加管理员</i-button>
-                        </i-col>
-                    </i-row>
-                    <i-row>
-                        <i-table stripe></i-table>
-                    </i-row>
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                管理员
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="tableData.length"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="16">
+                                <i-input prefix="ios-search" placeholder="搜索管理员"/>
+                            </i-col>
+                            <i-col span="2" push="16">
+                                <i-button style="width: 100%" type="primary">添加管理员</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-row>
+                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                            <template slot="Action" slot-scope="{index}">
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
+                        </i-row>
+                    </i-card>
                 </i-tab-pane>
                 <i-tab-pane label="社团活动" name="name5">
-                    <i-row class="rowStyle">
-                        <i-col span="3">
-                            社团活动    <i-badge :count="1"></i-badge>
-                        </i-col>
-                        <i-col span="4" push="15">
-                            <i-input search enter-button placeholder="搜索社团活动"  />
-                        </i-col>
-                        <i-col span="2" push="15" style="margin-left:10px;">
-                            <i-button type="primary">添加活动</i-button>
-                        </i-col>
-                    </i-row>
-                    <i-row>
-                        <i-table stripe></i-table>
-                    </i-row>
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                社团活动
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="tableData.length"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="16">
+                                <i-input prefix="ios-search" placeholder="搜索活动"/>
+                            </i-col>
+                            <i-col span="2" push="16">
+                                <i-button style="width: 100%" type="primary">添加活动</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-row>
+                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                            <template slot="Action" slot-scope="{index}">
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
+                        </i-row>
+                    </i-card>
                 </i-tab-pane>
             </i-tabs>
         </i-card>

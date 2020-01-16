@@ -159,7 +159,7 @@
                 <i-tab-pane v-if="orgInfo.DepartType===0" label="子部门" name="name3">
                     <i-row style="margin-top:20px;">
                         <i-col span="3">
-                            <i-row style="font-size:20px;">子部门<i-badge :count="9" style="margin-left:15px;"></i-badge></i-row>
+                           子部门   <i-badge :count="9"></i-badge>
                         </i-col>
                         <i-col span="4" push="15">
                             <i-input search enter-button placeholder="搜索部门"  />
@@ -169,12 +169,12 @@
                         </i-col>
                     </i-row>
                     <i-row>
-                        <i-table></i-table>
+                        <i-table stripe></i-table>
                     </i-row></i-tab-pane>
                 <i-tab-pane v-else-if="orgInfo.DepartType===1" label="指导老师" name="name3">
                     <i-row style="margin-top:20px;">
                         <i-col span="3">
-                            <i-row style="font-size:20px;">指导老师<i-badge :count="1" style="margin-left:15px;"></i-badge></i-row>
+                            指导老师    <i-badge :count="1"></i-badge>
                         </i-col>
                         <i-col span="4" push="15">
                             <i-input search enter-button placeholder="搜索指导老师"  />
@@ -184,13 +184,13 @@
                         </i-col>
                     </i-row>
                     <i-row>
-                        <i-table></i-table>
+                        <i-table stripe></i-table>
                     </i-row>
                 </i-tab-pane>
                 <i-tab-pane label="管理员" name="name4">
-                    <i-row style="margin-top:20px;">
+                    <i-row class="rowStyle">
                         <i-col span="3">
-                            <i-row style="font-size:20px;">管理员<i-badge :count="1" style="margin-left:15px;"></i-badge></i-row>
+                            管理员    <i-badge :count="1"></i-badge>
                         </i-col>
                         <i-col span="4" push="15">
                             <i-input search enter-button placeholder="搜索管理员"  />
@@ -200,13 +200,13 @@
                         </i-col>
                     </i-row>
                     <i-row>
-                        <i-table></i-table>
+                        <i-table stripe></i-table>
                     </i-row>
                 </i-tab-pane>
                 <i-tab-pane label="社团活动" name="name5">
-                    <i-row style="margin-top:20px;">
+                    <i-row class="rowStyle">
                         <i-col span="3">
-                            <i-row style="font-size:20px;">社团活动<i-badge :count="1" style="margin-left:15px;"></i-badge></i-row>
+                            社团活动    <i-badge :count="1"></i-badge>
                         </i-col>
                         <i-col span="4" push="15">
                             <i-input search enter-button placeholder="搜索社团活动"  />
@@ -216,7 +216,7 @@
                         </i-col>
                     </i-row>
                     <i-row>
-                        <i-table></i-table>
+                        <i-table stripe></i-table>
                     </i-row>
                 </i-tab-pane>
             </i-tabs>
@@ -318,6 +318,30 @@ export default {
                 Email: "",
                 Location: ""
             },
+            columns: [
+                {
+                    title: "姓名",
+                    slot: "Name"
+                },
+                {
+                    title: "学号"
+                },
+                {
+                    title: "手机号"
+                },
+                {
+                    title: "邮箱"
+
+                },
+                {
+                    title: "生源地"
+
+                },
+                {
+                    title: "操作",
+                    slot: "action"
+                }
+            ],
             level: 0,
             orgInfo: {},
             changeLogs: {},

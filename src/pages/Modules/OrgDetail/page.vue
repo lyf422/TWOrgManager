@@ -13,8 +13,8 @@
                     </i-row>
                 </i-col>
             </i-row>
-            <i-tabs :value="tabSelect">
-                <i-tab-pane label="基本信息" name="name1">
+            <i-tabs v-model="tabSelect">
+                <i-tab-pane label="基本信息" name="basicInfo">
                     <i-row>
                         <i-spin fix size="large" v-show="spinShow"></i-spin>
                         <i-col span="16">
@@ -128,88 +128,38 @@
                         </i-col>
                     </i-row>
                 </i-tab-pane>
-                <i-tab-pane label="成员管理" name="name2">
+                <i-tab-pane label="成员管理" name="member">
                     <i-card dis-hover>
                         <i-row type="flex" align="middle" :gutter="16" slot="title">
                             <i-col>
                                 社团成员
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.member.length"></i-badge>
+                                <i-badge :count="tableData.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
                                 <i-input prefix="ios-search" placeholder="搜索成员" />
                             </i-col>
                             <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary" @click="modifyMember()">添加成员</i-button>
+                                <i-button style="width: 100%" type="primary" @click="modifyRecord('member')">添加成员</i-button>
                             </i-col>
                         </i-row>
                         <i-table stripe :columns="tableCol.member" :data="tableData">
                             <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="delTableItem(index, row)">修改</i-button>
+                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
                         </i-table>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane label="管理员" name="name4">
-                    <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
-                            <i-col>
-                                管理员
-                            </i-col>
-                            <i-col>
-                                <i-badge :count="tableData.manager.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索管理员"/>
-                            </i-col>
-                            <i-col span="2" push="16">
-                                <i-button style="width: 117%" type="primary">添加管理员</i-button>
-                            </i-col>
-                        </i-row>
-                        <i-row>
-                        <i-table stripe :columns="tableCol.manager" :data="tableData.manager">
-                            <template slot="Action" slot-scope="{index}">
-                                <i-button @click="delTableItem(index)">删除</i-button>
-                            </template>
-                        </i-table>
-                        </i-row>
-                    </i-card>
-                </i-tab-pane>
-                <i-tab-pane label="社团活动" name="name5">
-                    <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
-                            <i-col>
-                                社团活动
-                            </i-col>
-                            <i-col>
-                                <i-badge :count="tableData.activity.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索活动"/>
-                            </i-col>
-                            <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary">添加活动</i-button>
-                            </i-col>
-                        </i-row>
-                        <i-row>
-                        <i-table stripe :columns="tableCol.activity" :data="tableData.activity">
-                            <template slot="Action" slot-scope="{index}">
-                                <i-button @click="delTableItem(index)">删除</i-button>
-                            </template>
-                        </i-table>
-                        </i-row>
-                    </i-card>
-                </i-tab-pane>
-                <i-tab-pane v-if="orgInfo.Type===0" label="子部门" name="name3">
+                <i-tab-pane :disabled="orgInfo.Type===0" label="子部门" name="subDept">
                     <i-card dis-hover>
                         <i-row type="flex" align="middle" :gutter="16" slot="title">
                             <i-col>
                                 子部门
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.subDept.length"></i-badge>
+                                <i-badge :count="tableData.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
                                 <i-input prefix="ios-search" placeholder="搜索部门"/>
@@ -219,22 +169,23 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.subDept" :data="tableData.subDept">
+                        <i-table stripe :columns="tableCol.subDept" :data="tableData">
                             <template slot="Action" slot-scope="{index}">
+                                <i-button @click="delTableItem(index)">管理</i-button>
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
                         </i-table>
                         </i-row>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane v-if="orgInfo.Type===1" label="指导老师" name="name3">
+                <i-tab-pane :disabled="orgInfo.Type===1" label="指导老师" name="tutor">
                     <i-card dis-hover>
                         <i-row type="flex" align="middle" :gutter="16" slot="title">
                             <i-col>
                                 指导老师
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.tutor.length"></i-badge>
+                                <i-badge :count="tableData.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="15">
                                 <i-input prefix="ios-search" placeholder="搜索指导老师"/>
@@ -244,8 +195,60 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.tutor" :data="tableData.tutor">
+                        <i-table stripe :columns="tableCol.tutor" :data="tableData">
+                            <template slot="Action" slot-scope="{index, row}">
+                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
+                        </i-row>
+                    </i-card>
+                </i-tab-pane>
+                <i-tab-pane label="管理员" name="manager">
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                管理员
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="tableData.length"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="16">
+                                <i-input prefix="ios-search" placeholder="搜索管理员"/>
+                            </i-col>
+                            <i-col span="2" push="16">
+                                <i-button style="width: 117%" type="primary">添加管理员</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-row>
+                        <i-table stripe :columns="tableCol.manager" :data="tableData">
                             <template slot="Action" slot-scope="{index}">
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
+                        </i-row>
+                    </i-card>
+                </i-tab-pane>
+                <i-tab-pane label="社团活动" name="activity">
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                社团活动
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="tableData.length"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="16">
+                                <i-input prefix="ios-search" placeholder="搜索活动"/>
+                            </i-col>
+                            <i-col span="2" push="16">
+                                <i-button style="width: 100%" type="primary">添加活动</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-row>
+                        <i-table stripe :columns="tableCol.activity" :data="tableData">
+                            <template slot="Action" slot-scope="{index, row}">
+                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
                         </i-table>
@@ -255,48 +258,29 @@
             </i-tabs>
         </i-card>
         <i-modal v-model="modalShow" title="添加/修改成员" @on-ok="submit()" @on-cancel="cancel()">
-            <i-form ref="Form" :model="modal" :rules="rules">
-                <i-form-item label="姓名" prop="Name">
-                    <i-input v-model="modal.Name"/>
-                </i-form-item>
-                <i-form-item label="学号" prop="Number">
-                    <i-input v-model="modal.Number"/>
-                </i-form-item>
-                <i-form-item label="电话" prop="Telephone">
-                    <i-input v-model="modal.Telephone"/>
-                </i-form-item>
-                <i-form-item label="邮箱" prop="Email">
-                    <i-input v-model="modal.Email"/>
-                </i-form-item>
-                <i-form-item label="生源地" prop="Location">
-                    <i-input v-model="modal.Location"/>
-                </i-form-item>
-            </i-form>
+            <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData" ></component>
         </i-modal>
     </i-row>
 </template>
 
 <script>
-const regex = require("@/regex.js");
+import memberForm from "./memberForm"
+import tutorForm from "./tutorForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
 const testData = require("./testData");
 const axios = require("axios");
 export default {
+    components: {
+        "member-form": memberForm,
+        "tutor-form": tutorForm
+    },
     methods: {
-        modifyMember () {
+        modifyRecord () {
             this.modalShow = true;
         },
         submit () {
-            let formMember = this.$refs["Form"];
-            formMember.validate(v => {
-                if (!v) {
-                    this.$Modal.error({
-                        title: "表单有误",
-                        content: "请正确填写表单"
-                    });
-                }
-            });
+            // let form = this.$refs["Form"];
         },
         cancel () {
         },
@@ -326,17 +310,25 @@ export default {
                 this.spinShow = false;
             })
         },
-        getTable () {
-            this.tableData = testData;
+        getTable (name) {
+            this.tableData = testData[name];
         },
         delTableItem (index) {
             this.tableData.splice(index, 1);
+        },
+        modifyTableItem (index, row) {
+            this.recordData = row;
+            this.modalShow = true;
+        }
+    },
+    watch: {
+        tabSelect (value) {
+            this.getTable(value)
         }
     },
     mounted () {
-        this.tabSelect = this.$route.params.tabSelect || "name1";
+        this.tabSelect = this.$route.params.tabSelect || "basicInfo";
         this.getOrgDetail();
-        this.getTable();
     },
     data () {
         return {
@@ -344,72 +336,16 @@ export default {
             tableCol,
             tabSelect: "",
             spinShow: false,
-            modal: {
-                Name: "",
-                Number: "",
-                Telephone: "",
-                Email: "",
-                Location: ""
-            },
-            columns: [
-                {
-                    title: "姓名",
-                    slot: "Name"
-                },
-                {
-                    title: "学号"
-                },
-                {
-                    title: "手机号"
-                },
-                {
-                    title: "邮箱"
-
-                },
-                {
-                    title: "生源地"
-
-                },
-                {
-                    title: "操作",
-                    slot: "action"
-                }
-            ],
+            recordData: {},
             level: 0,
             orgInfo: {},
             changeLogs: {},
             tableData: [],
             modalShow: false,
-            rules: {
-                Name: [
-                   {
-                        required: true,
-                        message: "必须填写姓名",
-                        trigger: "blur"
-                   }
-                ],
-                Number: [
-                   {
-                        required: true,
-                        message: "必须填写学号",
-                        trigger: "blur"
-                   }
-                ],
-                Telephone: [
-                   {
-                        type: "string",
-                        pattern: regex.mobile,
-                        message: "电话格式不正确",
-                        trigger: "blur"
-                   }
-                ],
-                Location: [
-                   {
-                        required: true,
-                        message: "必须填写生源地",
-                        trigger: "blur"
-                   }
-                ]
+            componentDic: {
+                member: "member-form",
+                tutor: "tutor-form",
+                subDept: "subDept-form"
             }
         };
     }

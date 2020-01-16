@@ -80,7 +80,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name2"
+                            tabSelect: "member"
                         }
                     },
                     icon: "md-person-add"
@@ -90,7 +90,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name5"
+                            tabSelect: "activity"
                         }
                     },
                     icon: "logo-buffer"
@@ -100,7 +100,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name1"
+                            tabSelect: "basicInfo"
                         }
                     },
                     icon: "md-information"
@@ -112,7 +112,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name2"
+                            tabSelect: "member"
                         }
                     },
                     icon: "md-person-add"
@@ -122,7 +122,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name3"
+                            tabSelect: "subDept"
                         }
                     },
                     icon: "md-add"
@@ -132,7 +132,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name5"
+                            tabSelect: "activity"
                         }
                     },
                     icon: "logo-buffer"
@@ -142,7 +142,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name1"
+                            tabSelect: "basicInfo"
                         }
                     },
                     icon: "md-information"

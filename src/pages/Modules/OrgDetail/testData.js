@@ -25,21 +25,21 @@ let testData = {
     subDept: [
         {
             Name: '办公部',
-            Type: '思想政治类',
+            DepartType: '思想政治类',
             ParentId: '信息学院团委',
-            Time: '2018年5月4日'
+            BirthTime: '2018年5月4日'
         },
         {
             Name: '文娱部',
-            Type: '文化艺术类',
+            DepartType: '文化艺术类',
             ParentId: '信息学院团委',
-            Time: '2018年6月4日'
+            BirthTime: '2018年6月4日'
         },
         {
             Name: '外联部',
-            Type: '社会实践类',
+            DepartType: '社会实践类',
             ParentId: '信息学院团委',
-            Time: '2018年7月5日'
+            BirthTime: '2018年7月5日'
         }
     ],
     tutor: [

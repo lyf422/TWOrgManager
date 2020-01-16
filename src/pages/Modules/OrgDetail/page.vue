@@ -8,8 +8,8 @@
                 <i-col span="21">
                     <i-row style="font-size:30px; margin-bottom:10px">{{orgInfo.Name ? orgInfo.Name : "正在加载中"}}</i-row>
                     <i-row>
-                        <i-col span="3">成员人数</i-col>
-                        <i-col span="3">指导老师</i-col>
+                        <i-col span="3">成员人数：12</i-col>
+                        <i-col span="3">指导老师：赵江声</i-col>
                     </i-row>
                 </i-col>
             </i-row>
@@ -143,7 +143,7 @@
                                 <i-badge :count="tableData.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索成员"  />
+                                <i-input prefix="ios-search" placeholder="搜索成员" />
                             </i-col>
                             <i-col span="2" push="16">
                                 <i-button style="width: 100%" type="primary" @click="modifyMember()">添加成员</i-button>

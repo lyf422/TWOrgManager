@@ -1,28 +1,18 @@
-let tableCol = {
+let testData = {
     member: [
         {
-            title: '姓名',
-            key: 'RealName'
+            RealName: '岳皓',
+            Code: '25136',
+            Mobile: '135132648756',
+            Email: 'yuehao@163.com',
+            Source: '大陆'
         },
         {
-            title: '学号',
-            key: 'Code'
-        },
-        {
-            title: '手机',
-            key: 'Mobile'
-        },
-        {
-            title: '邮箱',
-            key: 'Email'
-        },
-        {
-            title: '生源地',
-            key: 'Source'
-        },
-        {
-            title: '操作',
-            slot: 'Action'
+            RealName: '宋润涵',
+            Code: '132323',
+            Mobile: '151254425789',
+            Email: 'sh963852741@163.com',
+            Source: '大陆'
         }
     ],
     subDept: [
@@ -70,4 +60,4 @@ let tableCol = {
         }
     ]
 };
-module.exports = tableCol;
+module.exports = testData;

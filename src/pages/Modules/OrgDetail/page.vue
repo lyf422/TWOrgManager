@@ -156,7 +156,7 @@
                         </i-table>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane v-if="orgInfo.DepartType===0" label="子部门" name="name3">
+                <i-tab-pane v-if="orgInfo.Type===0" label="子部门" name="name3">
                     <i-row style="margin-top:20px;">
                         <i-col span="3">
                            子部门   <i-badge :count="9"></i-badge>
@@ -171,7 +171,7 @@
                     <i-row>
                         <i-table stripe></i-table>
                     </i-row></i-tab-pane>
-                <i-tab-pane v-else-if="orgInfo.DepartType===1" label="指导老师" name="name3">
+                <i-tab-pane v-else-if="orgInfo.Type===1" label="指导老师" name="name3">
                     <i-row style="margin-top:20px;">
                         <i-col span="3">
                             指导老师    <i-badge :count="1"></i-badge>

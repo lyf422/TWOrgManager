@@ -1,5 +1,5 @@
 <template>
-    <i-form :model="modalData" :rules="ruleForMem">
+    <i-form :model="modalData" :rules="ruleForMem" ref="Form">
         <i-form-item label="姓名" prop="RealName">
             <i-input v-model="modalData.RealName" />
         </i-form-item>
@@ -75,6 +75,12 @@
                         }
                     ]
                 }
+            }
+        },
+        methods: {
+            resetFields () {
+                let form = this.$refs["Form"];
+                form.resetFields();
             }
         }
     }

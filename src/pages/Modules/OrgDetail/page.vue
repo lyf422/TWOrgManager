@@ -28,7 +28,7 @@
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="11">
-                                        <i-form-item label="社团类型" style="width: 365px">
+                                        <i-form-item label="社团类型">
                                             <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
                                         </i-form-item>
                                     </i-col>
@@ -259,7 +259,7 @@
         </i-card>
         <i-modal v-model="modalShow" title="添加/修改成员" :fullscreen="componentDic[tabSelect]==='subDept-form'"
         @on-ok="submit()" @on-cancel="cancel()">
-            <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"  ></component>
+            <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"></component>
         </i-modal>
     </i-row>
 </template>
@@ -283,9 +283,13 @@ export default {
             this.modalShow = true;
         },
         submit () {
-            // let form = this.$refs["Form"];
+            let form = this.$refs["Form"];
+            this.getTable(this.tabSelect);
+            form.resetFields();
         },
         cancel () {
+            let form = this.$refs["Form"];
+            form.resetFields();
         },
         saveOrgDetail () {
             this.orgInfo.Affiliated = "789";
@@ -320,12 +324,13 @@ export default {
             this.tableData.splice(index, 1);
         },
         modifyTableItem (index, row) {
-            this.recordData = row;
+            this.recordData = JSON.parse(JSON.stringify(row));
             this.modalShow = true;
         }
     },
     watch: {
         tabSelect (value) {
+            if (value === "basicInfo") return;
             this.getTable(value)
         }
     },

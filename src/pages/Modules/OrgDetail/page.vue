@@ -8,8 +8,8 @@
                 <i-col span="21">
                     <i-row style="font-size:30px; margin-bottom:10px">{{orgInfo.Name ? orgInfo.Name : "正在加载中"}}</i-row>
                     <i-row>
-                        <i-col span="3">成员人数：0人</i-col>
-                        <i-col span="3">指导老师：无</i-col>
+                        <i-col span="3">成员人数：12</i-col>
+                        <i-col span="3">指导老师：赵江声</i-col>
                     </i-row>
                 </i-col>
             </i-row>
@@ -138,14 +138,15 @@
                                 <i-badge :count="tableData.member.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索成员"  />
+                                <i-input prefix="ios-search" placeholder="搜索成员" />
                             </i-col>
                             <i-col span="2" push="16">
                                 <i-button style="width: 100%" type="primary" @click="modifyMember()">添加成员</i-button>
                             </i-col>
                         </i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData.member">
-                            <template slot="Action" slot-scope="{index}">
+                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                            <template slot="Action" slot-scope="{index, row}">
+                                <i-button @click="delTableItem(index, row)">修改</i-button>
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
                         </i-table>
@@ -164,7 +165,7 @@
                                 <i-input prefix="ios-search" placeholder="搜索管理员"/>
                             </i-col>
                             <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary">添加管理员</i-button>
+                                <i-button style="width: 117%" type="primary">添加管理员</i-button>
                             </i-col>
                         </i-row>
                         <i-row>
@@ -235,10 +236,10 @@
                             <i-col>
                                 <i-badge :count="tableData.tutor.length"></i-badge>
                             </i-col>
-                            <i-col span="4" push="16">
+                            <i-col span="4" push="15">
                                 <i-input prefix="ios-search" placeholder="搜索指导老师"/>
                             </i-col>
-                            <i-col span="2" push="16">
+                            <i-col span="3" push="15">
                                 <i-button style="width: 100%" type="primary">添加指导老师</i-button>
                             </i-col>
                         </i-row>

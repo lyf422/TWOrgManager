@@ -5,15 +5,19 @@
                 <i-row>
                     <div class="welcome">{{time}}好，{{userInfo.realName}}</div>
                 </i-row>
-                <i-row>
-                    <div v-if="messageNum>0">您有{{messageNum}}条消息</div>
-                    <div v-else class="tip">您目前没有待办事项</div>
-                </i-row>
-                <i-row v-if="messageNum>0">
+                <List v-if="messageNum<=0" :header="`您有${messageNum}条待办事项`" >
+                    <ListItem>XXX的XX流程已到达您的步骤
+                        <div slot="action">123</div>
+                    </ListItem>
+                    <ListItem>XXX的XX流程已到达您的步骤</ListItem>
+                    <ListItem>XXX的XX流程已到达您的步骤</ListItem>
+                </List>
+                <i-row v-else class="tip">您目前没有待办事项</i-row>
+                <!--i-row v-if="messageNum>0">
                     <i-row v-for="(item,index) in message" @click="dealWorkflow(item.instanceId,item.stepId)" :key="index">
                         <div>{{item.Owner}}的{{item.workflowName}}流程已经到了您的步骤:{{item.StepName}}</div>
                     </i-row>
-                </i-row>
+                </i-row-->
                 <i-divider />
                 <i-row class="title">常用入口</i-row>
                 <i-row type="flex" justify="space-between">
@@ -190,13 +194,12 @@ export default {
     .welcome {
         font-size: 32px;
         color: #17233d;
-        padding: 5px 0;
+        padding: 10px 0;
         font-weight: bold;
     }
     .tip {
         font-size: 18px;
         color: #808695;
-        padding: 5px 0;
     }
     .title {
         font-size: 28px;

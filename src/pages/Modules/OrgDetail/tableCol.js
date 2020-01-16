@@ -22,8 +22,8 @@ let tableCol = {
         },
         {
             title: '操作',
-            slot: '',
-        },
+            slot: ''
+        }
     ],
     subDept: [
         {
@@ -44,7 +44,7 @@ let tableCol = {
         },
         {
             title: '操作',
-            slot: '',
+            slot: ''
         }
     ],
     tutor: [
@@ -66,8 +66,8 @@ let tableCol = {
         },
         {
             title: '操作',
-            slot: '',
+            slot: ''
         }
-    ],
+    ]
 };
-module.exports = enums;
+module.exports = tableCol;

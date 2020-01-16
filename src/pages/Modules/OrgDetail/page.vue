@@ -134,22 +134,25 @@
                     </i-row>
                 </i-tab-pane>
                 <i-tab-pane label="成员管理" name="name2">
-                    <i-row style="margin-top:20px;">
-                        <i-col span="3">
-                            <i-row style="font-size:20px;">社团成员<i-badge :count="10" style="margin-left:15px;"></i-badge></i-row>
-                        </i-col>
-                        <i-col span="4" push="15">
-                            <i-input prefix="ios-search" placeholder="搜索成员"  />
-                        </i-col>
-                        <i-col span="2" push="15" style="margin-left:10px;">
-                            <i-button type="primary" @click="modifyMember()">添加成员</i-button>
-                        </i-col>
-                    </i-row>
-                    <i-row>
-                        <i-table></i-table>
-                    </i-row>
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                社团成员
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="10"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="15">
+                                <i-input prefix="ios-search" placeholder="搜索成员"  />
+                            </i-col>
+                            <i-col span="2" push="15">
+                                <i-button type="primary" @click="modifyMember()">添加成员</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-table :columns="tableCol.member"></i-table>
+                    </i-card>
                 </i-tab-pane>
-                <i-tab-pane v-if="app.departType===0" label="子部门" name="name3">
+                <i-tab-pane v-if="orgInfo.DepartType===0" label="子部门" name="name3">
                     <i-row style="margin-top:20px;">
                         <i-col span="3">
                             <i-row style="font-size:20px;">子部门<i-badge :count="9" style="margin-left:15px;"></i-badge></i-row>
@@ -164,7 +167,7 @@
                     <i-row>
                         <i-table></i-table>
                     </i-row></i-tab-pane>
-                <i-tab-pane v-else-if="app.departType===1" label="指导老师" name="name3">
+                <i-tab-pane v-else-if="orgInfo.DepartType===1" label="指导老师" name="name3">
                     <i-row style="margin-top:20px;">
                         <i-col span="3">
                             <i-row style="font-size:20px;">指导老师<i-badge :count="1" style="margin-left:15px;"></i-badge></i-row>
@@ -239,6 +242,7 @@
 <script>
 const regex = require("@/regex.js");
 let app = require("@/config");
+let tableCol = require("./tableCol");
 const axios = require("axios");
 export default {
     methods: {
@@ -283,15 +287,30 @@ export default {
                 }
                 this.spinShow = false;
             })
+        },
+        getMembers () {
+            console.log(app);
+            axios.post("/api/security/GetUsersByDepartId", {}, msg => {
+                if (msg.success) {
+                    this.orgInfo = msg.data;
+                    this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
+                    this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                    this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
+                    this.changeLogs = msg.changeLogs;
+                    this.level = msg.level;
+                }
+            })
         }
     },
     mounted () {
         this.tabSelect = this.$route.params.tabSelect || "name1";
         this.getOrgDetail();
+        this.getMembers();
     },
     data () {
         return {
             app,
+            tableCol,
             tabSelect: "",
             spinShow: false,
             modal: {

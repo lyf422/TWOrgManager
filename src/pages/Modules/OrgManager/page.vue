@@ -35,7 +35,7 @@
             </i-col>
             <i-col span="5" offset="2">
                 <i-card :title="dashBoard.Name||'请设置社团名称'" :padding="0">
-                    <i-cell-group style="padding: px 0px">
+                    <i-cell-group style="padding: 10px 0px">
                         <i-cell :title="`现有成员:${dashBoard.users}人`" :to="entrForStudent[1].routerTo"></i-cell>
                         <i-cell :title="`指导老师:${dashBoard.teachers.length?dashBoard.teachers.length:'无'}`" v-if="dashBoard.DepartType===1">
                             <i-row v-for="(item,index) in dashBoard.teachers" :key="index">

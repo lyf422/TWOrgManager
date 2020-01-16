@@ -1,7 +1,7 @@
 <template>
     <i-card :padding="50">
-        <i-row >
-            <i-col span="12">
+        <i-row type="flex" justify="center">
+            <i-col span="13">
                 <i-row>
                     <div class="welcome">{{time}}好，{{userInfo.realName}}</div>
                 </i-row>
@@ -36,7 +36,7 @@
             <i-col span="5" offset="2">
                 <i-card :title="dashBoard.Name||'请设置社团名称'" :padding="0">
                     <i-cell-group style="padding: 10px 0px">
-                        <i-cell :title="`现有成员:${dashBoard.users}人`" :to="entrForStudent[1].routerTo"></i-cell>
+                        <i-cell :title="`现有成员:${dashBoard.users}人`" :to="entrForStudent[0].routerTo"></i-cell>
                         <i-cell :title="`指导老师:${dashBoard.teachers.length?dashBoard.teachers.length:'无'}`" v-if="dashBoard.DepartType===1">
                             <i-row v-for="(item,index) in dashBoard.teachers" :key="index">
                                 {{item}}

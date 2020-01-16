@@ -81,7 +81,7 @@
                                     </i-col>
                                     <i-col span="10">
                                         <i-form-item label="党支部类型" >
-                                            <dic-select dic="党支部类型" v-model="orgInfo.CPCBranchType"/>
+                                            <dic-select dic="党支部类型" :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchType"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -142,14 +142,18 @@
                             <i-col>
                                 <i-badge :count="10"></i-badge>
                             </i-col>
-                            <i-col span="4" push="15">
+                            <i-col span="4" push="16">
                                 <i-input prefix="ios-search" placeholder="搜索成员"  />
                             </i-col>
-                            <i-col span="2" push="15">
+                            <i-col span="2" push="16">
                                 <i-button type="primary" @click="modifyMember()">添加成员</i-button>
                             </i-col>
                         </i-row>
-                        <i-table :columns="tableCol.member"></i-table>
+                        <i-table :columns="tableCol.member" :data="tableData">
+                            <template slot="Action" slot-scope="{index}">
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane v-if="orgInfo.DepartType===0" label="子部门" name="name3">
@@ -241,8 +245,9 @@
 
 <script>
 const regex = require("@/regex.js");
-let app = require("@/config");
-let tableCol = require("./tableCol");
+const app = require("@/config");
+const tableCol = require("./tableCol");
+const testData = require("./testData");
 const axios = require("axios");
 export default {
     methods: {
@@ -289,17 +294,10 @@ export default {
             })
         },
         getMembers () {
-            console.log(app);
-            axios.post("/api/security/GetUsersByDepartId", {}, msg => {
-                if (msg.success) {
-                    this.orgInfo = msg.data;
-                    this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
-                    this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
-                    this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
-                    this.changeLogs = msg.changeLogs;
-                    this.level = msg.level;
-                }
-            })
+            this.tableData = testData.member;
+        },
+        delTableItem (index) {
+            this.tableData.splice(index);
         }
     },
     mounted () {
@@ -323,6 +321,7 @@ export default {
             level: 0,
             orgInfo: {},
             changeLogs: {},
+            tableData: [],
             modalShow: false,
             rules: {
                 Name: [

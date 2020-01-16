@@ -16,6 +16,20 @@
             <i-input v-model="modalData.Source" />
         </i-form-item>
     </i-form>
+    <i-form v-else-if="type==='activity'" :model="modalData">
+        <i-form-item label="活动名称" prop="Name">
+            <i-input v-model="modalData.Name" />
+        </i-form-item>
+        <i-form-item label="活动类型" prop="Category">
+            <i-input v-model="modalData.Category" />
+        </i-form-item>
+        <i-form-item label="活动时间" prop="Time">
+            <i-input v-model="modalData.Time" />
+        </i-form-item>
+        <i-form-item label="活动地点" prop="Location">
+            <i-input v-model="modalData.Location" />
+        </i-form-item>
+    </i-form>
 </template>
 
 <script>

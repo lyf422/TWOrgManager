@@ -201,7 +201,7 @@
                         <i-row>
                         <i-table stripe :columns="tableCol.activity" :data="tableData">
                             <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(row)">修改</i-button>
+                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
                         </i-table>

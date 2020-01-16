@@ -140,7 +140,7 @@
                                 社团成员
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
+                                <i-badge :count="tableData.member.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
                                 <i-input prefix="ios-search" placeholder="搜索成员"  />
@@ -149,7 +149,7 @@
                                 <i-button style="width: 100%" type="primary" @click="modifyMember()">添加成员</i-button>
                             </i-col>
                         </i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                        <i-table stripe :columns="tableCol.member" :data="tableData.member">
                             <template slot="Action" slot-scope="{index}">
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
@@ -163,7 +163,7 @@
                                 管理员
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
+                                <i-badge :count="tableData.manager.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
                                 <i-input prefix="ios-search" placeholder="搜索管理员"/>
@@ -173,7 +173,7 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                        <i-table stripe :columns="tableCol.manager" :data="tableData.manager">
                             <template slot="Action" slot-scope="{index}">
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
@@ -188,7 +188,7 @@
                                 社团活动
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
+                                <i-badge :count="tableData.activity.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
                                 <i-input prefix="ios-search" placeholder="搜索活动"/>
@@ -198,7 +198,7 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                        <i-table stripe :columns="tableCol.activity" :data="tableData.activity">
                             <template slot="Action" slot-scope="{index}">
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
@@ -213,7 +213,7 @@
                                 子部门
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
+                                <i-badge :count="tableData.subDept.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
                                 <i-input prefix="ios-search" placeholder="搜索部门"/>
@@ -223,7 +223,7 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                        <i-table stripe :columns="tableCol.subDept" :data="tableData.subDept">
                             <template slot="Action" slot-scope="{index}">
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
@@ -238,7 +238,7 @@
                                 指导老师
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
+                                <i-badge :count="tableData.tutor.length"></i-badge>
                             </i-col>
                             <i-col span="4" push="16">
                                 <i-input prefix="ios-search" placeholder="搜索指导老师"/>
@@ -248,7 +248,7 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                        <i-table stripe :columns="tableCol.tutor" :data="tableData.tutor">
                             <template slot="Action" slot-scope="{index}">
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
@@ -330,8 +330,8 @@ export default {
                 this.spinShow = false;
             })
         },
-        getMembers () {
-            this.tableData = testData.member;
+        getTable () {
+            this.tableData = testData;
         },
         delTableItem (index) {
             this.tableData.splice(index, 1);
@@ -340,7 +340,7 @@ export default {
     mounted () {
         this.tabSelect = this.$route.params.tabSelect || "name1";
         this.getOrgDetail();
-        this.getMembers();
+        this.getTable();
     },
     data () {
         return {

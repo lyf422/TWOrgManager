@@ -150,7 +150,8 @@
                             </i-col>
                         </i-row>
                         <i-table stripe :columns="tableCol.member" :data="tableData">
-                            <template slot="Action" slot-scope="{index}">
+                            <template slot="Action" slot-scope="{index, row}">
+                                <i-button @click="delTableItem(index, row)">修改</i-button>
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
                         </i-table>

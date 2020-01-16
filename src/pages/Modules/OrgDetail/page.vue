@@ -169,7 +169,7 @@
                                 <i-input prefix="ios-search" placeholder="搜索管理员"/>
                             </i-col>
                             <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary">添加管理员</i-button>
+                                <i-button style="width: 117%" type="primary">添加管理员</i-button>
                             </i-col>
                         </i-row>
                         <i-row>
@@ -240,10 +240,10 @@
                             <i-col>
                                 <i-badge :count="tableData.length"></i-badge>
                             </i-col>
-                            <i-col span="4" push="16">
+                            <i-col span="4" push="15">
                                 <i-input prefix="ios-search" placeholder="搜索指导老师"/>
                             </i-col>
-                            <i-col span="2" push="16">
+                            <i-col span="3" push="15">
                                 <i-button style="width: 100%" type="primary">添加指导老师</i-button>
                             </i-col>
                         </i-row>

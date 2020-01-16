@@ -17,39 +17,34 @@
                 <i-tab-pane label="基本信息" name="name1">
                     <i-row>
                         <i-spin fix size="large" v-show="spinShow"></i-spin>
-                        <i-col span="16" >
+                        <i-col span="16">
                             <i-form>
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="10">
+                                    <i-col span="24">
                                         <i-form-item label="社团名称" span="8">
                                             <i-input v-model="orgInfo.Name"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="6">
-                                        <i-form-item label="社团类型" style="width: 210px">
+                                    <i-col span="11">
+                                        <i-form-item label="社团类型" style="width: 365px">
                                             <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="6">
+                                    <i-col span="11">
                                         <i-form-item label="成立时间">
                                             <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="6">
-                                        <i-form-item label="排序号(升序)">
-                                            <i-input v-model="orgInfo.Sort" :disabled="(level < 3-orgInfo.Type)"/>
-                                        </i-form-item>
-                                    </i-col>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="部门电话">
                                             <i-input v-model="orgInfo.Phone"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="挂靠单位">
                                             <org-selector v-model="orgInfo.ParentId"/>
                                         </i-form-item>
@@ -59,13 +54,13 @@
                                     <i-input type="textarea" v-model="orgInfo.Description"/>
                                 </i-form-item>
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="是否有社团章程">
                                             <i-checkbox v-model="orgInfo.HaveDepartRule"></i-checkbox>
                                             <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="是否成立团支部">
                                             <i-checkbox v-model="orgInfo.HaveLeagueBranch"></i-checkbox>
                                             <i-date-picker :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
@@ -73,37 +68,37 @@
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="是否有党支部">
                                             <i-checkbox v-model="orgInfo.HaveCPCBranch"></i-checkbox>
                                             <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10">
-                                        <i-form-item label="党支部类型" >
+                                    <i-col span="11">
+                                        <i-form-item label="党支部类型">
                                             <dic-select dic="党支部类型" :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchType"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="社交媒体">
                                             <dic-select dic="社交媒体" v-model="orgInfo.SocialMedia"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="社交媒体粉丝数">
                                             <i-input v-model="orgInfo.SocialMediaFans"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="经费类型">
                                             <i-input v-model="orgInfo.FundsCategory"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="经费来源">
                                             <i-input v-model="orgInfo.ChannelForFunds"/>
                                         </i-form-item>
@@ -122,12 +117,12 @@
                             <i-timeline>
                                 <!--TimelineItem v-for="(item,index) in changeLogs.data" :key="index">{{item.Abstract}}</TimelineItem-->
                                 <TimelineItem>
-                                    <p class="time">1976年</p>
-                                    <p class="content">Apple I 问世</p>
+                                    <p class="time">2019年1月1日</p>
+                                    <p class="content" style="font-size:14px">张某修改了成员人数</p>
                                 </TimelineItem>
                                 <TimelineItem>
-                                    <p class="time">1976年</p>
-                                    <p class="content">Apple I 问世</p>
+                                    <p class="time">2019年1月10日</p>
+                                    <p class="content" style="font-size:14px">王某修改了社团名称</p>
                                 </TimelineItem>
                             </i-timeline>
                         </i-col>

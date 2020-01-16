@@ -170,8 +170,8 @@
                         </i-row>
                         <i-row>
                         <i-table stripe :columns="tableCol.subDept" :data="tableData">
-                            <template slot="Action" slot-scope="{index}">
-                                <i-button @click="delTableItem(index)">管理</i-button>
+                            <template slot="Action" slot-scope="{index, row}">
+                                <i-button @click="modifyTableItem(index, row)">管理</i-button>
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
                         </i-table>
@@ -257,8 +257,9 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal v-model="modalShow" title="添加/修改成员" @on-ok="submit()" @on-cancel="cancel()">
-            <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData" ></component>
+        <i-modal v-model="modalShow" title="添加/修改成员" :fullscreen="componentDic[tabSelect]==='subDept-form'"
+        @on-ok="submit()" @on-cancel="cancel()">
+            <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"  ></component>
         </i-modal>
     </i-row>
 </template>
@@ -266,6 +267,7 @@
 <script>
 import memberForm from "./memberForm"
 import tutorForm from "./tutorForm"
+import subDeptForm from "./subDeptForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
 const testData = require("./testData");
@@ -273,7 +275,8 @@ const axios = require("axios");
 export default {
     components: {
         "member-form": memberForm,
-        "tutor-form": tutorForm
+        "tutor-form": tutorForm,
+        "subDept-form": subDeptForm
     },
     methods: {
         modifyRecord () {

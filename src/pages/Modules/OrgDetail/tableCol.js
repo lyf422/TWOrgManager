@@ -32,11 +32,11 @@ let tableCol = {
         },
         {
             title: '类型',
-            key: 'Type'
+            key: 'DepartType'
         },
         {
             title: '挂靠单位',
-            key: ' ParentId'
+            key: 'ParentId'
         },
         {
             title: '成立时间',

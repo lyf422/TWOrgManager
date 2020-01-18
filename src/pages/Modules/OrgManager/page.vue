@@ -5,20 +5,33 @@
                 <i-row>
                     <div class="welcome">{{time}}好，{{userInfo.realName}}</div>
                 </i-row>
-                <List v-if="messageNum<=0" :header="`您有${messageNum}条待办事项`" >
+                <!--List v-if="messageNum<=0" :header="`您有${messageNum}条待办事项`" >
                     <ListItem>XXX的XX流程已到达您的步骤
                         <div slot="action">123</div>
                     </ListItem>
                     <ListItem>XXX的XX流程已到达您的步骤</ListItem>
                     <ListItem>XXX的XX流程已到达您的步骤</ListItem>
+                </List-->
+                <List v-if="messageNum>0" :header="`您有${messageNum}条待办事项`">
+                    <template v-for="(item,index) in message" >
+                        <ListItem :key="index">
+                            <ListItemMeta :title="`${item.Owner}提交的${item.workflowName}流程已到达您的步骤`" :description="`到达时间:${item.ArriveOn}`"></ListItemMeta>
+                            <template slot="action">
+                                <li @click="dealWorkflow(item.instanceId,item.stepId)"><a>{{item.StepName}}</a></li>
+                            </template>
+                        </ListItem>
+                    </template>
                 </List>
-                <i-row v-else class="tip">您目前没有待办事项</i-row>
+                <template v-else>
+                    <i-row class="tip">您目前没有待办事项</i-row>
+                    <i-row class="layout-con"><img :src="pic" /></i-row>
+                </template>
                 <!--i-row v-if="messageNum>0">
                     <i-row v-for="(item,index) in message" @click="dealWorkflow(item.instanceId,item.stepId)" :key="index">
                         <div>{{item.Owner}}的{{item.workflowName}}流程已经到了您的步骤:{{item.StepName}}</div>
                     </i-row>
                 </i-row-->
-                <i-divider />
+                <!--i-divider /-->
                 <i-row class="title">常用入口</i-row>
                 <i-row type="flex" justify="space-between">
                     <template v-if="dashBoard.DepartType===1">
@@ -37,16 +50,33 @@
                     </template>
                 </i-row>
             </i-col>
+            <Divider type="vertical" />
             <i-col span="5" offset="2">
-                <i-card :title="dashBoard.Name||'请设置社团名称'" :padding="0">
+                <i-card :padding="0"  :to="routers[0]">
+                    <template slot="title">
+                        {{dashBoard.Name||'请设置社团名称'}}
+                    </template>
                     <i-cell-group style="padding: 10px 0px">
                         <i-cell :title="`现有成员:${dashBoard.users}人`" :to="entrForStudent[0].routerTo"></i-cell>
-                        <i-cell :title="`指导老师:${dashBoard.teachers.length?dashBoard.teachers.length:'无'}`" v-if="dashBoard.DepartType===1">
-                            <i-row v-for="(item,index) in dashBoard.teachers" :key="index">
-                                {{item}}
-                            </i-row>
+                        <template v-if="dashBoard.DepartType===1">
+                            <template v-if="dashBoard.teachers.length===0">
+                                <i-cell title="指导老师:无" :to="routers[3]" />
+                            </template>
+                            <template v-else>
+                                <i-cell :title="`指导老师:${dashBoard.teachers.length}`">
+                                    <List>
+                                        <ListItem v-for="(item,index) in dashBoard.teachers" :key="index" :to="routers[3]">
+                                            {{item}}
+                                        </ListItem>
+                                    </List>
+                                </i-cell>
+                            </template>
+                        </template>
+                        <i-cell :title="`子部门:${dashBoard.children?dashBoard.children:'无'}`" v-else-if="dashBoard.DepartType===0" :to="routers[2]">
                         </i-cell>
-                        <i-cell :title="`子部门:${dashBoard.children?dashBoard.children:'无'}`" v-else-if="dashBoard.DepartType===0">
+                        <i-cell :title="`社团类型:${dashBoard.StrType}`">
+                        </i-cell>
+                        <i-cell :title="`成立时间:${dashBoard.BirthTime}`">
                         </i-cell>
                     </i-cell-group>
                 </i-card>
@@ -58,9 +88,11 @@
 <script>
 import axios from 'axios';
 let app = require("@/config");
+let pic = require("@/assets/icon.png");
 export default {
     data () {
         return {
+            pic: pic,
             messageNum: 0,
             message: [],
             time: "早上",
@@ -74,6 +106,39 @@ export default {
                 Name: ""
             },
             userInfo: app.userInfo,
+            routers: [
+                {
+                    name: "OrgDetail",
+                    params: {
+                        tabSelect: "basicInfo"
+                    }
+                }, {
+                    name: "OrgDetail",
+                    params: {
+                        tabSelect: "member"
+                    }
+                }, {
+                    name: "OrgDetail",
+                    params: {
+                        tabSelect: "subDept"
+                    }
+                }, {
+                    name: "OrgDetail",
+                    params: {
+                        tabSelect: "tutor"
+                    }
+                }, {
+                    name: "OrgDetail",
+                    params: {
+                        tabSelect: "manager"
+                    }
+                }, {
+                    name: "OrgDetail",
+                    params: {
+                        tabSelect: "activity"
+                    }
+                }
+            ],
             entrForStudent: [
                 {
                     title: "添加成员",
@@ -159,10 +224,20 @@ export default {
     },
     methods: {
         getDashBoard () {
-            axios.post("/api/org/GetDashboard", {}, msg => {
+            /* axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
+                console.log(this.dashBoard["teachers"]);
                 app.departType = msg.DepartType;
-            });
+            }); */
+            this.dashBoard = {
+                users: 0,
+                teachers: ["赵江声", "黄玺"],
+                Name: "轻乳酪蛋糕制作方法研究社团",
+                children: 0,
+                StrType: "社会实践类",
+                DepartType: 1,
+                BirthTime: "2020年1月17日"
+            };
         },
         judgeTime () {
             let day2 = new Date();
@@ -179,6 +254,42 @@ export default {
                 this.messageNum = msg.totalRow;
                 this.message = msg.data;
             })
+            this.message = [
+                {
+                    instanceId: 123456789123456789123456789,
+                    stepId: 321654987987321654987987321654987987,
+                    workflowName: "活动申请",
+                    Version: "1.0",
+                    Owner: "宋润涵",
+                    StepName: "新建活动",
+                    State: 0,
+                    ExecStatus: 0,
+                    ArriveOn: "2020/1/18"
+                },
+                {
+                    instanceId: 123456789123456789123456789456,
+                    stepId: 321654987987321654987987321654987945687,
+                    workflowName: "活动申请",
+                    Version: "1.0",
+                    Owner: "宋润涵",
+                    StepName: "审批活动",
+                    State: 0,
+                    ExecStatus: 0,
+                    ArriveOn: "2020/1/18"
+                },
+                {
+                    instanceId: 123456781239123456789123456789456,
+                    stepId: 321654564987987321654987987321654987945687,
+                    workflowName: "活动申请",
+                    Version: "1.0",
+                    Owner: "宋润涵",
+                    StepName: "活动终审",
+                    State: 0,
+                    ExecStatus: 0,
+                    ArriveOn: "2020/1/18"
+                }
+            ];
+            this.messageNum = 3;
         },
         dealWorkflow (instanceId, stepId) {
 
@@ -205,6 +316,7 @@ export default {
         font-size: 28px;
         color: #17233d;
         padding: 10px 0px;
+        margin-top: 10px;
     }
     .padding {
         padding: 10px;

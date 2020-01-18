@@ -138,7 +138,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索成员" />
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addTableItem()">添加成员</i-button>
+                                        <i-button type="primary" @click="modifyRecord('member')">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -146,11 +146,7 @@
                         <i-table stripe :columns="tableCol.member" :data="tableData">
                             <template slot="Action" slot-scope="{index, row}">
                                 <i-button @click="modifyTableItem(index, row)">修改</i-button>
-                                <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="row.isAdmin" @click="delTableItem(index)">删除</i-button>
-                                </i-tooltip>
-                                <i-button v-if="!row.isAdmin" @click="setAdmin(row)">设为管理员</i-button>
-                                <i-button v-if="row.isAdmin" @click="setAdmin(row)">设置密码</i-button>
+                                <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
                         </i-table>
                     </i-card>
@@ -201,6 +197,31 @@
                         <i-table stripe :columns="tableCol.tutor" :data="tableData">
                             <template slot="Action" slot-scope="{index, row}">
                                 <i-button @click="modifyTableItem(index, row)">修改</i-button>
+                                <i-button @click="delTableItem(index)">删除</i-button>
+                            </template>
+                        </i-table>
+                        </i-row>
+                    </i-card>
+                </i-tab-pane>
+                <i-tab-pane label="管理员" name="manager">
+                    <i-card dis-hover>
+                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                            <i-col>
+                                管理员
+                            </i-col>
+                            <i-col>
+                                <i-badge :count="tableData.length"></i-badge>
+                            </i-col>
+                            <i-col span="4" push="16">
+                                <i-input prefix="ios-search" placeholder="搜索管理员"/>
+                            </i-col>
+                            <i-col span="2" push="16">
+                                <i-button style="width: 117%" type="primary">添加管理员</i-button>
+                            </i-col>
+                        </i-row>
+                        <i-row>
+                        <i-table stripe :columns="tableCol.manager" :data="tableData">
+                            <template slot="Action" slot-scope="{index}">
                                 <i-button @click="delTableItem(index)">删除</i-button>
                             </template>
                         </i-table>
@@ -262,10 +283,8 @@ export default {
         },
         submit () {
             let form = this.$refs["Form"];
-            axios.post("/api/security/SaveUserV2", {...this.recordData, departId: this.orgInfo.ID}, msg => {
-                this.getTable(this.tabSelect);
-                form.resetFields();
-            })
+            this.getTable(this.tabSelect);
+            form.resetFields();
         },
         cancel () {
             let form = this.$refs["Form"];
@@ -275,7 +294,7 @@ export default {
             this.orgInfo.Code = "789";
             axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
-                    this.$Message.success("部门信息保存成功");
+                    this.$Message.success("保存成功");
                     this.getOrgDetail();
                 } else {
                     this.$Message.warning(msg.msg);
@@ -309,14 +328,6 @@ export default {
         modifyTableItem (index, row) {
             this.recordData = JSON.parse(JSON.stringify(row));
             this.modalShow = true;
-        },
-        addTableItem () {
-            this.modalShow = true;
-        },
-        setAdmin (row) {
-            axios.post("/api/security/SetAdministrator", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
-                this.getTable(this.tabSelect);
-            })
         }
     },
     watch: {

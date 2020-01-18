@@ -22,6 +22,7 @@ let tableCol = {
         },
         {
             title: '操作',
+            width: 300,
             slot: 'Action'
         }
     ],

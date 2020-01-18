@@ -12,12 +12,18 @@
                 </i-form-item>
             </i-col>
         </i-row>
-        <i-form-item label="学号" prop="Code">
-            <i-input v-model="modalData.Code" />
-        </i-form-item>
-        <i-form-item label="年级" prop="Grade">
-            <i-input v-model="modalData.Grade" />
-        </i-form-item>
+        <i-row type="flex" justify="space-between">
+            <i-col span="11">
+                <i-form-item label="学号" prop="Code">
+                    <i-input v-model="modalData.Code" />
+                </i-form-item>
+            </i-col>
+            <i-col span="11">
+                <i-form-item label="年级" prop="Grade">
+                    <i-input v-model="modalData.Grade" />
+                </i-form-item>
+            </i-col>
+        </i-row>
         <i-row type="flex" justify="space-between">
             <i-col span="11">
                 <i-form-item label="学院" prop="College">
@@ -30,12 +36,18 @@
                 </i-form-item>
             </i-col>
         </i-row>
-        <i-form-item label="电话" prop="Mobile">
-            <i-input v-model="modalData.Mobile" />
-        </i-form-item>
-        <i-form-item label="邮箱" prop="Email">
-            <i-input v-model="modalData.Email" />
-        </i-form-item>
+        <i-row type="flex" justify="space-between">
+            <i-col span="11">
+                <i-form-item label="电话" prop="Mobile">
+                    <i-input v-model="modalData.Mobile" />
+                </i-form-item>
+            </i-col>
+            <i-col span="11">
+                 <i-form-item label="邮箱" prop="Email">
+                    <i-input v-model="modalData.Email" />
+                </i-form-item>
+            </i-col>
+        </i-row>
         <i-row type="flex" justify="space-between">
             <i-col span="11">
                 <i-form-item label="籍贯" prop="BirthPlace">

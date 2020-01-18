@@ -8,8 +8,8 @@
                 <i-col span="21">
                     <i-row style="font-size:30px; margin-bottom:10px">{{orgInfo.Name ? orgInfo.Name : "正在加载中"}}</i-row>
                     <i-row>
-                        <i-col span="3">成员人数：12</i-col>
-                        <i-col span="3">指导老师：赵江声</i-col>
+                        <i-col span="3">成员人数：{{users}}</i-col>
+                        <i-col span="3">指导老师：{{teachers.length}}</i-col>
                     </i-row>
                 </i-col>
             </i-row>
@@ -18,7 +18,7 @@
                     <i-row>
                         <i-spin fix size="large" v-show="spinShow"></i-spin>
                         <i-col span="16">
-                            <i-form>
+                            <i-form :model="orgInfo">
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="24">
                                         <i-form-item label="社团名称" span="8">
@@ -115,14 +115,9 @@
                         </i-col>
                         <i-col span="5" offset="3">
                             <i-timeline>
-                                <!--TimelineItem v-for="(item,index) in changeLogs.data" :key="index">{{item.Abstract}}</TimelineItem-->
-                                <TimelineItem>
-                                    <p class="time">2019年1月1日</p>
-                                    <p class="content" style="font-size:14px">张某修改了成员人数</p>
-                                </TimelineItem>
-                                <TimelineItem>
-                                    <p class="time">2019年1月10日</p>
-                                    <p class="content" style="font-size:14px">王某修改了社团名称</p>
+                                <TimelineItem v-for="(item,index) in changeLogs.data" :key="index">
+                                    <p class="time">{{item.OperateOn}}</p>
+                                    <p class="content">{{item.Operator}}{{item.Abstract}}</p>
                                 </TimelineItem>
                             </i-timeline>
                         </i-col>
@@ -130,18 +125,22 @@
                 </i-tab-pane>
                 <i-tab-pane label="成员管理" name="member">
                     <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                        <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
-                                社团成员
+                                <i-row type="flex" align="middle" :gutter="16">
+                                    <i-col>社团成员</i-col>
+                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
+                                </i-row>
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索成员" />
-                            </i-col>
-                            <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary" @click="modifyRecord('member')">添加成员</i-button>
+                                <i-row type="flex" :gutter="16">
+                                    <i-col>
+                                        <i-input prefix="ios-search" placeholder="搜索成员" />
+                                    </i-col>
+                                    <i-col>
+                                        <i-button type="primary" @click="modifyRecord('member')">添加成员</i-button>
+                                    </i-col>
+                                </i-row>
                             </i-col>
                         </i-row>
                         <i-table stripe :columns="tableCol.member" :data="tableData">
@@ -270,7 +269,7 @@ import tutorForm from "./tutorForm"
 import subDeptForm from "./subDeptForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
-const testData = require("./testData");
+// const testData = require("./testData");
 const axios = require("axios");
 export default {
     components: {
@@ -292,7 +291,6 @@ export default {
             form.resetFields();
         },
         saveOrgDetail () {
-            this.orgInfo.Affiliated = "789";
             this.orgInfo.Code = "789";
             axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
@@ -308,6 +306,8 @@ export default {
             axios.post("/api/security/GetOrgDetail", {}, msg => {
                 if (msg.success) {
                     this.orgInfo = msg.data;
+                    this.teachers = msg.teachers;
+                    this.users = msg.users;
                     this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
                     this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
@@ -318,7 +318,9 @@ export default {
             })
         },
         getTable (name) {
-            this.tableData = testData[name];
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
+                this.tableData = msg.data;
+            })
         },
         delTableItem (index) {
             this.tableData.splice(index, 1);
@@ -342,6 +344,8 @@ export default {
         return {
             app,
             tableCol,
+            teachers: [],
+            users: 0,
             tabSelect: "",
             spinShow: false,
             recordData: {},

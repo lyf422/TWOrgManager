@@ -2,7 +2,6 @@ let appSetting = {
     debug: process.env.NODE_ENV !== "production",
     api: "",
     currentUserGuid: "",
-    departType: 0,
     titlePerfix: " - ",
     title: "登录",
     nav: "",

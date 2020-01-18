@@ -1,54 +1,58 @@
 <template>
-    <i-row>
-        <i-col span="16">
-            <i-row>
-                <div class="title">{{time}}好，{{userInfo.realName}}</div>
-                <div v-if="messageNum>0">您有{{messageNum}}条消息</div>
-                <div v-else class="tip">您目前没有待办事项</div>
-            </i-row>
-            <i-row v-if="messageNum>0">
-                <i-row v-for="(item,index) in message" @click="dealWorkflow(item.instanceId,item.stepId)" :key="index">
-                    <div>{{item.Owner}}的{{item.workflowName}}流程已经到了您的步骤:{{item.StepName}}</div>
+    <i-card :padding="50">
+        <i-row type="flex" justify="center">
+            <i-col span="13">
+                <i-row>
+                    <div class="welcome">{{time}}好，{{userInfo.realName}}</div>
                 </i-row>
-            </i-row>
-            <i-row v-else>
-                图片
-            </i-row>
-            <Divider />
-            <div class="title">常用入口</div>
-            <i-row type="flex" justify="space-between">
-                <template v-if="dashBoard.DepartType===1">
-                    <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index">
-                        <i-card class="layout-con" :to="item.routerTo">
-                            <i-icon class="margin" :type="item.icon" />{{item.title}}
-                        </i-card>
-                    </i-col>
-                </template>
-                <template v-else-if="dashBoard.DepartType===0">
-                    <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index">
-                        <i-card class="layout-con" :to="item.routerTo">
-                            <i-icon class="margin" :type="item.icon" />{{item.title}}
-                        </i-card>
-                    </i-col>
-                </template>
-            </i-row>
-        </i-col>
-        <i-col span="7" offset="1">
-            <i-card :title="dashBoard.Name||'请设置社团名称'">
-                <i-row>现有成员:{{dashBoard.users}}人</i-row>
-                <i-row v-if="dashBoard.DepartType===1">
-                    指导老师:{{dashBoard.teachers.length?dashBoard.teachers.length:"无"}}
-                    <i-row v-for="(item,index) in dashBoard.teachers" :key="index">
-                        {{item}}
+                <List v-if="messageNum<=0" :header="`您有${messageNum}条待办事项`" >
+                    <ListItem>XXX的XX流程已到达您的步骤
+                        <div slot="action">123</div>
+                    </ListItem>
+                    <ListItem>XXX的XX流程已到达您的步骤</ListItem>
+                    <ListItem>XXX的XX流程已到达您的步骤</ListItem>
+                </List>
+                <i-row v-else class="tip">您目前没有待办事项</i-row>
+                <!--i-row v-if="messageNum>0">
+                    <i-row v-for="(item,index) in message" @click="dealWorkflow(item.instanceId,item.stepId)" :key="index">
+                        <div>{{item.Owner}}的{{item.workflowName}}流程已经到了您的步骤:{{item.StepName}}</div>
                     </i-row>
+                </i-row-->
+                <i-divider />
+                <i-row class="title">常用入口</i-row>
+                <i-row type="flex" justify="space-between">
+                    <template v-if="dashBoard.DepartType===1">
+                        <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index">
+                            <i-card class="layout-con" :to="item.routerTo">
+                                <i-avatar class="margin" :icon="item.icon" />{{item.title}}
+                            </i-card>
+                        </i-col>
+                    </template>
+                    <template v-else-if="dashBoard.DepartType===0">
+                        <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index">
+                            <i-card class="layout-con" :to="item.routerTo">
+                                <i-avatar class="margin" :icon="item.icon" />{{item.title}}
+                            </i-card>
+                        </i-col>
+                    </template>
                 </i-row>
-                <i-row v-else-if="dashBoard.DepartType===0">
-                    子部门:{{dashBoard.children?dashBoard.children:"无"}}
-                </i-row>
-                <i-button @click="navTo()">跳转至详细页</i-button>
-            </i-card>
-        </i-col>
-    </i-row>
+            </i-col>
+            <i-col span="5" offset="2">
+                <i-card :title="dashBoard.Name||'请设置社团名称'" :padding="0">
+                    <i-cell-group style="padding: 10px 0px">
+                        <i-cell :title="`现有成员:${dashBoard.users}人`" :to="entrForStudent[0].routerTo"></i-cell>
+                        <i-cell :title="`指导老师:${dashBoard.teachers.length?dashBoard.teachers.length:'无'}`" v-if="dashBoard.DepartType===1">
+                            <i-row v-for="(item,index) in dashBoard.teachers" :key="index">
+                                {{item}}
+                            </i-row>
+                        </i-cell>
+                        <i-cell :title="`子部门:${dashBoard.children?dashBoard.children:'无'}`" v-else-if="dashBoard.DepartType===0">
+                        </i-cell>
+                    </i-cell-group>
+                </i-card>
+            </i-col>
+        </i-row>
+    </i-card>
 </template>
 
 <script>
@@ -76,7 +80,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name2"
+                            tabSelect: "member"
                         }
                     },
                     icon: "md-person-add"
@@ -86,7 +90,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name5"
+                            tabSelect: "activity"
                         }
                     },
                     icon: "logo-buffer"
@@ -96,7 +100,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name1"
+                            tabSelect: "basicInfo"
                         }
                     },
                     icon: "md-information"
@@ -108,7 +112,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name2"
+                            tabSelect: "member"
                         }
                     },
                     icon: "md-person-add"
@@ -118,7 +122,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name3"
+                            tabSelect: "subDept"
                         }
                     },
                     icon: "md-add"
@@ -128,7 +132,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name5"
+                            tabSelect: "activity"
                         }
                     },
                     icon: "logo-buffer"
@@ -138,7 +142,7 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         params: {
-                            tabSelect: "name1"
+                            tabSelect: "basicInfo"
                         }
                     },
                     icon: "md-information"
@@ -156,7 +160,6 @@ export default {
     methods: {
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
-                console.log(msg);
                 this.dashBoard = msg;
                 app.departType = msg.DepartType;
             });
@@ -188,15 +191,20 @@ export default {
 </script>
 
 <style lang="less">
-    .title {
-        font-size: 20px;
-        color: #464c5b;
-        padding: 5px 0;
+    .welcome {
+        font-size: 32px;
+        color: #17233d;
+        padding: 10px 0;
+        font-weight: bold;
     }
     .tip {
-        font-size: 14px;
-        color: #9ea7b4;
-        padding: 5px 0;
+        font-size: 18px;
+        color: #808695;
+    }
+    .title {
+        font-size: 28px;
+        color: #17233d;
+        padding: 10px 0px;
     }
     .padding {
         padding: 10px;
@@ -206,6 +214,6 @@ export default {
     }
     .layout-con {
         text-align: center;
-        color: black;
+        color: #515a6e;
     }
 </style>

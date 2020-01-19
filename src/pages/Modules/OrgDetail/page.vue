@@ -149,22 +149,28 @@
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
                                     <i-button :disabled="row.isAdmin" @click="delTableItem(index)">删除</i-button>
                                 </i-tooltip>
-                                <i-button v-if="!row.isAdmin" >设为管理员</i-button>
+                                <i-poptip transfer>
+                                    <i-button v-if="!row.isAdmin" >设置职位</i-button>
+                                    <i-row slot="title">将该成员设置为</i-row>
+                                    <template slot="content">
+                                        <i-button @click="setPositon(row,'管理员')">管理员</i-button>
+                                        <i-button @click="setPositon(row,'指导老师')">指导老师</i-button>
+                                        <i-button @click="setPositon(row,'成员')">普通成员</i-button>
+                                    </template>
+                                </i-poptip>
                                 <i-poptip transfer>
                                     <i-button v-if="row.isAdmin">设置密码</i-button>
                                     <i-row slot="title">您正在更改社团管理员密码</i-row>
-                                    <div slot="content">
-                                        <i-form :model="password" slot="content" label-position="top">
-                                            <i-form-item label="新密码">
-                                                <i-input v-model="password.password" size="small" />
-                                            </i-form-item>
-                                            <i-form-item label="确认密码">
-                                                <i-input v-model="password.confirmPassword" size="small"/>
-                                            </i-form-item>
-                                            <i-button type="primary" size="small" @click="setAdmin(row)">确认</i-button>
-                                            <i-button size="small">取消</i-button>
-                                        </i-form>
-                                    </div>
+                                    <i-form  :model="password" slot="content" label-position="top" :rules="pwdRule">
+                                        <i-form-item label="新密码" prop="password">
+                                            <i-input v-model="password.password" size="small"/>
+                                        </i-form-item>
+                                        <i-form-item label="确认密码" prop="confirmPassword">
+                                            <i-input v-model="password.confirmPassword" size="small"/>
+                                        </i-form-item>
+                                        <i-button type="primary" size="small" @click="setAdmin(row)">确认</i-button>
+                                        <i-button size="small">取消</i-button>
+                                    </i-form>
                                 </i-poptip>
                             </template>
                         </i-table>
@@ -329,8 +335,8 @@ export default {
         addTableItem () {
             this.modalShow = true;
         },
-        setAdmin (row) {
-            axios.post("/api/security/SetAdministrator", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
+        setPositon (row, position) {
+            axios.post("/api/security/SetPositionV2", {userId: row.ID, departId: this.orgInfo.ID, position}, msg => {
                 this.getTable(this.tabSelect);
             })
         },
@@ -351,6 +357,7 @@ export default {
         this.getOrgDetail();
     },
     data () {
+        let THIS = this;
         return {
             app,
             tableCol,
@@ -369,7 +376,21 @@ export default {
                 tutor: "tutor-form",
                 subDept: "subDept-form"
             },
-            password: {}
+            password: {},
+            pwdRule: {
+                password: {
+                    trigger: 'blur',
+                    validator (rule, value, callback, source, options) {
+                        (value && value.length >= 6 && value.length <= 16) ? callback() : callback(new Error('密码必须在6至16位之间'));
+                    }
+                },
+                confirmPassword: {
+                    trigger: 'blur',
+                    validator (rule, value, callback, source, options) {
+                        value === THIS.password.password ? callback() : callback(new Error('两次输入的密码不一致'));
+                    }
+                }
+            }
         };
     }
 }

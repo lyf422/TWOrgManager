@@ -63,17 +63,8 @@
                                 <i-cell title="指导老师:无" :to="routers[3]" />
                             </template>
                             <template v-else>
-                                <Dropdown class="fakecell" style="width: 100%">
-                                    <i-row>
-                                        <i-col span="22">指导老师:{{dashBoard.teachers.length}}</i-col>
-                                        <i-col span="2"><Icon type="ios-arrow-down"></Icon></i-col>
-                                    </i-row>
-                                    <DropdownMenu slot="list">
-                                        <DropdownItem v-for="(item,index) in dashBoard.teachers" :key="index" :to="routers[3]">
-                                            {{item}}
-                                        </DropdownItem>
-                                    </DropdownMenu>
-                                </Dropdown >
+                                <i-cell :to="routers[3]">指导老师:{{dashBoard.teachers.length}}名</i-cell>
+                                <i-cell v-for="(item,index) in dashBoard.teachers" :key="index" style="padding-left: 30px">{{item}}</i-cell>
                             </template>
                         </template>
                         <i-cell :title="`子部门:${dashBoard.children?dashBoard.children:'无'}`" v-else-if="dashBoard.DepartType===0" :to="routers[2]">

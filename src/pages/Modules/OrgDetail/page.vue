@@ -143,7 +143,7 @@
                                 </i-row>
                             </i-col>
                         </i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                        <i-table stripe :columns="tableCol.member" :data="tableData" :loading="tableLoading">
                             <template slot="Action" slot-scope="{index, row}">
                                 <i-button @click="modifyTableItem(index, row)">修改</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
@@ -313,8 +313,10 @@ export default {
             })
         },
         getTable (name) {
+            this.tableLoading = true;
             axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                 this.tableData = msg.data;
+                this.tableLoading = false;
             })
         },
         delTableItem (index, row) {
@@ -347,8 +349,34 @@ export default {
         }
     },
     mounted () {
-        this.tabSelect = this.$route.params.tabSelect || "basicInfo";
-        this.getOrgDetail();
+        this.$Spin.show({
+            render: (h) => {
+                return h('div', [
+                    h('Icon', {
+                        'class': 'spin-icon-load',
+                        props: {
+                            type: 'ios-loading',
+                            size: 18
+                        }
+                    }),
+                    h('div', '正在获取部门详细信息，请稍候……')
+                ])
+            }
+        });
+        axios.post("/api/security/GetOrgDetail", {}, msg => {
+            if (msg.success) {
+                this.orgInfo = msg.data;
+                this.teachers = msg.teachers;
+                this.users = msg.users;
+                this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
+                this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
+                this.changeLogs = msg.changeLogs;
+                this.level = msg.level;
+            }
+            this.$Spin.hide();
+            this.tabSelect = this.$route.params.tabSelect || "basicInfo";
+        });
     },
     data () {
         let THIS = this;
@@ -359,6 +387,7 @@ export default {
             users: 0,
             tabSelect: "",
             spinShow: false,
+            tableLoading: false,
             recordData: {},
             level: 0,
             orgInfo: {},
@@ -400,5 +429,8 @@ export default {
 }
 .content{
     padding-left: 5px;
+}
+.spin-icon-load{
+        animation: ani-demo-spin 1s linear infinite;
 }
 </style>

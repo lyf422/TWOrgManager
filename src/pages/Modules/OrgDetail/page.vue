@@ -149,8 +149,23 @@
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
                                     <i-button :disabled="row.isAdmin" @click="delTableItem(index)">删除</i-button>
                                 </i-tooltip>
-                                <i-button v-if="!row.isAdmin" @click="setAdmin(row)">设为管理员</i-button>
-                                <i-button v-if="row.isAdmin" @click="setAdmin(row)">设置密码</i-button>
+                                <i-button v-if="!row.isAdmin" >设为管理员</i-button>
+                                <i-poptip transfer>
+                                    <i-button v-if="row.isAdmin">设置密码</i-button>
+                                    <i-row slot="title">您正在更改社团管理员密码</i-row>
+                                    <div slot="content">
+                                        <i-form :model="password" slot="content" label-position="top">
+                                            <i-form-item label="新密码">
+                                                <i-input v-model="password.password" size="small" />
+                                            </i-form-item>
+                                            <i-form-item label="确认密码">
+                                                <i-input v-model="password.confirmPassword" size="small"/>
+                                            </i-form-item>
+                                            <i-button type="primary" size="small" @click="setAdmin(row)">确认</i-button>
+                                            <i-button size="small">取消</i-button>
+                                        </i-form>
+                                    </div>
+                                </i-poptip>
                             </template>
                         </i-table>
                     </i-card>
@@ -248,6 +263,7 @@ import tutorForm from "./tutorForm"
 import subDeptForm from "./subDeptForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
+const md5 = require("md5");
 // const testData = require("./testData");
 const axios = require("axios");
 export default {
@@ -317,6 +333,11 @@ export default {
             axios.post("/api/security/SetAdministrator", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.getTable(this.tabSelect);
             })
+        },
+        SetPassword (row) {
+            axios.post("/api/security/SetPassword", {userId: row.ID, departId: this.orgInfo.ID, password: md5(this.password.password)}, msg => {
+                this.getTable(this.tabSelect);
+            })
         }
     },
     watch: {
@@ -347,7 +368,8 @@ export default {
                 member: "member-form",
                 tutor: "tutor-form",
                 subDept: "subDept-form"
-            }
+            },
+            password: {}
         };
     }
 }

@@ -394,4 +394,11 @@ export default {
 .ivu-form-item .ivu-date-picker{
     width: 100%;
 }
+.time{
+    font-size: 14px;
+    font-weight: bold;
+}
+.content{
+    padding-left: 5px;
+}
 </style>

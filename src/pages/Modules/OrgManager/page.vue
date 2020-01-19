@@ -63,13 +63,17 @@
                                 <i-cell title="指导老师:无" :to="routers[3]" />
                             </template>
                             <template v-else>
-                                <i-cell :title="`指导老师:${dashBoard.teachers.length}`">
-                                    <List>
-                                        <ListItem v-for="(item,index) in dashBoard.teachers" :key="index" :to="routers[3]">
+                                <Dropdown class="fakecell" style="width: 100%">
+                                    <i-row>
+                                        <i-col span="22">指导老师:{{dashBoard.teachers.length}}</i-col>
+                                        <i-col span="2"><Icon type="ios-arrow-down"></Icon></i-col>
+                                    </i-row>
+                                    <DropdownMenu slot="list">
+                                        <DropdownItem v-for="(item,index) in dashBoard.teachers" :key="index" :to="routers[3]">
                                             {{item}}
-                                        </ListItem>
-                                    </List>
-                                </i-cell>
+                                        </DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown >
                             </template>
                         </template>
                         <i-cell :title="`子部门:${dashBoard.children?dashBoard.children:'无'}`" v-else-if="dashBoard.DepartType===0" :to="routers[2]">
@@ -327,5 +331,23 @@ export default {
     .layout-con {
         text-align: center;
         color: #515a6e;
+    }
+    .fakecell {
+        margin: 0;
+        line-height: normal;
+        padding: 7px 16px;
+        padding-top: 7px;
+        padding-right: 16px;
+        padding-bottom: 7px;
+        padding-left: 16px;
+        clear: both;
+        color: #515a6e;
+        font-size: 16px !important;
+        white-space: nowrap;
+        list-style: none;
+        cursor: pointer;
+        -webkit-transition: background 0.2s ease-in-out;
+        transition: background 0.2s ease-in-out;
+        position: relative;
     }
 </style>

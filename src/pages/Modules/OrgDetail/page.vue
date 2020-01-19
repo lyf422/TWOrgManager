@@ -147,17 +147,9 @@
                             <template slot="Action" slot-scope="{index, row}">
                                 <i-button @click="modifyTableItem(index, row)">修改</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="row.isAdmin" @click="delTableItem(index)">删除</i-button>
+                                    <i-button :disabled="row.isAdmin" @click="delTableItem(index, row)">删除</i-button>
                                 </i-tooltip>
-                                <i-poptip transfer>
-                                    <i-button v-if="!row.isAdmin" >设置职位</i-button>
-                                    <i-row slot="title">将该成员设置为</i-row>
-                                    <template slot="content">
-                                        <i-button @click="setPositon(row,'管理员')">管理员</i-button>
-                                        <i-button @click="setPositon(row,'指导老师')">指导老师</i-button>
-                                        <i-button @click="setPositon(row,'成员')">普通成员</i-button>
-                                    </template>
-                                </i-poptip>
+                                <i-button v-if="!row.isAdmin" @click="setPositon(row,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer>
                                     <i-button v-if="row.isAdmin">设置密码</i-button>
                                     <i-row slot="title">您正在更改社团管理员密码</i-row>
@@ -168,7 +160,7 @@
                                         <i-form-item label="确认密码" prop="confirmPassword">
                                             <i-input v-model="password.confirmPassword" size="small"/>
                                         </i-form-item>
-                                        <i-button type="primary" size="small" @click="setAdmin(row)">确认</i-button>
+                                        <i-button type="primary" size="small" @click="setPassword(row)">确认</i-button>
                                         <i-button size="small">取消</i-button>
                                     </i-form>
                                 </i-poptip>
@@ -325,8 +317,10 @@ export default {
                 this.tableData = msg.data;
             })
         },
-        delTableItem (index) {
-            this.tableData.splice(index, 1);
+        delTableItem (index, row) {
+             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
+                this.getTable(this.tabSelect);
+            })
         },
         modifyTableItem (index, row) {
             this.recordData = JSON.parse(JSON.stringify(row));
@@ -340,7 +334,7 @@ export default {
                 this.getTable(this.tabSelect);
             })
         },
-        SetPassword (row) {
+        setPassword (row) {
             axios.post("/api/security/SetPassword", {userId: row.ID, departId: this.orgInfo.ID, password: md5(this.password.password)}, msg => {
                 this.getTable(this.tabSelect);
             })

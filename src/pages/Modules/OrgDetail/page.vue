@@ -138,15 +138,32 @@
                                         <i-input prefix="ios-search" placeholder="搜索成员" />
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="modifyRecord('member')">添加成员</i-button>
+                                        <i-button type="primary" @click="addTableItem()">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
                         </i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData">
+                        <i-table stripe :columns="tableCol.member" :data="tableData" :loading="tableLoading">
                             <template slot="Action" slot-scope="{index, row}">
                                 <i-button @click="modifyTableItem(index, row)">修改</i-button>
-                                <i-button @click="delTableItem(index)">删除</i-button>
+                                <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
+                                    <i-button :disabled="row.isAdmin" @click="delTableItem(index, row)">删除</i-button>
+                                </i-tooltip>
+                                <i-button v-if="!row.isAdmin" @click="setPositon(row,'管理员')">设置管理员</i-button>
+                                <i-poptip transfer>
+                                    <i-button v-if="row.isAdmin">设置密码</i-button>
+                                    <i-row slot="title">您正在更改社团管理员密码</i-row>
+                                    <i-form  :model="password" slot="content" label-position="top" :rules="pwdRule">
+                                        <i-form-item label="新密码" prop="password">
+                                            <i-input v-model="password.password" size="small"/>
+                                        </i-form-item>
+                                        <i-form-item label="确认密码" prop="confirmPassword">
+                                            <i-input v-model="password.confirmPassword" size="small"/>
+                                        </i-form-item>
+                                        <i-button type="primary" size="small" @click="setPassword(row)">确认</i-button>
+                                        <i-button size="small">取消</i-button>
+                                    </i-form>
+                                </i-poptip>
                             </template>
                         </i-table>
                     </i-card>
@@ -203,31 +220,6 @@
                         </i-row>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane label="管理员" name="manager">
-                    <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
-                            <i-col>
-                                管理员
-                            </i-col>
-                            <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索管理员"/>
-                            </i-col>
-                            <i-col span="2" push="16">
-                                <i-button style="width: 117%" type="primary">添加管理员</i-button>
-                            </i-col>
-                        </i-row>
-                        <i-row>
-                        <i-table stripe :columns="tableCol.manager" :data="tableData">
-                            <template slot="Action" slot-scope="{index}">
-                                <i-button @click="delTableItem(index)">删除</i-button>
-                            </template>
-                        </i-table>
-                        </i-row>
-                    </i-card>
-                </i-tab-pane>
                 <i-tab-pane label="社团活动" name="activity">
                     <i-card dis-hover>
                         <i-row type="flex" align="middle" :gutter="16" slot="title">
@@ -269,6 +261,7 @@ import tutorForm from "./tutorForm"
 import subDeptForm from "./subDeptForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
+const md5 = require("md5");
 // const testData = require("./testData");
 const axios = require("axios");
 export default {
@@ -283,8 +276,10 @@ export default {
         },
         submit () {
             let form = this.$refs["Form"];
-            this.getTable(this.tabSelect);
-            form.resetFields();
+            axios.post("/api/security/SaveUserV2", {...this.recordData, departId: this.orgInfo.ID}, msg => {
+                this.getTable(this.tabSelect);
+                form.resetFields();
+            })
         },
         cancel () {
             let form = this.$refs["Form"];
@@ -294,7 +289,7 @@ export default {
             this.orgInfo.Code = "789";
             axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
-                    this.$Message.success("保存成功");
+                    this.$Message.success("部门信息保存成功");
                     this.getOrgDetail();
                 } else {
                     this.$Message.warning(msg.msg);
@@ -318,16 +313,33 @@ export default {
             })
         },
         getTable (name) {
+            this.tableLoading = true;
             axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                 this.tableData = msg.data;
+                this.tableLoading = false;
             })
         },
-        delTableItem (index) {
-            this.tableData.splice(index, 1);
+        delTableItem (index, row) {
+             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
+                this.getTable(this.tabSelect);
+            })
         },
         modifyTableItem (index, row) {
             this.recordData = JSON.parse(JSON.stringify(row));
             this.modalShow = true;
+        },
+        addTableItem () {
+            this.modalShow = true;
+        },
+        setPositon (row, position) {
+            axios.post("/api/security/SetPositionV2", {userId: row.ID, departId: this.orgInfo.ID, position}, msg => {
+                this.getTable(this.tabSelect);
+            })
+        },
+        setPassword (row) {
+            axios.post("/api/security/SetPassword", {userId: row.ID, departId: this.orgInfo.ID, password: md5(this.password.password)}, msg => {
+                this.getTable(this.tabSelect);
+            })
         }
     },
     watch: {
@@ -337,10 +349,37 @@ export default {
         }
     },
     mounted () {
-        this.tabSelect = this.$route.params.tabSelect || "basicInfo";
-        this.getOrgDetail();
+        this.$Spin.show({
+            render: (h) => {
+                return h('div', [
+                    h('Icon', {
+                        'class': 'spin-icon-load',
+                        props: {
+                            type: 'ios-loading',
+                            size: 18
+                        }
+                    }),
+                    h('div', '正在获取部门详细信息，请稍候……')
+                ])
+            }
+        });
+        axios.post("/api/security/GetOrgDetail", {}, msg => {
+            if (msg.success) {
+                this.orgInfo = msg.data;
+                this.teachers = msg.teachers;
+                this.users = msg.users;
+                this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
+                this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
+                this.changeLogs = msg.changeLogs;
+                this.level = msg.level;
+            }
+            this.$Spin.hide();
+            this.tabSelect = this.$route.params.tabSelect || "basicInfo";
+        });
     },
     data () {
+        let THIS = this;
         return {
             app,
             tableCol,
@@ -348,6 +387,7 @@ export default {
             users: 0,
             tabSelect: "",
             spinShow: false,
+            tableLoading: false,
             recordData: {},
             level: 0,
             orgInfo: {},
@@ -358,6 +398,21 @@ export default {
                 member: "member-form",
                 tutor: "tutor-form",
                 subDept: "subDept-form"
+            },
+            password: {},
+            pwdRule: {
+                password: {
+                    trigger: 'blur',
+                    validator (rule, value, callback, source, options) {
+                        (value && value.length >= 6 && value.length <= 16) ? callback() : callback(new Error('密码必须在6至16位之间'));
+                    }
+                },
+                confirmPassword: {
+                    trigger: 'blur',
+                    validator (rule, value, callback, source, options) {
+                        value === THIS.password.password ? callback() : callback(new Error('两次输入的密码不一致'));
+                    }
+                }
             }
         };
     }
@@ -367,5 +422,15 @@ export default {
 <style lang="less">
 .ivu-form-item .ivu-date-picker{
     width: 100%;
+}
+.time{
+    font-size: 14px;
+    font-weight: bold;
+}
+.content{
+    padding-left: 5px;
+}
+.spin-icon-load{
+        animation: ani-demo-spin 1s linear infinite;
 }
 </style>

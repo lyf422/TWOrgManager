@@ -300,7 +300,6 @@ export default {
             this.spinShow = true;
             axios.post("/api/security/GetOrgDetail", {}, msg => {
                 if (msg.success) {
-                    console.log(msg);
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;

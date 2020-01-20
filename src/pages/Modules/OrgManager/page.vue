@@ -219,12 +219,12 @@ export default {
     },
     methods: {
         getDashBoard () {
-            /* axios.post("/api/org/GetDashboard", {}, msg => {
+            axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
                 console.log(this.dashBoard["teachers"]);
                 app.departType = msg.DepartType;
-            }); */
-            this.dashBoard = {
+            });
+            /* this.dashBoard = {
                 users: 0,
                 teachers: ["赵江声", "黄玺"],
                 Name: "轻乳酪蛋糕制作方法研究社团",
@@ -232,7 +232,7 @@ export default {
                 StrType: "社会实践类",
                 DepartType: 1,
                 BirthTime: "2020年1月17日"
-            };
+            }; */
         },
         judgeTime () {
             let day2 = new Date();
@@ -249,7 +249,7 @@ export default {
                 this.messageNum = msg.totalRow;
                 this.message = msg.data;
             })
-            this.message = [
+            /* this.message = [
                 {
                     instanceId: 123456789123456789123456789,
                     stepId: 321654987987321654987987321654987987,
@@ -284,7 +284,7 @@ export default {
                     ArriveOn: "2020/1/18"
                 }
             ];
-            this.messageNum = 3;
+            this.messageNum = 3; */
         },
         dealWorkflow (instanceId, stepId) {
 
@@ -322,23 +322,5 @@ export default {
     .layout-con {
         text-align: center;
         color: #515a6e;
-    }
-    .fakecell {
-        margin: 0;
-        line-height: normal;
-        padding: 7px 16px;
-        padding-top: 7px;
-        padding-right: 16px;
-        padding-bottom: 7px;
-        padding-left: 16px;
-        clear: both;
-        color: #515a6e;
-        font-size: 16px !important;
-        white-space: nowrap;
-        list-style: none;
-        cursor: pointer;
-        -webkit-transition: background 0.2s ease-in-out;
-        transition: background 0.2s ease-in-out;
-        position: relative;
     }
 </style>

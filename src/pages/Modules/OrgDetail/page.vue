@@ -113,11 +113,20 @@
                             </i-form>
                             <i-button type="primary" @click="saveOrgDetail()">保存</i-button>
                         </i-col>
-                        <i-col span="5" offset="3">
+                        <i-col span="7" offset="1">
                             <i-timeline>
-                                <TimelineItem v-for="(item,index) in changeLogs.data" :key="index">
-                                    <p class="time">{{item.OperateOn}}</p>
-                                    <p class="content">{{item.Operator}}{{item.Abstract}}</p>
+                                <TimelineItem v-for="(item,index) in logs" :key="index">
+                                    <i-row>
+                                        <i-col span="12">
+                                            <p class="time">{{item.OperateOn}}</p>
+                                            <p class="content">{{item.Operator}}{{item.Abstract}}</p>
+                                        </i-col>
+                                        <i-col span="12" style="font-size: 0.7em;color: #808080;">
+                                            <p v-for="(d,index) in item.Details" :key="index">
+                                                {{d}}
+                                            </p>
+                                        </i-col>
+                                    </i-row>
                                 </TimelineItem>
                             </i-timeline>
                         </i-col>
@@ -135,7 +144,7 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索成员" />
+                                        <i-input prefix="ios-search" placeholder="搜索成员（没有做）" />
                                     </i-col>
                                     <i-col>
                                         <i-button type="primary" @click="addTableItem()">添加成员</i-button>
@@ -271,9 +280,6 @@ export default {
         "subDept-form": subDeptForm
     },
     methods: {
-        modifyRecord () {
-            this.modalShow = true;
-        },
         submit () {
             let form = this.$refs["Form"];
             axios.post("/api/security/SaveUserV2", {...this.recordData, departId: this.orgInfo.ID}, msg => {
@@ -307,6 +313,7 @@ export default {
                     this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                     this.changeLogs = msg.changeLogs;
+                    this.logs = this.changeLogs.data.reverse();
                     this.level = msg.level;
                 }
                 this.spinShow = false;
@@ -328,11 +335,12 @@ export default {
             if (this.tabSelect === 'member') {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.recordData = msg.user;
+                this.modalShow = true;
             });
             } else {
                 this.recordData = JSON.parse(JSON.stringify(row));
+                this.modalShow = true;
             }
-            this.modalShow = true;
         },
         addTableItem () {
             this.modalShow = true;
@@ -383,6 +391,7 @@ export default {
                 this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                 this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                 this.changeLogs = msg.changeLogs;
+                this.logs = this.changeLogs.data.reverse();
                 this.level = msg.level;
             }
             this.$Spin.hide();
@@ -395,6 +404,7 @@ export default {
             app,
             tableCol,
             visible: false,
+            logs: [],
             teachers: [],
             users: 0,
             tabSelect: "",

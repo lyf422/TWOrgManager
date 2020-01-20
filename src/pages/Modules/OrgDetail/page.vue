@@ -145,20 +145,20 @@
                         </i-row>
                         <i-table stripe :columns="tableCol.member" :data="tableData" :loading="tableLoading">
                             <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
+                                <i-button @click="modifyTableItem(index, row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="row.isAdmin" @click="delTableItem(index, row)">删除</i-button>
+                                    <i-button :disabled="row.isAdmin" @click="delTableItem(index, row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
-                                <i-button v-if="!row.isAdmin" @click="setPositon(row,'管理员')">设置管理员</i-button>
+                                <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer>
-                                    <i-button v-if="row.isAdmin">设置密码</i-button>
+                                    <i-button v-if="(level === 3)&&row.isAdmin">设置密码</i-button>
                                     <i-row slot="title">您正在更改社团管理员密码</i-row>
                                     <i-form  :model="password" slot="content" label-position="top" :rules="pwdRule">
                                         <i-form-item label="新密码" prop="password">
-                                            <i-input v-model="password.password" size="small"/>
+                                            <i-input v-model="password.password" size="small" type="password"/>
                                         </i-form-item>
                                         <i-form-item label="确认密码" prop="confirmPassword">
-                                            <i-input v-model="password.confirmPassword" size="small"/>
+                                            <i-input v-model="password.confirmPassword" size="small" type="password"/>
                                         </i-form-item>
                                         <i-button type="primary" size="small" @click="setPassword(row)">确认</i-button>
                                         <i-button size="small">取消</i-button>
@@ -300,6 +300,7 @@ export default {
             this.spinShow = true;
             axios.post("/api/security/GetOrgDetail", {}, msg => {
                 if (msg.success) {
+                    console.log(msg);
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
@@ -325,7 +326,13 @@ export default {
             })
         },
         modifyTableItem (index, row) {
-            this.recordData = JSON.parse(JSON.stringify(row));
+            if (this.tabSelect === 'member') {
+            axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
+                this.recordData = msg.user;
+            });
+            } else {
+                this.recordData = JSON.parse(JSON.stringify(row));
+            }
             this.modalShow = true;
         },
         addTableItem () {

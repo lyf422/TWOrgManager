@@ -135,7 +135,7 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索成员" />
+                                        <i-input prefix="ios-search" placeholder="搜索成员（没有做）" />
                                     </i-col>
                                     <i-col>
                                         <i-button type="primary" @click="addTableItem()">添加成员</i-button>

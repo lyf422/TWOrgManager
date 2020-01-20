@@ -113,11 +113,20 @@
                             </i-form>
                             <i-button type="primary" @click="saveOrgDetail()">保存</i-button>
                         </i-col>
-                        <i-col span="5" offset="3">
+                        <i-col span="7" offset="1">
                             <i-timeline>
                                 <TimelineItem v-for="(item,index) in changeLogs.data" :key="index">
-                                    <p class="time">{{item.OperateOn}}</p>
-                                    <p class="content">{{item.Operator}}{{item.Abstract}}</p>
+                                    <i-row>
+                                        <i-col span="12">
+                                            <p class="time">{{item.OperateOn}}</p>
+                                            <p class="content">{{item.Operator}}{{item.Abstract}}</p>
+                                        </i-col>
+                                        <i-col span="12" style="font-size: 0.7em;color: #808080;">
+                                            <p v-for="(d,index) in item.Details" :key="index">
+                                                {{d}}
+                                            </p>
+                                        </i-col>
+                                    </i-row>
                                 </TimelineItem>
                             </i-timeline>
                         </i-col>

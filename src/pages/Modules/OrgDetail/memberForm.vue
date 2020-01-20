@@ -32,14 +32,14 @@
             </i-col>
             <i-col span="11">
                 <i-form-item label="入团时间" prop="JoinCCYLTime">
-                    <i-input v-model="modalData.JoinCCYLTime" />
+                    <i-date-picker v-model="modalData.JoinCCYLTime" />
                 </i-form-item>
             </i-col>
         </i-row>
         <i-row type="flex" justify="space-between">
             <i-col span="11">
                 <i-form-item label="入党时间" prop="JoinCPCTime">
-                    <i-input v-model="modalData.JoinCPCTime" />
+                    <i-date-picker v-model="modalData.JoinCPCTime" />
                 </i-form-item>
             </i-col>
             <i-col span="11">

@@ -280,9 +280,6 @@ export default {
         "subDept-form": subDeptForm
     },
     methods: {
-        modifyRecord () {
-            this.modalShow = true;
-        },
         submit () {
             let form = this.$refs["Form"];
             axios.post("/api/security/SaveUserV2", {...this.recordData, departId: this.orgInfo.ID}, msg => {
@@ -337,11 +334,12 @@ export default {
             if (this.tabSelect === 'member') {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.recordData = msg.user;
+                this.modalShow = true;
             });
             } else {
                 this.recordData = JSON.parse(JSON.stringify(row));
+                this.modalShow = true;
             }
-            this.modalShow = true;
         },
         addTableItem () {
             this.modalShow = true;

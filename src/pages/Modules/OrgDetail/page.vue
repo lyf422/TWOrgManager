@@ -115,7 +115,7 @@
                         </i-col>
                         <i-col span="7" offset="1">
                             <i-timeline>
-                                <TimelineItem v-for="(item,index) in changeLogs.data" :key="index">
+                                <TimelineItem v-for="(item,index) in logs" :key="index">
                                     <i-row>
                                         <i-col span="12">
                                             <p class="time">{{item.OperateOn}}</p>
@@ -313,6 +313,7 @@ export default {
                     this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                     this.changeLogs = msg.changeLogs;
+                    this.logs = this.changeLogs.data.reverse();
                     this.level = msg.level;
                 }
                 this.spinShow = false;
@@ -385,6 +386,7 @@ export default {
                 this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                 this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                 this.changeLogs = msg.changeLogs;
+                this.logs = this.changeLogs.data.reverse();
                 this.level = msg.level;
             }
             this.$Spin.hide();
@@ -396,6 +398,7 @@ export default {
         return {
             app,
             tableCol,
+            logs: [],
             teachers: [],
             users: 0,
             tabSelect: "",

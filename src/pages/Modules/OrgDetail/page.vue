@@ -115,7 +115,7 @@
                         </i-col>
                         <i-col span="7" offset="1">
                             <i-timeline>
-                                <TimelineItem v-for="(item,index) in changeLogs.data" :key="index">
+                                <TimelineItem v-for="(item,index) in logs" :key="index">
                                     <i-row>
                                         <i-col span="12">
                                             <p class="time">{{item.OperateOn}}</p>
@@ -159,7 +159,7 @@
                                     <i-button :disabled="row.isAdmin" @click="delTableItem(index, row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
                                 <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row,'管理员')">设置管理员</i-button>
-                                <i-poptip transfer>
+                                <i-poptip transfer v-model="visible" v-if="row.isAdmin">
                                     <i-button v-if="(level === 3)&&row.isAdmin">设置密码</i-button>
                                     <i-row slot="title">您正在更改社团管理员密码</i-row>
                                     <i-form  :model="password" slot="content" label-position="top" :rules="pwdRule">
@@ -170,7 +170,7 @@
                                             <i-input v-model="password.confirmPassword" size="small" type="password"/>
                                         </i-form-item>
                                         <i-button type="primary" size="small" @click="setPassword(row)">确认</i-button>
-                                        <i-button size="small">取消</i-button>
+                                        <i-button size="small" @click="cancelSet()">取消</i-button>
                                     </i-form>
                                 </i-poptip>
                             </template>
@@ -313,6 +313,7 @@ export default {
                     this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                     this.changeLogs = msg.changeLogs;
+                    this.logs = this.changeLogs.data.reverse();
                     this.level = msg.level;
                 }
                 this.spinShow = false;
@@ -352,7 +353,12 @@ export default {
         setPassword (row) {
             axios.post("/api/security/SetPassword", {userId: row.ID, departId: this.orgInfo.ID, password: md5(this.password.password)}, msg => {
                 this.getTable(this.tabSelect);
+                this.$Message.info('修改成功');
             })
+            this.visible = false;
+        },
+        cancelSet () {
+            this.visible = false;
         }
     },
     watch: {
@@ -385,6 +391,7 @@ export default {
                 this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                 this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                 this.changeLogs = msg.changeLogs;
+                this.logs = this.changeLogs.data.reverse();
                 this.level = msg.level;
             }
             this.$Spin.hide();
@@ -396,6 +403,8 @@ export default {
         return {
             app,
             tableCol,
+            visible: false,
+            logs: [],
             teachers: [],
             users: 0,
             tabSelect: "",

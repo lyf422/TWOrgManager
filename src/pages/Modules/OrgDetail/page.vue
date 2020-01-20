@@ -177,7 +177,7 @@
                         </i-table>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type===0" label="子部门" name="subDept">
+                <i-tab-pane :disabled="orgInfo.Type===1" label="子部门" name="subDept">
                     <i-card dis-hover>
                         <i-row type="flex" align="middle" :gutter="16" slot="title">
                             <i-col>
@@ -203,7 +203,7 @@
                         </i-row>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type===1" label="指导老师" name="tutor">
+                <i-tab-pane :disabled="orgInfo.Type===0" label="指导老师" name="tutor">
                     <i-card dis-hover>
                         <i-row type="flex" align="middle" :gutter="16" slot="title">
                             <i-col>

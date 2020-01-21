@@ -1,14 +1,21 @@
 <template>
     <i-form :model="modalData" ref="Form">
         <i-row type="flex" justify="space-between">
-            <i-col span="11">
+            <i-col span="24">
                 <i-form-item label="部门名称">
                     <i-input v-model="modalData.Name"/>
                 </i-form-item>
             </i-col>
+        </i-row>
+        <i-row type="flex" justify="space-between">
             <i-col span="11">
                 <i-form-item label="部门的层级显示">
                     <i-input v-model="modalData.label"/>
+                </i-form-item>
+            </i-col>
+            <i-col span="11">
+                <i-form-item label="挂靠单位">
+                    <org-selector/>
                 </i-form-item>
             </i-col>
         </i-row>

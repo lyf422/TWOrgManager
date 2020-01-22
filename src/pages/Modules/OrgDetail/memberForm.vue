@@ -32,7 +32,7 @@
             </i-col>
             <i-col span="11">
                 <i-form-item label="入团时间" prop="JoinCCYLTime">
-                    <Checkbox v-model="league"></Checkbox>
+                    <Checkbox v-model="league">时间{{modalData.JoinCCYLTime}}</Checkbox>
                     <i-date-picker v-model="modalData.JoinCCYLTime" :disabled="!league"/>
                 </i-form-item>
             </i-col>
@@ -118,8 +118,7 @@
         },
         methods: {
             resetFields () {
-                let form = this.$refs["Form"];
-                form.resetFields();
+                this.$refs["Form"].resetFields();
             }
         }
     }

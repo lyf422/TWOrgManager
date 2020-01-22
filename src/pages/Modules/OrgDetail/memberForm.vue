@@ -27,19 +27,21 @@
         <i-row type="flex" justify="space-between">
             <i-col span="11">
                 <i-form-item label="政治面貌" prop="PoliticalStatus">
-                    <i-input v-model="modalData.PoliticalStatus" />
+                    <dic-select dic="政治面貌" v-model="modalData.PoliticalStatus" />
                 </i-form-item>
             </i-col>
             <i-col span="11">
                 <i-form-item label="入团时间" prop="JoinCCYLTime">
-                    <i-date-picker v-model="modalData.JoinCCYLTime" />
+                    <Checkbox v-model="league"></Checkbox>
+                    <i-date-picker v-model="modalData.JoinCCYLTime" :disabled="!league"/>
                 </i-form-item>
             </i-col>
         </i-row>
         <i-row type="flex" justify="space-between">
             <i-col span="11">
                 <i-form-item label="入党时间" prop="JoinCPCTime">
-                    <i-date-picker v-model="modalData.JoinCPCTime" />
+                    <Checkbox v-model="party"></Checkbox>
+                    <i-date-picker v-model="modalData.JoinCPCTime" :disabled="!party"/>
                 </i-form-item>
             </i-col>
             <i-col span="11">
@@ -86,6 +88,8 @@
         },
         data () {
             return {
+                league: false,
+                party: false,
                 ruleForMem: {
                     RealName: [
                         {

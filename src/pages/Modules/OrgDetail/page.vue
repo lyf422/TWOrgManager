@@ -117,15 +117,12 @@
                             <i-timeline>
                                 <TimelineItem v-for="(item,index) in logs" :key="index">
                                     <i-row>
-                                        <i-col span="12">
-                                            <p class="time">{{item.OperateOn}}</p>
-                                            <p class="content">{{item.Operator}}{{item.Abstract}}</p>
-                                        </i-col>
-                                        <i-col span="12" style="font-size: 0.7em;color: #808080;">
-                                            <p v-for="(d,index) in item.Details" :key="index">
+                                        <p class="time">{{item.OperateOn}} {{item.Operator}}</p>
+                                        <p class="content">
+                                            <i-row v-for="(d,index) in item.Details" :key="index">
                                                 {{d}}
-                                            </p>
-                                        </i-col>
+                                            </i-row>
+                                        </p>
                                     </i-row>
                                 </TimelineItem>
                             </i-timeline>
@@ -147,16 +144,16 @@
                                         <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getTable"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addTableItem()">添加成员</i-button>
+                                        <i-button type="primary" @click="addMember()">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
                         </i-row>
                         <i-table stripe :columns="tableCol.member" :data="tableData" :loading="tableLoading">
-                            <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
+                            <template slot="Action" slot-scope="{row}">
+                                <i-button @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="row.isAdmin" @click="delTableItem(index, row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
+                                    <i-button :disabled="row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
                                 <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer v-model="visible" v-if="row.isAdmin">
@@ -336,39 +333,34 @@ export default {
                 this.spinShow = false;
             })
         },
-        getTable (name) {
+        getMemberTable () {
             this.tableLoading = true;
             let userName = this.keyword ? this.keyword : undefined;
-            if (name === "subDept") {
-                axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
-                    this.tableData = msg.data;
-                    this.tableLoading = false;
-                })
-            } else {
-                axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name: userName}, msg => {
-                    this.tableData = msg.data;
-                    this.tableLoading = false;
-                })
-            };
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name: userName}, msg => {
+                  this.tableData = msg.data;
+                  this.tableLoading = false;
+              })
         },
-        delTableItem (index, row) {
+        getDeptTable () {
+            this.tableLoading = true;
+            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
+                this.tableData = msg.data.children;
+                this.tableLoading = false;
+            });
+        },
+        delMember (row) {
              axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
-                this.getTable(this.tabSelect);
+                this.getMemberTable();
             })
         },
-        modifyTableItem (index, row) {
-            if (this.tabSelect === 'member') {
+        modifyMember (row) {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.recordData.user = msg.user;
                 this.recordData.changeLogs = msg.changeLogs;
                 this.modalShow = true;
             });
-            } else {
-                this.recordData = JSON.parse(JSON.stringify(row));
-                this.modalShow = true;
-            }
         },
-        addTableItem () {
+        addMember () {
             this.modalShow = true;
         },
         setPositon (row, position) {
@@ -392,8 +384,11 @@ export default {
     },
     watch: {
         tabSelect (value) {
-            if (value === "basicInfo") return;
-            this.getTable(value)
+          switch (value) {
+                  case "member": this.getMemberTable(); break;
+                  case "subDept": this.getDeptTable(); break;
+                  case "basicInfo": this.getOrgDetail(); break;
+             }
         },
         keyword (v) {
             this.setKeyword();
@@ -456,6 +451,11 @@ export default {
                 member: "member-form",
                 tutor: "tutor-form",
                 subDept: "subDept-form"
+            },
+            evalDic: {
+                member: "this.getMemberTable()",
+                subDept: "this.getDeptTable()",
+                basicInfo: "this.getOrgDetail()"
             },
             password: {},
             pwdRule: {

@@ -194,12 +194,12 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.subDept" :data="tableData">
-                            <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)">管理</i-button>
-                                <i-button @click="delTableItem(index)">删除</i-button>
-                            </template>
-                        </i-table>
+                            <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData">
+                                <template slot="Action" slot-scope="{index, row}">
+                                    <i-button @click="modifyTableItem(index, row)">管理</i-button>
+                                    <i-button @click="delTableItem(index)">删除</i-button>
+                                </template>
+                            </i-table>
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -321,10 +321,17 @@ export default {
         },
         getTable (name) {
             this.tableLoading = true;
-            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
-                this.tableData = msg.data;
-                this.tableLoading = false;
-            })
+            if (name === "subDept") {
+                axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
+                    this.tableData = msg.data;
+                    this.tableLoading = false;
+                })
+            } else {
+                axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
+                    this.tableData = msg.data;
+                    this.tableLoading = false;
+                })
+            };
         },
         delTableItem (index, row) {
              axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {

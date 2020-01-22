@@ -117,15 +117,12 @@
                             <i-timeline>
                                 <TimelineItem v-for="(item,index) in logs" :key="index">
                                     <i-row>
-                                        <i-col span="12">
-                                            <p class="time">{{item.OperateOn}}</p>
-                                            <p class="content">{{item.Operator}}{{item.Abstract}}</p>
-                                        </i-col>
-                                        <i-col span="12" style="font-size: 0.7em;color: #808080;">
-                                            <p v-for="(d,index) in item.Details" :key="index">
+                                        <p class="time">{{item.OperateOn}} {{item.Operator}}</p>
+                                        <p class="content">
+                                            <i-row v-for="(d,index) in item.Details" :key="index">
                                                 {{d}}
-                                            </p>
-                                        </i-col>
+                                            </i-row>
+                                        </p>
                                     </i-row>
                                 </TimelineItem>
                             </i-timeline>

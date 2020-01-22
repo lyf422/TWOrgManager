@@ -83,7 +83,7 @@
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="11">
                                         <i-form-item label="社交媒体">
-                                            <dic-select dic="社交媒体" v-model="orgInfo.SocialMedia"/>
+                                            <dic-select multiple dic="社交媒体" v-model="orgInfo.SocialMedia"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11">
@@ -291,6 +291,12 @@ export default {
     },
     methods: {
         submit () {
+            if (this.recordData.JoinCCYLTime === "") {
+                this.recordData.JoinCCYLTime = "1990-1-1";
+            }
+            if (this.recordData.JoinCPCTime === "") {
+                this.recordData.JoinCPCTime = "1990-1-1";
+            }
             let form = this.$refs["Form"];
             let recordData = this.recordData;
             if (this.tabSelect === 'member') {

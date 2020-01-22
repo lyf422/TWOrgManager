@@ -144,16 +144,16 @@
                                         <i-input prefix="ios-search" placeholder="搜索成员（没有做）" />
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addTableItem()">添加成员</i-button>
+                                        <i-button type="primary" @click="addMember()">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
                         </i-row>
                         <i-table stripe :columns="tableCol.member" :data="tableData" :loading="tableLoading">
-                            <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
+                            <template slot="Action" slot-scope="{row}">
+                                <i-button @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="row.isAdmin" @click="delTableItem(index, row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
+                                    <i-button :disabled="row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
                                 <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer v-model="visible" v-if="row.isAdmin">
@@ -174,7 +174,7 @@
                         </i-table>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type===0" label="子部门" name="subDept">
+                <i-tab-pane :disabled="orgInfo.Type===1" label="子部门" name="subDept">
                     <i-card dis-hover>
                         <i-row type="flex" align="middle" :gutter="16" slot="title">
                             <i-col>
@@ -200,7 +200,7 @@
                         </i-row>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type===1" label="指导老师" name="tutor">
+                <i-tab-pane :disabled="orgInfo.Type===0" label="指导老师" name="tutor">
                     <i-card dis-hover>
                         <i-row type="flex" align="middle" :gutter="16" slot="title">
                             <i-col>
@@ -268,7 +268,6 @@ import subDeptForm from "./subDeptForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
 const md5 = require("md5");
-// const testData = require("./testData");
 const axios = require("axios");
 export default {
     components: {
@@ -316,37 +315,32 @@ export default {
                 this.spinShow = false;
             })
         },
-        getTable (name) {
+        getMemberTable () {
             this.tableLoading = true;
-            if (name === "subDept") {
-                axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
-                    this.tableData = msg.data;
-                    this.tableLoading = false;
-                })
-            } else if (name === "member") {
-                axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
-                    this.tableData = msg.data;
-                    this.tableLoading = false;
-                })
-            };
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
+                this.tableData = msg.data;
+                this.tableLoading = false;
+            });
         },
-        delTableItem (index, row) {
+        getDeptTable () {
+            this.tableLoading = true;
+            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
+                this.tableData = msg.data.children;
+                this.tableLoading = false;
+            });
+        },
+        delMember (row) {
              axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
-                this.getTable(this.tabSelect);
+                this.getMemberTable();
             })
         },
-        modifyTableItem (index, row) {
-            if (this.tabSelect === 'member') {
+        modifyMember (row) {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.recordData = msg.user;
                 this.modalShow = true;
             });
-            } else {
-                this.recordData = JSON.parse(JSON.stringify(row));
-                this.modalShow = true;
-            }
         },
-        addTableItem () {
+        addMember () {
             this.modalShow = true;
         },
         setPositon (row, position) {
@@ -367,8 +361,11 @@ export default {
     },
     watch: {
         tabSelect (value) {
-            if (value === "basicInfo") return;
-            this.getTable(value)
+            switch (value) {
+                case "member": this.getMemberTable(); break;
+                case "subDept": this.getDeptTable(); break;
+                case "basicInfo": this.getOrgDetail(); break;
+            }
         }
     },
     mounted () {
@@ -424,6 +421,11 @@ export default {
                 member: "member-form",
                 tutor: "tutor-form",
                 subDept: "subDept-form"
+            },
+            evalDic: {
+                member: "this.getMemberTable()",
+                subDept: "this.getDeptTable()",
+                basicInfo: "this.getOrgDetail()"
             },
             password: {},
             pwdRule: {

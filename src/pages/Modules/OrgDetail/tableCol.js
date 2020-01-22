@@ -29,7 +29,7 @@ let tableCol = {
     subDept: [
         {
             title: '部门名称',
-            key: 'Name'
+            key: 'name'
         },
         {
             title: '部门层级显示',

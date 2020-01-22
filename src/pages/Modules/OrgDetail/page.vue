@@ -144,7 +144,7 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索成员（没有做）" />
+                                        <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getTable"/>
                                     </i-col>
                                     <i-col>
                                         <i-button type="primary" @click="addTableItem()">添加成员</i-button>
@@ -177,20 +177,24 @@
                         </i-table>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type===0" label="子部门" name="subDept">
+                <i-tab-pane :disabled="orgInfo.Type===1" label="子部门" name="subDept">
                     <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                        <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
-                                子部门
+                                <i-row type="flex" align="middle" :gutter="16">
+                                    <i-col>子部门</i-col>
+                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
+                                </i-row>
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索部门"/>
-                            </i-col>
-                            <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary" @click="addTableItem()">添加部门</i-button>
+                                <i-row type="flex" :gutter="16">
+                                    <i-col>
+                                        <i-input prefix="ios-search" placeholder="搜索部门"/>
+                                    </i-col>
+                                    <i-col>
+                                        <i-button type="primary" @click="addTableItem()">添加部门</i-button>
+                                    </i-col>
+                                </i-row>
                             </i-col>
                         </i-row>
                         <i-row>
@@ -203,20 +207,24 @@
                         </i-row>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type===1" label="指导老师" name="tutor">
+                <i-tab-pane :disabled="orgInfo.Type===0" label="指导老师" name="tutor">
                     <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                        <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
-                                指导老师
+                                <i-row type="flex" align="middle" :gutter="16">
+                                    <i-col>指导老师</i-col>
+                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
+                                </i-row>
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="15">
-                                <i-input prefix="ios-search" placeholder="搜索指导老师"/>
-                            </i-col>
-                            <i-col span="3" push="15">
-                                <i-button style="width: 100%" type="primary">添加指导老师</i-button>
+                                <i-row type="flex" :gutter="16">
+                                    <i-col>
+                                        <i-input prefix="ios-search" placeholder="搜索老师"/>
+                                    </i-col>
+                                    <i-col>
+                                        <i-button type="primary">添加老师</i-button>
+                                    </i-col>
+                                </i-row>
                             </i-col>
                         </i-row>
                         <i-row>
@@ -231,18 +239,22 @@
                 </i-tab-pane>
                 <i-tab-pane label="社团活动" name="activity">
                     <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                        <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
-                                社团活动
+                                <i-row type="flex" align="middle" :gutter="16">
+                                    <i-col>社团活动</i-col>
+                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
+                                </i-row>
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索活动"/>
-                            </i-col>
-                            <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary">添加活动</i-button>
+                                <i-row type="flex" :gutter="16">
+                                    <i-col>
+                                        <i-input prefix="ios-search" placeholder="搜索活动"/>
+                                    </i-col>
+                                    <i-col>
+                                        <i-button type="primary">添加活动</i-button>
+                                    </i-col>
+                                </i-row>
                             </i-col>
                         </i-row>
                         <i-row>
@@ -271,6 +283,7 @@ import subDeptForm from "./subDeptForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
 const md5 = require("md5");
+let _ = require("lodash");
 // const testData = require("./testData");
 const axios = require("axios");
 export default {
@@ -282,7 +295,11 @@ export default {
     methods: {
         submit () {
             let form = this.$refs["Form"];
-            axios.post("/api/security/SaveUserV2", {...this.recordData, departId: this.orgInfo.ID}, msg => {
+            let recordData = this.recordData;
+            if (this.tabSelect === 'member') {
+                recordData = this.recordData.user;
+            }
+            axios.post("/api/security/SaveUserV2", {...recordData, departId: this.orgInfo.ID}, msg => {
                 this.getTable(this.tabSelect);
                 form.resetFields();
             })
@@ -321,13 +338,14 @@ export default {
         },
         getTable (name) {
             this.tableLoading = true;
+            let userName = this.keyword ? this.keyword : undefined;
             if (name === "subDept") {
                 axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                     this.tableData = msg.data;
                     this.tableLoading = false;
                 })
             } else {
-                axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
+                axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name: userName}, msg => {
                     this.tableData = msg.data;
                     this.tableLoading = false;
                 })
@@ -341,7 +359,8 @@ export default {
         modifyTableItem (index, row) {
             if (this.tabSelect === 'member') {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
-                this.recordData = msg.user;
+                this.recordData.user = msg.user;
+                this.recordData.changeLogs = msg.changeLogs;
                 this.modalShow = true;
             });
             } else {
@@ -366,12 +385,18 @@ export default {
         },
         cancelSet () {
             this.visible = false;
-        }
+        },
+        setKeyword: _.debounce(function () {
+            this.getTable();
+        }, 500)
     },
     watch: {
         tabSelect (value) {
             if (value === "basicInfo") return;
             this.getTable(value)
+        },
+        keyword (v) {
+            this.setKeyword();
         }
     },
     mounted () {
@@ -412,12 +437,16 @@ export default {
             tableCol,
             visible: false,
             logs: [],
+            keyword: "",
             teachers: [],
             users: 0,
             tabSelect: "",
             spinShow: false,
             tableLoading: false,
-            recordData: {},
+            recordData: {
+                user: [],
+                changeLogs: []
+            },
             level: 0,
             orgInfo: {},
             changeLogs: {},
@@ -461,5 +490,9 @@ export default {
 }
 .spin-icon-load{
         animation: ani-demo-spin 1s linear infinite;
+}
+.type{
+    width: 200px;
+    overflow: auto
 }
 </style>

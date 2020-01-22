@@ -83,7 +83,7 @@
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="11">
                                         <i-form-item label="社交媒体">
-                                            <dic-select multiple dic="社交媒体" v-model="orgInfo.SocialMedia"/>
+                                            <dic-select dic="社交媒体" v-model="orgInfo.SocialMedia"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11">
@@ -141,7 +141,7 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getTable"/>
+                                        <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
                                     </i-col>
                                     <i-col>
                                         <i-button type="primary" @click="addMember()">添加成员</i-button>
@@ -266,7 +266,7 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal v-model="modalShow" title="添加/修改成员" :fullscreen="componentDic[tabSelect]==='subDept-form'"
+        <i-modal v-model="modalShow" title="添加/修改成员" :fullscreen="componentDic[tabSelect]==='subDept-form'" width="768"
         @on-ok="submit()" @on-cancel="cancel()">
             <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"></component>
         </i-modal>
@@ -281,7 +281,6 @@ const app = require("@/config");
 const tableCol = require("./tableCol");
 const md5 = require("md5");
 let _ = require("lodash");
-// const testData = require("./testData");
 const axios = require("axios");
 export default {
     components: {
@@ -298,21 +297,12 @@ export default {
                 this.recordData.JoinCPCTime = "1990-1-1";
             }
             let form = this.$refs["Form"];
-            let recordData = this.recordData;
-            if (this.tabSelect === 'member') {
-                recordData = this.recordData.user;
-            }
-            axios.post("/api/security/SaveUserV2", {...recordData, departId: this.orgInfo.ID}, msg => {
-                this.getTable(this.tabSelect);
-                form.resetFields();
-            })
-        },
-        cancel () {
-            let form = this.$refs["Form"];
+            form.submit(this.orgInfo.ID, this.callbackFunc);
             form.resetFields();
         },
+        cancel () {
+        },
         saveOrgDetail () {
-            this.orgInfo.Code = "789";
             axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
                     this.$Message.success("部门信息保存成功");
@@ -332,8 +322,7 @@ export default {
                     this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
                     this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
-                    this.changeLogs = msg.changeLogs;
-                    this.logs = this.changeLogs.data.reverse();
+                    this.logs = msg.changeLogs.data.reverse();
                     this.level = msg.level;
                 }
                 this.spinShow = false;
@@ -343,9 +332,9 @@ export default {
             this.tableLoading = true;
             let userName = this.keyword ? this.keyword : undefined;
             axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name: userName}, msg => {
-                  this.tableData = msg.data;
-                  this.tableLoading = false;
-              })
+                this.tableData = msg.data;
+                this.tableLoading = false;
+            });
         },
         getDeptTable () {
             this.tableLoading = true;
@@ -364,6 +353,7 @@ export default {
                 this.recordData.user = msg.user;
                 this.recordData.changeLogs = msg.changeLogs;
                 this.modalShow = true;
+                this.callbackFunc = this.getMemberTable;
             });
         },
         addMember () {
@@ -371,12 +361,12 @@ export default {
         },
         setPositon (row, position) {
             axios.post("/api/security/SetPositionV2", {userId: row.ID, departId: this.orgInfo.ID, position}, msg => {
-                this.getTable(this.tabSelect);
+                this.getMemberTable();
             })
         },
         setPassword (row) {
             axios.post("/api/security/SetPassword", {userId: row.ID, departId: this.orgInfo.ID, password: md5(this.password.password)}, msg => {
-                this.getTable(this.tabSelect);
+                this.getMemberTable();
                 this.$Message.info('修改成功');
             })
             this.visible = false;
@@ -385,7 +375,7 @@ export default {
             this.visible = false;
         },
         setKeyword: _.debounce(function () {
-            this.getTable();
+            this.getMemberTable();
         }, 500)
     },
     watch: {
@@ -423,8 +413,7 @@ export default {
                 this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
                 this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                 this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
-                this.changeLogs = msg.changeLogs;
-                this.logs = this.changeLogs.data.reverse();
+                this.logs = msg.changeLogs.data.reverse();
                 this.level = msg.level;
             }
             this.$Spin.hide();
@@ -445,23 +434,17 @@ export default {
             spinShow: false,
             tableLoading: false,
             recordData: {
-                user: [],
+                user: {},
                 changeLogs: []
             },
             level: 0,
             orgInfo: {},
-            changeLogs: {},
             tableData: [],
             modalShow: false,
             componentDic: {
                 member: "member-form",
                 tutor: "tutor-form",
                 subDept: "subDept-form"
-            },
-            evalDic: {
-                member: "this.getMemberTable()",
-                subDept: "this.getDeptTable()",
-                basicInfo: "this.getOrgDetail()"
             },
             password: {},
             pwdRule: {
@@ -477,7 +460,8 @@ export default {
                         value === THIS.password.password ? callback() : callback(new Error('两次输入的密码不一致'));
                     }
                 }
-            }
+            },
+            callbackFunc: ""
         };
     }
 }
@@ -495,10 +479,6 @@ export default {
     padding-left: 5px;
 }
 .spin-icon-load{
-        animation: ani-demo-spin 1s linear infinite;
-}
-.type{
-    width: 200px;
-    overflow: auto
+    animation: ani-demo-spin 1s linear infinite;
 }
 </style>

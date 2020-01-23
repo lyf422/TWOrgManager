@@ -1,167 +1,105 @@
 <template>
-        <i-row>
-            <i-col span="14">
-                <i-form :model="modalData" :rules="ruleForMem" ref="Form">
-                    <i-row type="flex" justify="space-between">
-                        <i-col span="11">
-                            <i-form-item label="姓名" prop="RealName">
-                                <i-input v-model="modalData.user.RealName" />
-                            </i-form-item>
-                        </i-col>
-                        <i-col span="11">
-                            <i-form-item label="学号" prop="Code">
-                                <i-input v-model="modalData.user.Code" />
-                            </i-form-item>
+    <i-row>
+        <i-col span="15">
+            <i-form :model="modalData" :rules="ruleForMem" ref="Form">
+                <i-row type="flex" justify="space-between">
+                    <i-col span="11">
+                        <i-form-item label="姓名" prop="RealName">
+                            <i-input v-model="modalData.user.RealName" />
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11">
+                        <i-form-item label="学号" prop="Code">
+                            <i-input v-model="modalData.user.Code" />
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex" justify="space-between">
+                    <i-col span="11">
+                        <i-form-item label="学历" prop="Educational">
+                            <i-input v-model="modalData.user.Educational" />
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11">
+                        <i-form-item label="专业" prop="Major">
+                            <i-input v-model="modalData.user.Major" />
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex" justify="space-between">
+                    <i-col span="11">
+                        <i-form-item label="政治面貌" prop="PoliticalStatus">
+                            <i-input v-model="modalData.user.PoliticalStatus" />
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11">
+                        <i-form-item label="入团时间" prop="JoinCCYLTime">
+                            <i-date-picker v-model="modalData.user.JoinCCYLTime" />
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex" justify="space-between">
+                    <i-col span="11">
+                        <i-form-item label="入党时间" prop="JoinCPCTime">
+                            <i-date-picker v-model="modalData.user.JoinCPCTime" />
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11">
+                        <i-form-item label="邮箱" prop="Email">
+                            <i-input v-model="modalData.user.Email" />
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex" justify="space-between">
+                    <i-col span="11">
+                        <i-form-item label="电话" prop="Mobile">
+                            <i-input v-model="modalData.user.Mobile" />
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11">
+                        <i-form-item label="QQ" prop="QQ">
+                            <i-input v-model="modalData.user.QQ" />
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex" justify="space-between">
+                    <i-col span="11">
+                        <i-form-item label="籍贯" prop="BirthPlace">
+                            <i-input v-model="modalData.user.BirthPlace" />
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11">
+                        <i-form-item label="生源地" prop="Source">
+                            <i-input v-model="modalData.user.Source" />
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+            </i-form>
+        </i-col>
+        <i-col span="7" offset="2">
+            <i-timeline style="overflow-y:scroll; height:600px; padding-top: 10px;">
+                <TimelineItem v-for="(item,index) in modalData.changeLogs.data" :key="index">
+                    <i-row>
+                        <i-col>
+                            <p class="time">{{item.OperateOn}}</p>
+                            <p class="content">{{item.Operator}}{{item.Abstract}}</p>
                         </i-col>
                     </i-row>
-                    <i-row type="flex" justify="space-between">
-                        <i-col span="11">
-                            <i-form-item label="学历" prop="Educational">
-                                <i-input v-model="modalData.user.Educational" />
-                            </i-form-item>
-                        </i-col>
-                        <i-col span="11">
-                            <i-form-item label="专业" prop="Major">
-                                <i-input v-model="modalData.user.Major" />
-                            </i-form-item>
+                    <i-row span="15">
+                        <i-col style="font-size: 0.7em;color: #808080;">
+                            <p v-for="(d,index) in item.Details" :key="index">
+                                {{d}}
+                            </p>
                         </i-col>
                     </i-row>
-                    <i-row type="flex" justify="space-between">
-                        <i-col span="11">
-                            <i-form-item label="政治面貌" prop="PoliticalStatus">
-                                <i-input v-model="modalData.user.PoliticalStatus" />
-                            </i-form-item>
-                        </i-col>
-                        <i-col span="11">
-                            <i-form-item label="入团时间" prop="JoinCCYLTime">
-                                <i-date-picker v-model="modalData.user.JoinCCYLTime" />
-                            </i-form-item>
-                        </i-col>
-                    </i-row>
-                    <i-row type="flex" justify="space-between">
-                        <i-col span="11">
-                            <i-form-item label="入党时间" prop="JoinCPCTime">
-                                <i-date-picker v-model="modalData.user.JoinCPCTime" />
-                            </i-form-item>
-                        </i-col>
-                        <i-col span="11">
-                            <i-form-item label="邮箱" prop="Email">
-                                <i-input v-model="modalData.user.Email" />
-                            </i-form-item>
-                        </i-col>
-                    </i-row>
-                    <i-row type="flex" justify="space-between">
-                        <i-col span="11">
-                            <i-form-item label="电话" prop="Mobile">
-                                <i-input v-model="modalData.user.Mobile" />
-                            </i-form-item>
-                        </i-col>
-                        <i-col span="11">
-                            <i-form-item label="QQ" prop="QQ">
-                                <i-input v-model="modalData.user.QQ" />
-                            </i-form-item>
-                        </i-col>
-                    </i-row>
-                    <i-row type="flex" justify="space-between">
-                        <i-col span="11">
-                            <i-form-item label="籍贯" prop="BirthPlace">
-                                <i-input v-model="modalData.user.BirthPlace" />
-                            </i-form-item>
-                        </i-col>
-                        <i-col span="11">
-                            <i-form-item label="生源地" prop="Source">
-                                <i-input v-model="modalData.user.Source" />
-                            </i-form-item>
-                        </i-col>
-                    </i-row>
-                </i-form>
-            </i-col>
-            <i-col span="7" offset="1">
-                <i-timeline style="overflow-y:scroll;height:600px;width:180px">
-                    <TimelineItem v-for="(item,index) in modalData.changeLogs.data" :key="index">
-                        <i-row>
-                            <i-col>
-                                <p class="time">{{item.OperateOn}}</p>
-                                <p class="content">{{item.Operator}}{{item.Abstract}}</p>
-                            </i-col>
-                        </i-row>
-                        <i-row span="15">
-                            <i-col style="font-size: 0.7em;color: #808080;">
-                                <p v-for="(d,index) in item.Details" :key="index">
-                                    {{d}}
-                                </p>
-                            </i-col>
-                        </i-row>
-                    </TimelineItem>
-                </i-timeline>
-            </i-col>
-        </i-row>
-        <i-row type="flex" justify="space-between">
-            <i-col span="11">
-                <i-form-item label="学历" prop="Educational">
-                    <i-input v-model="modalData.Educational" />
-                </i-form-item>
-            </i-col>
-            <i-col span="11">
-                <i-form-item label="专业" prop="Major">
-                    <i-input v-model="modalData.Major" />
-                </i-form-item>
-            </i-col>
-        </i-row>
-        <i-row type="flex" justify="space-between">
-            <i-col span="11">
-                <i-form-item label="政治面貌" prop="PoliticalStatus">
-                    <dic-select dic="政治面貌" v-model="modalData.PoliticalStatus" />
-                </i-form-item>
-            </i-col>
-            <i-col span="11">
-                <i-form-item label="入团时间" prop="JoinCCYLTime">
-                    <Checkbox v-model="league"></Checkbox>
-                    <i-date-picker v-model="modalData.JoinCCYLTime" :disabled="!league"/>
-                </i-form-item>
-            </i-col>
-        </i-row>
-        <i-row type="flex" justify="space-between">
-            <i-col span="11">
-                <i-form-item label="入党时间" prop="JoinCPCTime">
-                    <Checkbox v-model="party"></Checkbox>
-                    <i-date-picker v-model="modalData.JoinCPCTime" :disabled="!party"/>
-                </i-form-item>
-            </i-col>
-            <i-col span="11">
-                 <i-form-item label="邮箱" prop="Email">
-                    <i-input v-model="modalData.Email" />
-                </i-form-item>
-            </i-col>
-        </i-row>
-        <i-row type="flex" justify="space-between">
-            <i-col span="11">
-                <i-form-item label="电话" prop="Mobile">
-                    <i-input v-model="modalData.Mobile" />
-                </i-form-item>
-            </i-col>
-            <i-col span="11">
-                <i-form-item label="QQ" prop="QQ">
-                    <i-input v-model="modalData.QQ" />
-                </i-form-item>
-            </i-col>
-        </i-row>
-        <i-row type="flex" justify="space-between">
-            <i-col span="11">
-                <i-form-item label="籍贯" prop="BirthPlace">
-                    <i-input v-model="modalData.BirthPlace" />
-                </i-form-item>
-            </i-col>
-            <i-col span="11">
-                <i-form-item label="生源地" prop="Source">
-                    <i-input v-model="modalData.Source" />
-                </i-form-item>
-            </i-col>
-        </i-row>
-    </i-form>
+                </TimelineItem>
+            </i-timeline>
+        </i-col>
+    </i-row>
 </template>
 
 <script>
+    const axios = require("axios");
     const regex = require("@/regex.js");
     export default {
         props: {
@@ -202,8 +140,13 @@
         },
         methods: {
             resetFields () {
-                let form = this.$refs["Form"];
-                form.resetFields();
+                this.$refs["Form"].resetFields();
+            },
+            submit (departId, callback) {
+                axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId}, msg => {
+                    this.resetFields();
+                    callback()
+                })
             }
         }
     }

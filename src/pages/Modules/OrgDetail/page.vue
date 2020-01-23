@@ -83,7 +83,7 @@
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="11">
                                         <i-form-item label="社交媒体">
-                                            <dic-select dic="社交媒体" v-model="orgInfo.SocialMedia"/>
+                                            <i-input v-model="orgInfo.SocialMedia"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11">
@@ -114,7 +114,7 @@
                             <i-button type="primary" @click="saveOrgDetail()">保存</i-button>
                         </i-col>
                         <i-col span="7" offset="1">
-                            <i-timeline>
+                            <i-timeline style="overflow-y:scroll; height:900px; padding-top: 10px;">
                                 <TimelineItem v-for="(item,index) in logs" :key="index">
                                     <i-row>
                                         <p class="time">{{item.OperateOn}} {{item.Operator}}</p>

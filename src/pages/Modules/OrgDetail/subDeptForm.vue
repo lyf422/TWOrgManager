@@ -3,7 +3,7 @@
         <i-row type="flex" justify="space-between">
             <i-col span="24">
                 <i-form-item label="部门名称">
-                    <i-input v-model="modalData.Name"/>
+                    <i-input v-model="modalData.name"/>
                 </i-form-item>
             </i-col>
         </i-row>

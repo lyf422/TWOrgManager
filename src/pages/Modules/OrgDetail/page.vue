@@ -20,9 +20,14 @@
                         <i-col span="16">
                             <i-form :model="orgInfo">
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="24">
+                                    <i-col :span="sort==false ? 24 : 11">
                                         <i-form-item label="社团名称" span="8">
                                             <i-input v-model="orgInfo.Name"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" v-if="sort">
+                                        <i-form-item label="排序号">
+                                            <i-input v-model="orgInfo.Sort"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -197,7 +202,7 @@
                         <i-row>
                             <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData">
                                 <template slot="Action" slot-scope="{index, row}">
-                                    <i-button @click="modifyTableItem(index, row)">管理</i-button>
+                                    <i-button @click="modifySubDepart(index, row)">管理</i-button>
                                     <i-button @click="delTableItem(index)">删除</i-button>
                                 </template>
                             </i-table>
@@ -303,6 +308,10 @@ export default {
         cancel () {
         },
         saveOrgDetail () {
+            if (this.level < 3) {
+                this.$Message.warning("权限不足");
+                return;
+            }
             axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
                     this.$Message.success("部门信息保存成功");
@@ -311,10 +320,11 @@ export default {
                     this.$Message.warning(msg.msg);
                 }
             })
+            this.sort = false;
         },
         getOrgDetail () {
             this.spinShow = true;
-            axios.post("/api/security/GetOrgDetail", {}, msg => {
+            axios.post("/api/security/GetOrgDetail", {id: this.orgInfo.ID}, msg => {
                 if (msg.success) {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
@@ -327,6 +337,10 @@ export default {
                 }
                 this.spinShow = false;
             })
+        },
+        addTableItem () {
+            this.tabSelect = "basicInfo";
+            this.orgInfo = {};
         },
         getMemberTable () {
             this.tableLoading = true;
@@ -356,6 +370,25 @@ export default {
                 this.callbackFunc = this.getMemberTable;
             });
         },
+        modifySubDepart (index, row) {
+            this.tabSelect = "basicInfo";
+            this.sort = true;
+            axios.post("/api/security/GetOrgDetail", {id: row.id}, msg => {
+            if (msg.success) {
+                this.orgInfo = msg.data;
+                this.teachers = msg.teachers;
+                this.users = msg.users;
+                this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
+                this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
+                this.logs = msg.changeLogs.data.reverse();
+                this.level = msg.level;
+            }
+        })
+        },
+        modifyTableItem () {
+
+        },
         addMember () {
             this.modalShow = true;
         },
@@ -383,7 +416,7 @@ export default {
           switch (value) {
                   case "member": this.getMemberTable(); break;
                   case "subDept": this.getDeptTable(); break;
-                  case "basicInfo": this.getOrgDetail(); break;
+                  // case "basicInfo": this.getOrgDetail(); break;
              }
         },
         keyword (v) {
@@ -437,6 +470,7 @@ export default {
                 user: {},
                 changeLogs: []
             },
+            sort: false,
             level: 0,
             orgInfo: {},
             tableData: [],

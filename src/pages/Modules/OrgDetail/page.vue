@@ -296,12 +296,6 @@ export default {
     },
     methods: {
         submit () {
-            if (this.recordData.JoinCCYLTime === "") {
-                this.recordData.JoinCCYLTime = "1990-1-1";
-            }
-            if (this.recordData.JoinCPCTime === "") {
-                this.recordData.JoinCPCTime = "1990-1-1";
-            }
             let form = this.$refs["Form"];
             form.submit(this.orgInfo.ID, this.callbackFunc);
             form.resetFields();

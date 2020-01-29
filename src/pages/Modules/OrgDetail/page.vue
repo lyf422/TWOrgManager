@@ -20,9 +20,14 @@
                         <i-col span="16">
                             <i-form :model="orgInfo">
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="24">
+                                    <i-col :span="sort==false ? 24 : 11">
                                         <i-form-item label="社团名称" span="8">
                                             <i-input v-model="orgInfo.Name"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" v-if="sort">
+                                        <i-form-item label="排序号">
+                                            <i-input v-model="orgInfo.Sort"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -189,7 +194,9 @@
                                         <i-input prefix="ios-search" placeholder="搜索部门"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addTableItem()">添加部门</i-button>
+                                        <i-button type="primary" @click="addSubDepart">
+                                            新建部门
+                                        </i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -197,7 +204,7 @@
                         <i-row>
                             <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData">
                                 <template slot="Action" slot-scope="{index, row}">
-                                    <i-button @click="modifyTableItem(index, row)">管理</i-button>
+                                    <i-button @click="modifySubDepart(index, row)">管理</i-button>
                                     <i-button @click="delTableItem(index)">删除</i-button>
                                 </template>
                             </i-table>
@@ -266,8 +273,7 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal v-model="modalShow" title="添加/修改成员" :fullscreen="componentDic[tabSelect]==='subDept-form'" width="768"
-        @on-ok="submit()" @on-cancel="cancel()">
+        <i-modal v-model="modalShow" title="添加/修改成员" width="768" @on-ok="submit()" @on-cancel="cancel()">
             <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"></component>
         </i-modal>
     </i-row>
@@ -311,10 +317,11 @@ export default {
                     this.$Message.warning(msg.msg);
                 }
             })
+            this.sort = false;
         },
         getOrgDetail () {
             this.spinShow = true;
-            axios.post("/api/security/GetOrgDetail", {}, msg => {
+            axios.post("/api/security/GetOrgDetail", {id: this.orgInfo.ID}, msg => {
                 if (msg.success) {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
@@ -327,6 +334,9 @@ export default {
                 }
                 this.spinShow = false;
             })
+        },
+        addSubDepart () {
+            this.modalShow = true;
         },
         getMemberTable () {
             this.tableLoading = true;
@@ -356,6 +366,12 @@ export default {
                 this.callbackFunc = this.getMemberTable;
             });
         },
+        modifySubDepart (index, row) {
+            window.open("/manage/org/detail?id=" + row.id);
+        },
+        modifyTableItem () {
+
+        },
         addMember () {
             this.modalShow = true;
         },
@@ -381,9 +397,9 @@ export default {
     watch: {
         tabSelect (value) {
           switch (value) {
-                  case "member": this.getMemberTable(); break;
-                  case "subDept": this.getDeptTable(); break;
-                  case "basicInfo": this.getOrgDetail(); break;
+                case "member": this.getMemberTable(); break;
+                case "subDept": this.getDeptTable(); break;
+                case "basicInfo": this.getOrgDetail(); break;
              }
         },
         keyword (v) {
@@ -405,7 +421,7 @@ export default {
                 ])
             }
         });
-        axios.post("/api/security/GetOrgDetail", {}, msg => {
+        axios.post("/api/security/GetOrgDetail", {id: this.$route.query.id ? this.$route.query.id : null}, msg => {
             if (msg.success) {
                 this.orgInfo = msg.data;
                 this.teachers = msg.teachers;
@@ -437,6 +453,7 @@ export default {
                 user: {},
                 changeLogs: []
             },
+            sort: false,
             level: 0,
             orgInfo: {},
             tableData: [],

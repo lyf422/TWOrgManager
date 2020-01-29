@@ -21,8 +21,8 @@
                         </i-form-item>
                     </i-col>
                     <i-col span="11">
-                        <i-form-item label="专业" prop="Major">
-                            <i-input v-model="modalData.user.Major" />
+                        <i-form-item label="专业" prop="Specialty">
+                            <i-input v-model="modalData.user.Specialty" />
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -145,7 +145,7 @@
             submit (departId, callback) {
                 axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId}, msg => {
                     this.resetFields();
-                    callback()
+                    callback();
                 })
             }
         }

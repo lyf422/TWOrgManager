@@ -145,7 +145,7 @@
             submit (departId, callback) {
                 axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId}, msg => {
                     this.resetFields();
-                    callback()
+                    callback();
                 })
             }
         }

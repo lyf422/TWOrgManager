@@ -9,37 +9,16 @@
         </i-row>
         <i-row type="flex" justify="space-between">
             <i-col span="11">
-                <i-form-item label="部门的层级显示">
-                    <i-input v-model="modalData.label"/>
+                <i-form-item label="部门类型">
+                    <i-select v-model="modalData.Type">
+                        <i-option value="0" key="子部门">子部门</i-option>
+                        <i-option value="1" key="社团">社团</i-option>
+                    </i-select>
                 </i-form-item>
             </i-col>
             <i-col span="11">
                 <i-form-item label="挂靠单位">
-                    <org-selector/>
-                </i-form-item>
-            </i-col>
-        </i-row>
-        <i-row type="flex" justify="space-between">
-            <i-col span="11">
-                <i-form-item label="排序号">
-                    <i-input v-model="modalData.Sort"/>
-                </i-form-item>
-            </i-col>
-            <i-col span="11">
-                <i-form-item label="部门的编码">
-                    <i-input v-model="modalData.Code"/>
-                </i-form-item>
-            </i-col>
-        </i-row>
-        <i-row type="flex" justify="space-between">
-            <i-col span="11">
-                <i-form-item label="是否拥有子部门">
-                    <i-input v-model="modalData.isParent" :disabled="modalData.Type===1"/>
-                </i-form-item>
-            </i-col>
-            <i-col span="11">
-                <i-form-item label="管理员姓名">
-                    <i-input v-model="modalData.admin"/>
+                    <org-selector v-model="modalData.ParentId"/>
                 </i-form-item>
             </i-col>
         </i-row>
@@ -47,6 +26,7 @@
 </template>
 
 <script>
+    const axios = require("axios");
     export default {
         props: {
             modalData: {
@@ -62,6 +42,12 @@
             resetFields () {
                 let form = this.$refs["Form"];
                 form.resetFields();
+            },
+            submit (departId, callback) {
+                axios.post("/api/security/SaveDepartV2", this.modalData, msg => {
+                    this.resetFields();
+                    callback()
+                });
             }
         }
     }

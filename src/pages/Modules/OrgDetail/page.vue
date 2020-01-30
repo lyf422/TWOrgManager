@@ -296,12 +296,6 @@ export default {
     },
     methods: {
         submit () {
-            if (this.recordData.JoinCCYLTime === "") {
-                this.recordData.JoinCCYLTime = "1990-1-1";
-            }
-            if (this.recordData.JoinCPCTime === "") {
-                this.recordData.JoinCPCTime = "1990-1-1";
-            }
             let form = this.$refs["Form"];
             form.submit(this.orgInfo.ID, this.callbackFunc);
             form.resetFields();
@@ -326,8 +320,16 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
-                    this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                    if (this.orgInfo.HaveLeagueBranch === "true") {
+                        this.orgInfo.HaveLeagueBranch = Boolean(true);
+                    } else {
+                        this.orgInfo.HaveLeagueBranch = Boolean(false);
+                    };
+                    if (this.orgInfo.HaveCPCBranch === "true") {
+                        this.orgInfo.HaveCPCBranch = Boolean(true);
+                    } else {
+                        this.orgInfo.HaveCPCBranch = Boolean(false);
+                    };
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                     this.logs = msg.changeLogs.data.reverse();
                     this.level = msg.level;
@@ -405,7 +407,7 @@ export default {
                 case "member": this.getMemberTable(); break;
                 case "subDept": this.getDeptTable(); break;
                 case "basicInfo": this.getOrgDetail(); break;
-             }
+            }
         },
         keyword (v) {
             this.setKeyword();

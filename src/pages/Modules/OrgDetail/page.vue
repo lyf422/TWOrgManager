@@ -215,7 +215,7 @@
                             <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData">
                                 <template slot="Action" slot-scope="{index, row}">
                                     <i-button @click="modifySubDepart(index, row)">管理</i-button>
-                                    <i-button @click="delTableItem(index)">删除</i-button>
+                                    <i-button @click="delSubDepart(index, row)">删除</i-button>
                                 </template>
                             </i-table>
                         </i-row>
@@ -307,6 +307,9 @@ export default {
     methods: {
         submit () {
             let form = this.$refs["Form"];
+            if (this.tabSelect === "subDept") {
+                this.callbackFunc = this.getDeptTable;
+            }
             form.submit(this.orgInfo.ID, this.callbackFunc);
             form.resetFields();
         },
@@ -356,12 +359,28 @@ export default {
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData = msg.data.children;
+                this.tableData.map(e => {
+                    if (e.Type === 0) {
+                        e.Type = "挂靠单位";
+                    } else {
+                        e.Type = "社团";
+                    }
+                })
                 this.tableLoading = false;
             });
         },
         delMember (row) {
-             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
+             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId}, msg => {
                 this.getMemberTable();
+            })
+        },
+        delSubDepart (index, row) {
+            axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
+                if (msg.success === false) {
+                        this.$Message.warning(msg.msg);
+                } else {
+                    this.getDeptTable();
+                }
             })
         },
         modifyMember (row) {
@@ -509,7 +528,7 @@ export default {
                     }
                 }
             },
-            callbackFunc: ""
+            callbackFunc: () => {}
         };
     }
 }

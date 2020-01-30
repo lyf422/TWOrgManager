@@ -205,7 +205,7 @@
                             <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData">
                                 <template slot="Action" slot-scope="{index, row}">
                                     <i-button @click="modifySubDepart(index, row)">管理</i-button>
-                                    <i-button @click="delTableItem(index)">删除</i-button>
+                                    <i-button @click="delSubDepart(index, row)">删除</i-button>
                                 </template>
                             </i-table>
                         </i-row>
@@ -297,6 +297,9 @@ export default {
     methods: {
         submit () {
             let form = this.$refs["Form"];
+            if (this.tabSelect === "subDept") {
+                this.callbackFunc = this.getDeptTable;
+            }
             form.submit(this.orgInfo.ID, this.callbackFunc);
             form.resetFields();
         },
@@ -365,6 +368,15 @@ export default {
         delMember (row) {
              axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId}, msg => {
                 this.getMemberTable();
+            })
+        },
+        delSubDepart (index, row) {
+            axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
+                if (msg.success === false) {
+                        this.$Message.warning(msg.msg);
+                } else {
+                    this.getDeptTable();
+                }
             })
         },
         modifyMember (row) {

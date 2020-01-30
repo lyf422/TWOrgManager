@@ -400,7 +400,7 @@ export default {
                 case "member": this.getMemberTable(); break;
                 case "subDept": this.getDeptTable(); break;
                 case "basicInfo": this.getOrgDetail(); break;
-             }
+            }
         },
         keyword (v) {
             this.setKeyword();

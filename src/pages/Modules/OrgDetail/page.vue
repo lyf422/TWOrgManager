@@ -352,6 +352,13 @@ export default {
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData = msg.data.children;
+                this.tableData.map(e => {
+                    if (e.Type === 0) {
+                        e.Type = "挂靠单位";
+                    } else {
+                        e.Type = "社团";
+                    }
+                })
                 this.tableLoading = false;
             });
         },

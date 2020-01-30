@@ -143,6 +143,12 @@
                 this.$refs["Form"].resetFields();
             },
             submit (departId, callback) {
+                if (!this.modalData.user.JoinCCYLTime) {
+                    this.modalData.user.JoinCCYLTime = "1990-1-1";
+                }
+                if (!this.modalData.user.JoinCPCTime) {
+                    this.modalData.user.JoinCPCTime = "1990-1-1";
+                }
                 axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId}, msg => {
                     this.resetFields();
                     callback();

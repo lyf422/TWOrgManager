@@ -15,5 +15,10 @@ module.exports = {
         layout: "admin",
         showAs: "OrgManage",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/ActivityForm")
+    },
+    WorkflowConfig: {
+        path: "/manage/wwf/config",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/WorkflowConfig")
     }
 };

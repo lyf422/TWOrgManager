@@ -296,12 +296,6 @@ export default {
     },
     methods: {
         submit () {
-            if (this.recordData.JoinCCYLTime === "") {
-                this.recordData.JoinCCYLTime = "1990-1-1";
-            }
-            if (this.recordData.JoinCPCTime === "") {
-                this.recordData.JoinCPCTime = "1990-1-1";
-            }
             let form = this.$refs["Form"];
             form.submit(this.orgInfo.ID, this.callbackFunc);
             form.resetFields();
@@ -373,6 +367,11 @@ export default {
 
         },
         addMember () {
+            this.recordData = {
+                RealName: "",
+                user: {},
+                changeLogs: []
+            };
             this.modalShow = true;
         },
         setPositon (row, position) {
@@ -450,6 +449,7 @@ export default {
             spinShow: false,
             tableLoading: false,
             recordData: {
+                RealName: "",
                 user: {},
                 changeLogs: []
             },
@@ -497,5 +497,8 @@ export default {
 }
 .spin-icon-load{
     animation: ani-demo-spin 1s linear infinite;
+}
+.ivu-poptip-body-content {
+    overflow: hidden;
 }
 </style>

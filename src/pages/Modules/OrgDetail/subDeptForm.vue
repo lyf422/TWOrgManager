@@ -50,7 +50,7 @@
                     if (msg.success === false) {
                         this.$Message.warning(msg.msg);
                     } else {
-                        // window.open("/manage/org/detail?id=" + id);
+                        window.open("/manage/org/detail?id=" + msg.id);
                     }
                 });
             }

@@ -363,7 +363,7 @@ export default {
             });
         },
         delMember (row) {
-             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
+             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId}, msg => {
                 this.getMemberTable();
             })
         },

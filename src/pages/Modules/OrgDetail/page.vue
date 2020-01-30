@@ -493,7 +493,7 @@ export default {
                     }
                 }
             },
-            callbackFunc: ""
+            callbackFunc: () => {}
         };
     }
 }

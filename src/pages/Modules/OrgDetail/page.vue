@@ -326,8 +326,16 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
-                    this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                    if (this.orgInfo.HaveLeagueBranch === "true") {
+                        this.orgInfo.HaveLeagueBranch = Boolean(true);
+                    } else {
+                        this.orgInfo.HaveLeagueBranch = Boolean(false);
+                    };
+                    if (this.orgInfo.HaveCPCBranch === "true") {
+                        this.orgInfo.HaveCPCBranch = Boolean(true);
+                    } else {
+                        this.orgInfo.HaveCPCBranch = Boolean(false);
+                    };
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                     this.logs = msg.changeLogs.data.reverse();
                     this.level = msg.level;

@@ -20,9 +20,14 @@
                         <i-col span="16">
                             <i-form :model="orgInfo">
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="24">
+                                    <i-col :span="sort==false ? 24 : 11">
                                         <i-form-item label="社团名称" span="8">
                                             <i-input v-model="orgInfo.Name"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" v-if="sort">
+                                        <i-form-item label="排序号">
+                                            <i-input v-model="orgInfo.Sort"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -83,7 +88,7 @@
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="11">
                                         <i-form-item label="社交媒体">
-                                            <dic-select dic="社交媒体" v-model="orgInfo.SocialMedia"/>
+                                            <i-input v-model="orgInfo.SocialMedia"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11">
@@ -114,18 +119,15 @@
                             <i-button type="primary" @click="saveOrgDetail()">保存</i-button>
                         </i-col>
                         <i-col span="7" offset="1">
-                            <i-timeline>
+                            <i-timeline style="overflow-y:scroll; height:900px; padding-top: 10px;">
                                 <TimelineItem v-for="(item,index) in logs" :key="index">
                                     <i-row>
-                                        <i-col span="12">
-                                            <p class="time">{{item.OperateOn}}</p>
-                                            <p class="content">{{item.Operator}}{{item.Abstract}}</p>
-                                        </i-col>
-                                        <i-col span="12" style="font-size: 0.7em;color: #808080;">
-                                            <p v-for="(d,index) in item.Details" :key="index">
+                                        <p class="time">{{item.OperateOn}} {{item.Operator}}</p>
+                                        <p class="content">
+                                            <i-row v-for="(d,index) in item.Details" :key="index">
                                                 {{d}}
-                                            </p>
-                                        </i-col>
+                                            </i-row>
+                                        </p>
                                     </i-row>
                                 </TimelineItem>
                             </i-timeline>
@@ -144,19 +146,19 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索成员（没有做）" />
+                                        <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addTableItem()">添加成员</i-button>
+                                        <i-button type="primary" @click="addMember()">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
                         </i-row>
                         <i-table stripe :columns="tableCol.member" :data="tableData" :loading="tableLoading">
-                            <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
+                            <template slot="Action" slot-scope="{row}">
+                                <i-button @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="row.isAdmin" @click="delTableItem(index, row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
+                                    <i-button :disabled="row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
                                 <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer v-model="visible" v-if="row.isAdmin">
@@ -179,44 +181,54 @@
                 </i-tab-pane>
                 <i-tab-pane :disabled="orgInfo.Type===1" label="子部门" name="subDept">
                     <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                        <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
-                                子部门
+                                <i-row type="flex" align="middle" :gutter="16">
+                                    <i-col>子部门</i-col>
+                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
+                                </i-row>
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索部门"/>
-                            </i-col>
-                            <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary">添加部门</i-button>
+                                <i-row type="flex" :gutter="16">
+                                    <i-col>
+                                        <i-input prefix="ios-search" placeholder="搜索部门"/>
+                                    </i-col>
+                                    <i-col>
+                                        <i-button type="primary" @click="addSubDepart">
+                                            新建部门
+                                        </i-button>
+                                    </i-col>
+                                </i-row>
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.subDept" :data="tableData">
-                            <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)">管理</i-button>
-                                <i-button @click="delTableItem(index)">删除</i-button>
-                            </template>
-                        </i-table>
+                            <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData">
+                                <template slot="Action" slot-scope="{index, row}">
+                                    <i-button @click="modifySubDepart(index, row)">管理</i-button>
+                                    <i-button @click="delTableItem(index)">删除</i-button>
+                                </template>
+                            </i-table>
                         </i-row>
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane :disabled="orgInfo.Type===0" label="指导老师" name="tutor">
                     <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                        <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
-                                指导老师
+                                <i-row type="flex" align="middle" :gutter="16">
+                                    <i-col>指导老师</i-col>
+                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
+                                </i-row>
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="15">
-                                <i-input prefix="ios-search" placeholder="搜索指导老师"/>
-                            </i-col>
-                            <i-col span="3" push="15">
-                                <i-button style="width: 100%" type="primary">添加指导老师</i-button>
+                                <i-row type="flex" :gutter="16">
+                                    <i-col>
+                                        <i-input prefix="ios-search" placeholder="搜索老师"/>
+                                    </i-col>
+                                    <i-col>
+                                        <i-button type="primary">添加老师</i-button>
+                                    </i-col>
+                                </i-row>
                             </i-col>
                         </i-row>
                         <i-row>
@@ -231,18 +243,22 @@
                 </i-tab-pane>
                 <i-tab-pane label="社团活动" name="activity">
                     <i-card dis-hover>
-                        <i-row type="flex" align="middle" :gutter="16" slot="title">
+                        <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
-                                社团活动
+                                <i-row type="flex" align="middle" :gutter="16">
+                                    <i-col>社团活动</i-col>
+                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
+                                </i-row>
                             </i-col>
                             <i-col>
-                                <i-badge :count="tableData.length"></i-badge>
-                            </i-col>
-                            <i-col span="4" push="16">
-                                <i-input prefix="ios-search" placeholder="搜索活动"/>
-                            </i-col>
-                            <i-col span="2" push="16">
-                                <i-button style="width: 100%" type="primary">添加活动</i-button>
+                                <i-row type="flex" :gutter="16">
+                                    <i-col>
+                                        <i-input prefix="ios-search" placeholder="搜索活动"/>
+                                    </i-col>
+                                    <i-col>
+                                        <i-button type="primary">添加活动</i-button>
+                                    </i-col>
+                                </i-row>
                             </i-col>
                         </i-row>
                         <i-row>
@@ -257,8 +273,7 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal v-model="modalShow" title="添加/修改成员" :fullscreen="componentDic[tabSelect]==='subDept-form'"
-        @on-ok="submit()" @on-cancel="cancel()">
+        <i-modal v-model="modalShow" title="添加/修改成员" width="768" @on-ok="submit()" @on-cancel="cancel()">
             <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"></component>
         </i-modal>
     </i-row>
@@ -271,7 +286,7 @@ import subDeptForm from "./subDeptForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
 const md5 = require("md5");
-// const testData = require("./testData");
+let _ = require("lodash");
 const axios = require("axios");
 export default {
     components: {
@@ -282,17 +297,12 @@ export default {
     methods: {
         submit () {
             let form = this.$refs["Form"];
-            axios.post("/api/security/SaveUserV2", {...this.recordData, departId: this.orgInfo.ID}, msg => {
-                this.getTable(this.tabSelect);
-                form.resetFields();
-            })
-        },
-        cancel () {
-            let form = this.$refs["Form"];
+            form.submit(this.orgInfo.ID, this.callbackFunc);
             form.resetFields();
         },
+        cancel () {
+        },
         saveOrgDetail () {
-            this.orgInfo.Code = "789";
             axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
                     this.$Message.success("部门信息保存成功");
@@ -301,70 +311,106 @@ export default {
                     this.$Message.warning(msg.msg);
                 }
             })
+            this.sort = false;
         },
         getOrgDetail () {
             this.spinShow = true;
-            axios.post("/api/security/GetOrgDetail", {}, msg => {
+            axios.post("/api/security/GetOrgDetail", {id: this.orgInfo.ID}, msg => {
                 if (msg.success) {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
-                    this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                    if (this.orgInfo.HaveLeagueBranch === "true") {
+                        this.orgInfo.HaveLeagueBranch = Boolean(true);
+                    } else {
+                        this.orgInfo.HaveLeagueBranch = Boolean(false);
+                    };
+                    if (this.orgInfo.HaveCPCBranch === "true") {
+                        this.orgInfo.HaveCPCBranch = Boolean(true);
+                    } else {
+                        this.orgInfo.HaveCPCBranch = Boolean(false);
+                    };
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
-                    this.changeLogs = msg.changeLogs;
-                    this.logs = this.changeLogs.data.reverse();
+                    this.logs = msg.changeLogs.data.reverse();
                     this.level = msg.level;
                 }
                 this.spinShow = false;
             })
         },
-        getTable (name) {
+        addSubDepart () {
+            this.modalShow = true;
+        },
+        getMemberTable () {
             this.tableLoading = true;
-            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
+            let userName = this.keyword ? this.keyword : undefined;
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name: userName}, msg => {
                 this.tableData = msg.data;
                 this.tableLoading = false;
-            })
-        },
-        delTableItem (index, row) {
-             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
-                this.getTable(this.tabSelect);
-            })
-        },
-        modifyTableItem (index, row) {
-            if (this.tabSelect === 'member') {
-            axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
-                this.recordData = msg.user;
-                this.modalShow = true;
             });
-            } else {
-                this.recordData = JSON.parse(JSON.stringify(row));
-                this.modalShow = true;
-            }
         },
-        addTableItem () {
+        getDeptTable () {
+            this.tableLoading = true;
+            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
+                this.tableData = msg.data.children;
+                this.tableLoading = false;
+            });
+        },
+        delMember (row) {
+             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
+                this.getMemberTable();
+            })
+        },
+        modifyMember (row) {
+            axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
+                this.recordData.user = msg.user;
+                this.recordData.changeLogs = msg.changeLogs;
+                this.modalShow = true;
+                this.callbackFunc = this.getMemberTable;
+            });
+        },
+        modifySubDepart (index, row) {
+            window.open("/manage/org/detail?id=" + row.id);
+        },
+        modifyTableItem () {
+
+        },
+        addMember () {
+            this.recordData = {
+                RealName: "",
+                user: {},
+                changeLogs: []
+            };
             this.modalShow = true;
         },
         setPositon (row, position) {
             axios.post("/api/security/SetPositionV2", {userId: row.ID, departId: this.orgInfo.ID, position}, msg => {
-                this.getTable(this.tabSelect);
+                this.getMemberTable();
             })
         },
         setPassword (row) {
             axios.post("/api/security/SetPassword", {userId: row.ID, departId: this.orgInfo.ID, password: md5(this.password.password)}, msg => {
-                this.getTable(this.tabSelect);
+                this.getMemberTable();
                 this.$Message.info('修改成功');
             })
             this.visible = false;
         },
         cancelSet () {
             this.visible = false;
-        }
+        },
+        setKeyword: _.debounce(function () {
+            this.getMemberTable();
+        }, 500)
     },
     watch: {
         tabSelect (value) {
-            if (value === "basicInfo") return;
-            this.getTable(value)
+          switch (value) {
+                case "member": this.getMemberTable(); break;
+                case "subDept": this.getDeptTable(); break;
+                case "basicInfo": this.getOrgDetail(); break;
+            }
+        },
+        keyword (v) {
+            this.setKeyword();
         }
     },
     mounted () {
@@ -382,7 +428,7 @@ export default {
                 ])
             }
         });
-        axios.post("/api/security/GetOrgDetail", {}, msg => {
+        axios.post("/api/security/GetOrgDetail", {id: this.$route.query.id ? this.$route.query.id : null}, msg => {
             if (msg.success) {
                 this.orgInfo = msg.data;
                 this.teachers = msg.teachers;
@@ -390,8 +436,7 @@ export default {
                 this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
                 this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
                 this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
-                this.changeLogs = msg.changeLogs;
-                this.logs = this.changeLogs.data.reverse();
+                this.logs = msg.changeLogs.data.reverse();
                 this.level = msg.level;
             }
             this.$Spin.hide();
@@ -405,15 +450,20 @@ export default {
             tableCol,
             visible: false,
             logs: [],
+            keyword: "",
             teachers: [],
             users: 0,
             tabSelect: "",
             spinShow: false,
             tableLoading: false,
-            recordData: {},
+            recordData: {
+                RealName: "",
+                user: {},
+                changeLogs: []
+            },
+            sort: false,
             level: 0,
             orgInfo: {},
-            changeLogs: {},
             tableData: [],
             modalShow: false,
             componentDic: {
@@ -435,7 +485,8 @@ export default {
                         value === THIS.password.password ? callback() : callback(new Error('两次输入的密码不一致'));
                     }
                 }
-            }
+            },
+            callbackFunc: ""
         };
     }
 }
@@ -453,6 +504,9 @@ export default {
     padding-left: 5px;
 }
 .spin-icon-load{
-        animation: ani-demo-spin 1s linear infinite;
+    animation: ani-demo-spin 1s linear infinite;
+}
+.ivu-poptip-body-content {
+    overflow: hidden;
 }
 </style>

@@ -29,19 +29,19 @@ let tableCol = {
     subDept: [
         {
             title: '部门名称',
-            key: 'Name'
+            key: 'name'
         },
         {
-            title: '类型',
-            key: 'DepartType'
+            title: '部门层级显示',
+            key: 'label'
         },
         {
-            title: '挂靠单位',
-            key: 'ParentId'
+            title: '是否拥有子部门',
+            key: 'isParent'
         },
         {
-            title: '成立时间',
-            key: 'BirthTime'
+            title: '管理员姓名',
+            key: 'admin'
         },
         {
             title: '操作',

@@ -64,7 +64,7 @@
                             </template>
                             <template v-else>
                                 <i-cell :to="routers[3]">指导老师:{{dashBoard.teachers.length}}名</i-cell>
-                                <i-cell v-for="(item,index) in dashBoard.teachers" :key="index" style="padding-left: 30px">{{item}}</i-cell>
+                                <i-cell v-for="(item,index) in dashBoard.teachers" :key="index" style="padding-left: 30px">{{item.RealName}}</i-cell>
                             </template>
                         </template>
                         <i-cell :title="`子部门:${dashBoard.children?dashBoard.children:'无'}`" v-else-if="dashBoard.DepartType===0" :to="routers[2]">

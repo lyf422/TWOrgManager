@@ -20,14 +20,9 @@
                         <i-col span="16">
                             <i-form :model="orgInfo">
                                 <i-row type="flex" justify="space-between">
-                                    <i-col :span="sort==false ? 24 : 11">
+                                    <i-col span="24">
                                         <i-form-item label="社团名称" span="8">
                                             <i-input v-model="orgInfo.Name"/>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="11" v-if="sort">
-                                        <i-form-item label="排序号">
-                                            <i-input v-model="orgInfo.Sort"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -52,6 +47,21 @@
                                     <i-col span="11">
                                         <i-form-item label="挂靠单位">
                                             <org-selector v-model="orgInfo.ParentId"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex" justify="space-between" v-if="level === 3">
+                                    <i-col span="11">
+                                        <i-form-item label="排序号">
+                                            <i-input v-model="orgInfo.Sort"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11">
+                                        <i-form-item label="部门类型">
+                                            <i-select v-model="orgInfo.Type">
+                                                <i-option :value="0" key="挂靠单位">挂靠单位</i-option>
+                                                <i-option :value="1" key="社团">社团</i-option>
+                                            </i-select>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -323,17 +333,11 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    if (this.orgInfo.HaveLeagueBranch === "true") {
-                        this.orgInfo.HaveLeagueBranch = Boolean(true);
-                    } else {
-                        this.orgInfo.HaveLeagueBranch = Boolean(false);
-                    };
-                    if (this.orgInfo.HaveCPCBranch === "true") {
-                        this.orgInfo.HaveCPCBranch = Boolean(true);
-                    } else {
-                        this.orgInfo.HaveCPCBranch = Boolean(false);
-                    };
+                    // 弥补接口错误
+                    this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
+                    this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
+                    // 至此结束
                     this.logs = msg.changeLogs.data.reverse();
                     this.level = msg.level;
                 }
@@ -422,7 +426,7 @@ export default {
     },
     watch: {
         tabSelect (value) {
-          switch (value) {
+            switch (value) {
                 case "member": this.getMemberTable(); break;
                 case "subDept": this.getDeptTable(); break;
                 case "basicInfo": this.getOrgDetail(); break;
@@ -430,6 +434,26 @@ export default {
         },
         keyword (v) {
             this.setKeyword();
+        },
+        "orgInfo.Type" (value, oldValue) {
+            if (value === oldValue || oldValue === undefined) return;
+            this.$Modal.confirm({
+                title: "确实要更改部门类型吗？",
+                content: `将部门类型由<strong>${oldValue === 0 ? "挂靠单位" : "社团"}</strong>更改为
+                    <strong>${value === 0 ? "挂靠单位" : "社团"}</strong>`,
+                onOk: () => {
+                    axios.post("/api/security/SwitchDepartType", {
+                        id: this.orgInfo.ID,
+                        cate: this.orgInfo.Type === 0 ? "挂靠单位" : "社团",
+                        type: value
+                    }, msg => {
+                        this.getOrgDetail();
+                    });
+                },
+                onCancel: () => {
+                    this.orgInfo.Type = oldValue;
+                }
+            })
         }
     },
     mounted () {
@@ -480,7 +504,6 @@ export default {
                 user: {},
                 changeLogs: []
             },
-            sort: false,
             level: 0,
             orgInfo: {},
             tableData: [],

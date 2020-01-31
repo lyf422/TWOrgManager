@@ -52,7 +52,7 @@
             </i-col>
             <Divider type="vertical" />
             <i-col span="5" offset="2">
-                <i-card :padding="0"  :to="routers[0]">
+                <i-card :padding="0" :to="routers[0]">
                     <template slot="title">
                         {{dashBoard.Name||'请设置社团名称'}}
                     </template>

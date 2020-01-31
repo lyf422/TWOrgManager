@@ -105,6 +105,28 @@ let tableCol = {
             title: '操作',
             slot: 'Action'
         }
+    ],
+    operation: [
+        {
+            title: 'MethodName',
+            key: 'MethodName'
+        },
+        {
+            title: 'CreatedBy',
+            key: 'CreatedBy'
+        },
+        {
+            title: 'Description',
+            key: 'Description'
+        },
+        {
+            title: 'IPAddress',
+            key: 'IPAddress'
+        },
+        {
+            title: 'CreatedOn',
+            key: 'CreatedOn'
+        }
     ]
 };
 module.exports = tableCol;

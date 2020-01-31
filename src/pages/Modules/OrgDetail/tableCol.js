@@ -36,8 +36,8 @@ let tableCol = {
             key: 'label'
         },
         {
-            title: '是否拥有子部门',
-            key: 'isParent'
+            title: '部门类型',
+            key: 'Type'
         },
         {
             title: '管理员姓名',

@@ -281,6 +281,10 @@
                         </i-row>
                     </i-card>
                 </i-tab-pane>
+                <i-tab-pane label="操作日志" name="operation">
+                    <i-table stripe :columns="tableCol.operation" :data="tableData">
+                    </i-table>
+                </i-tab-pane>
             </i-tabs>
         </i-card>
         <i-modal v-model="modalShow" title="添加/修改成员" width="768" @on-ok="submit()" @on-cancel="cancel()">
@@ -369,6 +373,13 @@ export default {
                 this.tableLoading = false;
             });
         },
+        getOptDetail () {
+            this.tableLoading = true;
+            axios.post("/api/logs/GetLogsByDepartId", {departId: this.orgInfo.ID}, msg => {
+                this.tableData = msg.data;
+                this.tableLoading = false;
+            });
+        },
         delMember (row) {
              axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId}, msg => {
                 this.getMemberTable();
@@ -430,6 +441,7 @@ export default {
                 case "member": this.getMemberTable(); break;
                 case "subDept": this.getDeptTable(); break;
                 case "basicInfo": this.getOrgDetail(); break;
+                case "operation": this.getOptDetail(); break;
             }
         },
         keyword (v) {

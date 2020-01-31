@@ -233,19 +233,19 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索老师"/>
+                                        <i-input prefix="ios-search" placeholder="搜索老师" v-model="keyword" @keyup.enter.native="getTutorTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary">添加老师</i-button>
+                                        <i-button type="primary" @click="addTutor">添加老师</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.tutor" :data="tableData">
-                            <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
-                                <i-button @click="delTableItem(index)">删除</i-button>
+                        <i-table stripe :columns="tableCol.tutor" :data="tableData" :loading="tableLoading">
+                            <template slot="Action" slot-scope="{row}">
+                                <i-button @click="modifyTutor(row)">修改</i-button>
+                                <i-button @click="delTutor(row)">删除</i-button>
                             </template>
                         </i-table>
                         </i-row>
@@ -314,6 +314,9 @@ export default {
             if (this.tabSelect === "subDept") {
                 this.callbackFunc = this.getDeptTable;
             }
+            if (this.tabSelect === "tutor") {
+                this.callbackFunc = this.getTutorTable;
+            }
             form.submit(this.orgInfo.ID, this.callbackFunc);
             form.resetFields();
         },
@@ -351,6 +354,14 @@ export default {
         addSubDepart () {
             this.modalShow = true;
         },
+        addTutor () {
+            this.recordData = {
+                RealName: "",
+                user: {},
+                changeLogs: []
+            };
+            this.modalShow = true;
+        },
         getMemberTable () {
             this.tableLoading = true;
             let userName = this.keyword ? this.keyword : undefined;
@@ -359,6 +370,33 @@ export default {
                 this.tableLoading = false;
             });
         },
+        getTutorTable (user, departId) {
+            if (user !== undefined && user.ID === undefined) {
+                this.getNewTutor(user.RealName, departId);
+            }
+            this.tableLoading = true;
+            let userName = this.keyword ? this.keyword : undefined;
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name: userName, position: "指导老师"}, msg => {
+                this.tableData = msg.data;
+                this.tableLoading = false;
+            });
+        },
+        getNewTutor (realName, departId) {
+                axios.post("/api/security/GetUsersByDepartId", {name: realName, departId: departId}, msg => {
+                    if (msg.success) {
+                        let param = msg.data[0];
+                        this.setTutor(param, departId);
+                    }
+                })
+        },
+        setTutor (param, departId) {
+                axios.post("/api/security/SetPositionV2", {userId: param.ID, departId: departId, position: "指导老师"}, msg => {
+                    if (msg.success) {
+                        this.$Message.info('创建成功');
+                        this.getTutorTable();
+                    }
+                })
+            },
         getDeptTable () {
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
@@ -385,6 +423,11 @@ export default {
                 this.getMemberTable();
             })
         },
+        delTutor (row) {
+             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId, position: "指导老师"}, msg => {
+                this.getTutorTable();
+            })
+        },
         delSubDepart (index, row) {
             axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
                 if (msg.success === false) {
@@ -400,6 +443,14 @@ export default {
                 this.recordData.changeLogs = msg.changeLogs;
                 this.modalShow = true;
                 this.callbackFunc = this.getMemberTable;
+            });
+        },
+        modifyTutor (row) {
+            axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
+                this.recordData.user = msg.user;
+                this.recordData.changeLogs = msg.changeLogs;
+                this.modalShow = true;
+                this.callbackFunc = this.getTutorTable;
             });
         },
         modifySubDepart (index, row) {
@@ -432,7 +483,12 @@ export default {
             this.visible = false;
         },
         setKeyword: _.debounce(function () {
-            this.getMemberTable();
+                if (this.tabSelect === "member") {
+                    this.getMemberTable();
+                }
+                if (this.tabSelect === "tutor") {
+                    this.getTutorTable();
+                }
         }, 500)
     },
     watch: {
@@ -441,6 +497,7 @@ export default {
                 case "member": this.getMemberTable(); break;
                 case "subDept": this.getDeptTable(); break;
                 case "basicInfo": this.getOrgDetail(); break;
+                case "tutor": this.getTutorTable(); break;
                 case "operation": this.getOptDetail(); break;
             }
         },

@@ -51,23 +51,15 @@ let tableCol = {
     tutor: [
         {
             title: '姓名',
-            key: 'Name'
+            key: 'RealName'
         },
         {
             title: '工号',
             key: 'Code'
         },
         {
-            title: '类别',
-            key: 'Category'
-        },
-        {
-            title: '政治面貌',
-            key: 'Status'
-        },
-        {
-            title: '单位',
-            key: 'Company'
+            title: '手机',
+            key: 'Mobile'
         },
         {
             title: '操作',

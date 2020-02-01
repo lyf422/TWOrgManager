@@ -2,7 +2,7 @@
     <i-card>
         <i-row type="flex">
             <i-col span="3">
-                <i-button size="large" type="primary" @click="showModal(-1)">新建工作流</i-button>
+                <i-button size="large" type="primary" @click="createWorkFlow">新建工作流</i-button>
             </i-col>
             <i-col span="6">
                 <i-input prefix="ios-search" size="large" placeholder="查询工作流" />
@@ -22,7 +22,7 @@
                 </i-form-item>
             </i-form>
             <div slot="footer">
-                <Button type="primary" @click="createWorkFlow">确认</Button>
+                <Button type="primary" @click="submit">确认</Button>
             </div>
         </i-modal>
     </i-card>
@@ -58,31 +58,31 @@ export default {
             }
     },
     methods: {
-        showModal (index, row) {
+        createWorkFlow () {
             this.visible = true;
-            if (index === -1) {
-                this.json = "";
+            this.json = "";
+        },
+        modifyWorkFlow (index, row) {
+            this.visible = true;
+            let temp = {};
+            if (!row.children) {
+                temp = row;
             } else {
-                let temp = {};
-                if (!row.children) {
-                    temp = row;
-                } else {
-                    row.children.map(e => {
-                        if (e.Version === row.Version) {
-                            temp = e;
-                        }
-                    })
-                }
-                axios.postStream("/api/workflow/GetWorkflowJson", {id: temp.ID}, msg => {
-                    if (msg.success) {
-                        this.json = msg.json;
-                    } else {
-                        this.$Message.warning(msg.msg);
+                row.children.map(e => {
+                    if (e.Version === row.Version) {
+                        temp = e;
                     }
                 })
             }
+            axios.postStream("/api/workflow/GetWorkflowJson", {id: temp.ID}, msg => {
+                if (msg.success) {
+                    this.json = msg.json;
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         },
-        createWorkFlow () {
+        submit () {
             let json = window.btoa(encodeURIComponent(this.json));
             axios.postStream("/api/workflow/SubmitWorkflow", {json: json}, msg => {
                 if (msg.success) {
@@ -93,7 +93,7 @@ export default {
                         closable: true
                     });
                     } else {
-                        this.$Message.success("工作流创建成功");
+                        this.$Message.success("提交成功");
                     }
                 } else {
                     this.$Message.warning({
@@ -105,9 +105,6 @@ export default {
             })
             this.visible = false;
             this.getWorkFlows();
-        },
-        modifyWorkFlow (index, row) {
-            this.showModal(index, row);
         },
         getWorkFlows () {
             axios.post("/api/workflow/GetWorkflows", {}, msg => {

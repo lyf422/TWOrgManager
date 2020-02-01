@@ -69,7 +69,7 @@ export default {
                         temp = e;
                     }
                 })
-                axios.post("/api/workflow/GetWorkflowJson", {id: temp.ID}, msg => {
+                axios.postStream("/api/workflow/GetWorkflowJson", {id: temp.ID}, msg => {
                     if (msg.success) {
                         this.json = msg.json;
                     } else {
@@ -83,12 +83,20 @@ export default {
             axios.postStream("/api/workflow/SubmitWorkflow", {json: json}, msg => {
                 if (msg.success) {
                     if (msg.Errors.length > 0) {
-                        this.$Message.warning(msg.Errors[0]);
+                        this.$Message.warning({
+                        content: msg.Errors[0],
+                        duration: 0,
+                        closable: true
+                    });
                     } else {
                         this.$Message.success("工作流创建成功");
                     }
                 } else {
-                    this.$Message.warning(msg.msg);
+                    this.$Message.warning({
+                        content: msg.Errors[0],
+                        duration: 0,
+                        closable: true
+                    });
                 }
             })
             this.visible = false;

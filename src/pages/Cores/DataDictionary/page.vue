@@ -175,7 +175,6 @@ export default {
 
 <style lang="less">
 #DataDictionary {
-    padding: 16px;
     .ivu-table-filter-list {
         width: 120px;
     }

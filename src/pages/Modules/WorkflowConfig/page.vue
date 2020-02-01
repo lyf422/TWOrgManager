@@ -11,7 +11,7 @@
         <i-divider />
         <i-table stripe :columns="columns" :data="data" row-key="ID">
             <template slot="action" slot-scope="{index, row}">
-                <i-button @click="reloadWorkFlow(index, row)">刷新</i-button>
+                <i-button @click="reloadWorkFlow(row)">刷新</i-button>
                 <i-button @click="modifyWorkFlow(index,row)">修改</i-button>
             </template>
         </i-table>
@@ -42,7 +42,7 @@ export default {
                 },
                 {
                     title: "激活版本",
-                    key: "ActivationVersion"
+                    key: "Version"
                 },
                 {
                     title: "创建时间",
@@ -64,11 +64,15 @@ export default {
                 this.json = "";
             } else {
                 let temp = {};
-                row.Histories.map(e => {
-                    if (e.Version === row.ActivationVersion) {
-                        temp = e;
-                    }
-                })
+                if (!row.children) {
+                    temp = row;
+                } else {
+                    row.children.map(e => {
+                        if (e.Version === row.Version) {
+                            temp = e;
+                        }
+                    })
+                }
                 axios.postStream("/api/workflow/GetWorkflowJson", {id: temp.ID}, msg => {
                     if (msg.success) {
                         this.json = msg.json;
@@ -114,7 +118,7 @@ export default {
                 }
             })
         },
-        reloadWorkFlow (index, row) {
+        reloadWorkFlow (row) {
             axios.post("/api/workflow/ReloadWorkflow", {workflow: row.Name, version: row.Version}, msg => {
                 if (msg.success) {
                     this.$Message.success("刷新成功");

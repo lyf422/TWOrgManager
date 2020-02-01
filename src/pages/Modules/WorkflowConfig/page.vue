@@ -92,6 +92,7 @@ export default {
                 }
             })
             this.visible = false;
+            this.getWorkFlows();
         },
         modifyWorkFlow (index, row) {
             this.showModal(index, row);

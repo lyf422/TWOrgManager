@@ -59,11 +59,10 @@ export default {
     },
     methods: {
         createWorkFlow () {
-            this.visible = true;
             this.json = "";
+            this.visible = true;
         },
         modifyWorkFlow (index, row) {
-            this.visible = true;
             let temp = {};
             if (!row.children) {
                 temp = row;
@@ -77,6 +76,7 @@ export default {
             axios.postStream("/api/workflow/GetWorkflowJson", {id: temp.ID}, msg => {
                 if (msg.success) {
                     this.json = msg.json;
+                    this.visible = true;
                 } else {
                     this.$Message.warning(msg.msg);
                 }

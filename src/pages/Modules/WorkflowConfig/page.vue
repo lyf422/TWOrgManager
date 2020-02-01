@@ -18,7 +18,7 @@
         <i-modal title="新建/管理工作流" v-model="visible">
             <i-form>
                 <i-form-item label="工作流内容">
-                    <i-input type="textarea" :rows="8" v-model="json"/>
+                    <i-input type="textarea" :autosize="{minRows: 8,maxRows: 25}" v-model="json"/>
                 </i-form-item>
             </i-form>
             <div slot="footer">
@@ -79,7 +79,7 @@ export default {
             }
         },
         createWorkFlow () {
-            var json = window.btoa(encodeURIComponent(this.json));
+            let json = window.btoa(encodeURIComponent(this.json));
             axios.postStream("/api/workflow/SubmitWorkflow", {json: json}, msg => {
                 if (msg.success) {
                     if (msg.Errors.length > 0) {

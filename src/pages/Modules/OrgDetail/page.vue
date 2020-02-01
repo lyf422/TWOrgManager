@@ -462,7 +462,6 @@ export default {
         },
         addMember () {
             this.recordData = {
-                RealName: "",
                 user: {},
                 changeLogs: []
             };
@@ -566,7 +565,6 @@ export default {
             spinShow: false,
             tableLoading: false,
             recordData: {
-                RealName: "",
                 user: {},
                 changeLogs: []
             },

@@ -104,32 +104,32 @@ export default {
             routers: [
                 {
                     name: "OrgDetail",
-                    params: {
+                    query: {
                         tabSelect: "basicInfo"
                     }
                 }, {
                     name: "OrgDetail",
-                    params: {
+                    query: {
                         tabSelect: "member"
                     }
                 }, {
                     name: "OrgDetail",
-                    params: {
+                    query: {
                         tabSelect: "subDept"
                     }
                 }, {
                     name: "OrgDetail",
-                    params: {
+                    query: {
                         tabSelect: "tutor"
                     }
                 }, {
                     name: "OrgDetail",
-                    params: {
+                    query: {
                         tabSelect: "manager"
                     }
                 }, {
                     name: "OrgDetail",
-                    params: {
+                    query: {
                         tabSelect: "activity"
                     }
                 }
@@ -139,7 +139,7 @@ export default {
                     title: "添加成员",
                     routerTo: {
                         name: "OrgDetail",
-                        params: {
+                        query: {
                             tabSelect: "member"
                         }
                     },
@@ -149,7 +149,7 @@ export default {
                     title: "申请活动",
                     routerTo: {
                         name: "OrgDetail",
-                        params: {
+                        query: {
                             tabSelect: "activity"
                         }
                     },
@@ -159,7 +159,7 @@ export default {
                     title: "基本信息",
                     routerTo: {
                         name: "OrgDetail",
-                        params: {
+                        query: {
                             tabSelect: "basicInfo"
                         }
                     },
@@ -169,7 +169,7 @@ export default {
                     title: "我创建的",
                     routerTo: {
                         name: "MyFlow",
-                        params: {}
+                        query: {}
                     },
                     icon: "md-information"
                 },
@@ -177,7 +177,7 @@ export default {
                     title: "我参与的",
                     routerTo: {
                         name: "MyAttend",
-                        params: {}
+                        query: {}
                     },
                     icon: "md-information"
                 },
@@ -185,7 +185,7 @@ export default {
                     title: "所有流程",
                     routerTo: {
                         name: "AllFlow",
-                        params: {}
+                        query: {}
                     },
                     icon: "md-information"
                 }
@@ -195,7 +195,7 @@ export default {
                     title: "添加成员",
                     routerTo: {
                         name: "OrgDetail",
-                        params: {
+                        query: {
                             tabSelect: "member"
                         }
                     },
@@ -205,7 +205,7 @@ export default {
                     title: "添加社团",
                     routerTo: {
                         name: "OrgDetail",
-                        params: {
+                        query: {
                             tabSelect: "subDept"
                         }
                     },
@@ -215,7 +215,7 @@ export default {
                     title: "申请活动",
                     routerTo: {
                         name: "OrgDetail",
-                        params: {
+                        query: {
                             tabSelect: "activity"
                         }
                     },
@@ -225,7 +225,7 @@ export default {
                     title: "我创建的",
                     routerTo: {
                         name: "MyFlow",
-                        params: {}
+                        query: {}
                     },
                     icon: "md-information"
                 },
@@ -233,7 +233,7 @@ export default {
                     title: "我参与的",
                     routerTo: {
                         name: "MyAttend",
-                        params: {}
+                        query: {}
                     },
                     icon: "md-information"
                 },
@@ -241,7 +241,7 @@ export default {
                     title: "所有流程",
                     routerTo: {
                         name: "AllFlow",
-                        params: {}
+                        query: {}
                     },
                     icon: "md-information"
                 }

@@ -266,7 +266,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索活动"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary">添加活动</i-button>
+                                        <i-button type="primary" @click="addActivity">添加活动</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -362,6 +362,15 @@ export default {
                 changeLogs: []
             };
             this.modalShow = true;
+        },
+        addActivity () {
+            axios.post("/api/org/Applicate", {id: this.orgInfo.ID}, msg => {
+                if (msg.success) {
+                   window.open("/manage/org/activityform?instanceId=" + msg.instanceId + '&stepId=' + msg.stepId);
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         },
         getMemberTable () {
             this.tableLoading = true;

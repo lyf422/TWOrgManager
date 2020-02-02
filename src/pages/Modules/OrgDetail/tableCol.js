@@ -13,8 +13,8 @@ let tableCol = {
             key: 'Mobile'
         },
         {
-            title: '邮箱',
-            key: 'Email'
+            title: '所属社团',
+            key: 'departName'
         },
         {
             title: '生源地',
@@ -36,8 +36,8 @@ let tableCol = {
             key: 'label'
         },
         {
-            title: '是否拥有子部门',
-            key: 'isParent'
+            title: '部门类型',
+            key: 'Type'
         },
         {
             title: '管理员姓名',
@@ -51,23 +51,15 @@ let tableCol = {
     tutor: [
         {
             title: '姓名',
-            key: 'Name'
+            key: 'RealName'
         },
         {
             title: '工号',
             key: 'Code'
         },
         {
-            title: '类别',
-            key: 'Category'
-        },
-        {
-            title: '政治面貌',
-            key: 'Status'
-        },
-        {
-            title: '单位',
-            key: 'Company'
+            title: '手机',
+            key: 'Mobile'
         },
         {
             title: '操作',
@@ -112,6 +104,28 @@ let tableCol = {
         {
             title: '操作',
             slot: 'Action'
+        }
+    ],
+    operation: [
+        {
+            title: '操作',
+            key: 'MethodName'
+        },
+        {
+            title: '操作人员',
+            key: 'CreatedBy'
+        },
+        {
+            title: '具体描述',
+            key: 'Description'
+        },
+        {
+            title: 'IP地址',
+            key: 'IPAddress'
+        },
+        {
+            title: '记录时间',
+            key: 'CreatedOn'
         }
     ]
 };

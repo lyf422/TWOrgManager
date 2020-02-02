@@ -16,18 +16,13 @@
             <i-tabs v-model="tabSelect">
                 <i-tab-pane label="基本信息" name="basicInfo">
                     <i-row>
-                        <i-spin fix size="large" v-show="spinShow"></i-spin>
+                        <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-col span="16">
                             <i-form :model="orgInfo">
                                 <i-row type="flex" justify="space-between">
-                                    <i-col :span="sort==false ? 24 : 11">
+                                    <i-col span="24">
                                         <i-form-item label="社团名称" span="8">
                                             <i-input v-model="orgInfo.Name"/>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="11" v-if="sort">
-                                        <i-form-item label="排序号">
-                                            <i-input v-model="orgInfo.Sort"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -52,6 +47,21 @@
                                     <i-col span="11">
                                         <i-form-item label="挂靠单位">
                                             <org-selector v-model="orgInfo.ParentId"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex" justify="space-between" v-if="level === 3">
+                                    <i-col span="11">
+                                        <i-form-item label="排序号">
+                                            <i-input v-model="orgInfo.Sort"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11">
+                                        <i-form-item label="部门类型">
+                                            <i-select v-model="orgInfo.Type">
+                                                <i-option :value="0" key="挂靠单位">挂靠单位</i-option>
+                                                <i-option :value="1" key="社团">社团</i-option>
+                                            </i-select>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -116,7 +126,7 @@
                                     <i-input type="textarea" v-model="orgInfo.Remark"/>
                                 </i-form-item>
                             </i-form>
-                            <i-button type="primary" @click="saveOrgDetail()">保存</i-button>
+                            <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
                         </i-col>
                         <i-col span="7" offset="1">
                             <i-timeline style="overflow-y:scroll; height:900px; padding-top: 10px;">
@@ -154,13 +164,13 @@
                                 </i-row>
                             </i-col>
                         </i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData" :loading="tableLoading">
+                        <i-table stripe :columns="tableCol.member" :data="tableData.member" :loading="tableLoading">
                             <template slot="Action" slot-scope="{row}">
                                 <i-button @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
                                     <i-button :disabled="row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
-                                <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row,'管理员')">设置管理员</i-button>
+                                <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer v-model="visible" v-if="row.isAdmin">
                                     <i-button v-if="(level === 3)&&row.isAdmin">设置密码</i-button>
                                     <i-row slot="title">您正在更改社团管理员密码</i-row>
@@ -202,10 +212,10 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                            <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData">
-                                <template slot="Action" slot-scope="{index, row}">
-                                    <i-button @click="modifySubDepart(index, row)">管理</i-button>
-                                    <i-button @click="delTableItem(index)">删除</i-button>
+                            <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData.subDept" :loading="tableLoading">
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="modifySubDepart(row)">管理</i-button>
+                                    <i-button @click="delSubDepart(row)">删除</i-button>
                                 </template>
                             </i-table>
                         </i-row>
@@ -223,19 +233,19 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索老师"/>
+                                        <i-input prefix="ios-search" placeholder="搜索老师" v-model="keyword" @keyup.enter.native="getTutorTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary">添加老师</i-button>
+                                        <i-button type="primary" @click="addTutor()">添加老师</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.tutor" :data="tableData">
-                            <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
-                                <i-button @click="delTableItem(index)">删除</i-button>
+                        <i-table stripe :columns="tableCol.tutor" :data="tableData.tutor" :loading="tableLoading">
+                            <template slot="Action" slot-scope="{row}">
+                                <i-button @click="modifyTutor(row)">修改</i-button>
+                                <i-button @click="delTutor(row)">删除</i-button>
                             </template>
                         </i-table>
                         </i-row>
@@ -262,7 +272,7 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.activity" :data="tableData">
+                        <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
                             <template slot="Action" slot-scope="{index, row}">
                                 <i-button @click="modifyTableItem(index, row)">修改</i-button>
                                 <i-button @click="delTableItem(index)">删除</i-button>
@@ -270,6 +280,10 @@
                         </i-table>
                         </i-row>
                     </i-card>
+                </i-tab-pane>
+                <i-tab-pane label="操作日志" name="operation">
+                    <i-table stripe :columns="tableCol.operation" :data="tableData.operation" :loading="tableLoading">
+                    </i-table>
                 </i-tab-pane>
             </i-tabs>
         </i-card>
@@ -303,61 +317,106 @@ export default {
         cancel () {
         },
         saveOrgDetail () {
+            this.isSaving = true;
             axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
                     this.$Message.success("部门信息保存成功");
-                    this.getOrgDetail();
                 } else {
                     this.$Message.warning(msg.msg);
                 }
-            })
-            this.sort = false;
+                this.getOrgDetail();
+                this.isSaving = false;
+            });
         },
         getOrgDetail () {
-            this.spinShow = true;
+            this.tableLoading = true;
             axios.post("/api/security/GetOrgDetail", {id: this.orgInfo.ID}, msg => {
                 if (msg.success) {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    if (this.orgInfo.HaveLeagueBranch === "true") {
-                        this.orgInfo.HaveLeagueBranch = Boolean(true);
-                    } else {
-                        this.orgInfo.HaveLeagueBranch = Boolean(false);
-                    };
-                    if (this.orgInfo.HaveCPCBranch === "true") {
-                        this.orgInfo.HaveCPCBranch = Boolean(true);
-                    } else {
-                        this.orgInfo.HaveCPCBranch = Boolean(false);
-                    };
+                    // 弥补接口错误
+                    this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
+                    this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
+                    // 至此结束
                     this.logs = msg.changeLogs.data.reverse();
                     this.level = msg.level;
+                } else {
+                    this.$Message.warning(msg.msg);
                 }
-                this.spinShow = false;
+                this.tableLoading = false;
             })
-        },
-        addSubDepart () {
-            this.modalShow = true;
         },
         getMemberTable () {
             this.tableLoading = true;
-            let userName = this.keyword ? this.keyword : undefined;
-            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name: userName}, msg => {
-                this.tableData = msg.data;
+            let name = this.keyword ? this.keyword : undefined;
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name}, msg => {
+                this.tableData.member = msg.data;
+                this.tableLoading = false;
+            });
+        },
+        getTutorTable () {
+            this.tableLoading = true;
+            let name = this.keyword ? this.keyword : undefined;
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name, position: "指导老师"}, msg => {
+                this.tableData.tutor = msg.data;
                 this.tableLoading = false;
             });
         },
         getDeptTable () {
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
-                this.tableData = msg.data.children;
+                this.tableData.subDept = msg.data.children;
+                this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"))
                 this.tableLoading = false;
             });
         },
+        getOptTable () {
+            this.tableLoading = true;
+            axios.post("/api/logs/GetLogsByDepartId", {departId: this.orgInfo.ID}, msg => {
+                this.tableData.operation = msg.data;
+                this.tableLoading = false;
+            });
+        },
+        addSubDepart () {
+            this.callbackFunc = this.modifySubDepart;
+            this.modalShow = true;
+        },
+        addTutor () {
+            this.recordData = {
+                user: {},
+                changeLogs: []
+            };
+            this.callbackFunc = this.getTutorTable;
+            this.modalShow = true;
+        },
+        addMember () {
+            this.recordData = {
+                user: {},
+                changeLogs: []
+            };
+            this.callbackFunc = this.getMemberTable;
+            this.modalShow = true;
+        },
         delMember (row) {
-             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: this.orgInfo.ID}, msg => {
+             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId}, msg => {
                 this.getMemberTable();
+            })
+        },
+        delTutor (row) {
+             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId, position: "指导老师"}, msg => {
+                this.getTutorTable();
+            })
+        },
+        delSubDepart (row) {
+            axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
+                if (msg.success) {
+                    this.getDeptTable();
+                    this.$Message.success("删除成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
             })
         },
         modifyMember (row) {
@@ -368,23 +427,24 @@ export default {
                 this.callbackFunc = this.getMemberTable;
             });
         },
-        modifySubDepart (index, row) {
+        modifyTutor (row) {
+            axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
+                this.recordData.user = msg.user;
+                this.recordData.changeLogs = msg.changeLogs;
+                this.modalShow = true;
+                this.callbackFunc = this.getTutorTable;
+            });
+        },
+        modifySubDepart (row) {
             window.open("/manage/org/detail?id=" + row.id);
         },
         modifyTableItem () {
 
         },
-        addMember () {
-            this.recordData = {
-                RealName: "",
-                user: {},
-                changeLogs: []
-            };
-            this.modalShow = true;
-        },
-        setPositon (row, position) {
-            axios.post("/api/security/SetPositionV2", {userId: row.ID, departId: this.orgInfo.ID, position}, msg => {
+        setPositon (userId, position) {
+            axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
                 this.getMemberTable();
+                this.getTutorTable();
             })
         },
         setPassword (row) {
@@ -398,19 +458,37 @@ export default {
             this.visible = false;
         },
         setKeyword: _.debounce(function () {
-            this.getMemberTable();
+                if (this.tabSelect === "member") {
+                    this.getMemberTable();
+                }
+                if (this.tabSelect === "tutor") {
+                    this.getTutorTable();
+                }
         }, 500)
     },
     watch: {
-        tabSelect (value) {
-          switch (value) {
-                case "member": this.getMemberTable(); break;
-                case "subDept": this.getDeptTable(); break;
-                case "basicInfo": this.getOrgDetail(); break;
-            }
-        },
         keyword (v) {
             this.setKeyword();
+        },
+        "orgInfo.Type" (value, oldValue) {
+            if (value === oldValue || oldValue === undefined) return;
+            this.$Modal.confirm({
+                title: "确实要更改部门类型吗？",
+                content: `将部门类型由<strong>${oldValue === 0 ? "挂靠单位" : "社团"}</strong>更改为
+                    <strong>${value === 0 ? "挂靠单位" : "社团"}</strong>`,
+                onOk: () => {
+                    axios.post("/api/security/SwitchDepartType", {
+                        id: this.orgInfo.ID,
+                        cate: this.orgInfo.Type === 0 ? "挂靠单位" : "社团",
+                        type: value
+                    }, msg => {
+                        this.getOrgDetail();
+                    });
+                },
+                onCancel: () => {
+                    this.orgInfo.Type = oldValue;
+                }
+            })
         }
     },
     mounted () {
@@ -438,6 +516,11 @@ export default {
                 this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                 this.logs = msg.changeLogs.data.reverse();
                 this.level = msg.level;
+                // 获取其他Tab页信息
+                this.getMemberTable();
+                this.getTutorTable();
+                this.getDeptTable();
+                this.getOptTable();
             }
             this.$Spin.hide();
             this.tabSelect = this.$route.params.tabSelect || "basicInfo";
@@ -454,17 +537,20 @@ export default {
             teachers: [],
             users: 0,
             tabSelect: "",
-            spinShow: false,
+            isSaving: false,
             tableLoading: false,
             recordData: {
-                RealName: "",
                 user: {},
                 changeLogs: []
             },
-            sort: false,
             level: 0,
             orgInfo: {},
-            tableData: [],
+            tableData: {
+                member: [],
+                subDept: [],
+                tutor: [],
+                operation: []
+            },
             modalShow: false,
             componentDic: {
                 member: "member-form",
@@ -486,7 +572,7 @@ export default {
                     }
                 }
             },
-            callbackFunc: ""
+            callbackFunc: () => {}
         };
     }
 }

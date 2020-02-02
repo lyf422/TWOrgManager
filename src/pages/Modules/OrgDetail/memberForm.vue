@@ -1,7 +1,7 @@
 <template>
     <i-row>
         <i-col span="15">
-            <i-form :model="modalData" :rules="ruleForMem" ref="Form">
+            <i-form :model="modalData.user" :rules="ruleForMem" ref="Form">
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
                         <i-form-item label="姓名" prop="RealName">
@@ -34,14 +34,16 @@
                     </i-col>
                     <i-col span="11">
                         <i-form-item label="入团时间" prop="JoinCCYLTime">
-                            <i-date-picker v-model="modalData.user.JoinCCYLTime" />
+                            <i-checkbox v-model="haveJoinCCYL"></i-checkbox>
+                            <i-date-picker :disabled="!haveJoinCCYL" v-model="modalData.user.JoinCCYLTime" />
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
                         <i-form-item label="入党时间" prop="JoinCPCTime">
-                            <i-date-picker v-model="modalData.user.JoinCPCTime" />
+                            <i-checkbox v-model="haveJoinCPC"></i-checkbox>
+                            <i-date-picker :disabled="!haveJoinCPC" v-model="modalData.user.JoinCPCTime" />
                         </i-form-item>
                     </i-col>
                     <i-col span="11">
@@ -108,10 +110,18 @@
                 required: true
             }
         },
+        watch: {
+            "modalData.user.JoinCPCTime" (value) {
+                this.haveJoinCPC = value !== "1900年1月1日";
+            },
+            "modalData.user.JoinCCYLTime" (value) {
+                this.haveJoinCCYL = value !== "1900年1月1日";
+            }
+        },
         data () {
             return {
-                league: false,
-                party: false,
+                haveJoinCPC: false,
+                haveJoinCCYL: false,
                 ruleForMem: {
                     RealName: [
                         {
@@ -143,13 +153,12 @@
                 this.$refs["Form"].resetFields();
             },
             submit (departId, callback) {
-                if (!this.modalData.user.JoinCCYLTime) {
-                    this.modalData.user.JoinCCYLTime = "1990-1-1";
-                }
-                if (!this.modalData.user.JoinCPCTime) {
-                    this.modalData.user.JoinCPCTime = "1990-1-1";
-                }
-                axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId}, msg => {
+                axios.post("/api/security/SaveUserV2", {
+                    ...this.modalData.user,
+                    JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
+                    JoinCCYLTime: this.haveJoinCCYL ? this.modalData.user.JoinCCYLTime : "1900-01-01",
+                    departId
+                    }, msg => {
                     this.resetFields();
                     callback();
                 })

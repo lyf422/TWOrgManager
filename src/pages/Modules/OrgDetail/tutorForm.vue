@@ -1,24 +1,42 @@
 <template>
-    <i-form :model="modalData" ref="Form">
-        <i-form-item label="姓名" prop="Name">
-            <i-input v-model="modalData.Name" />
-        </i-form-item>
-        <i-form-item label="工号" prop="Code">
-            <i-input v-model="modalData.Code" />
-        </i-form-item>
-        <i-form-item label="类别" prop="Category">
-            <i-input v-model="modalData.Category" />
-        </i-form-item>
-        <i-form-item label="政治面貌" prop="Status">
-            <i-input v-model="modalData.Status" />
-        </i-form-item>
-        <i-form-item label="单位" prop="Company">
-            <i-input v-model="modalData.Company" />
-        </i-form-item>
-    </i-form>
+    <i-row>
+        <i-col span="15">
+            <i-form :model="modalData" ref="Form" :rules="ruleForMem">
+                <i-form-item label="姓名" prop="RealName">
+                    <i-input v-model="modalData.user.RealName" />
+                </i-form-item>
+                <i-form-item label="工号" prop="Code">
+                    <i-input v-model="modalData.user.Code" />
+                </i-form-item>
+                <i-form-item label="手机" prop="Mobile">
+                    <i-input v-model="modalData.user.Mobile" />
+                </i-form-item>
+            </i-form>
+        </i-col>
+        <i-col span="7" offset="2">
+            <i-timeline style="overflow-y:scroll; height:600px; padding-top: 10px;">
+                <TimelineItem v-for="(item,index) in modalData.changeLogs.data" :key="index">
+                    <i-row>
+                        <i-col>
+                            <p class="time">{{item.OperateOn}}</p>
+                            <p class="content">{{item.Operator}}{{item.Abstract}}</p>
+                        </i-col>
+                    </i-row>
+                    <i-row span="15">
+                        <i-col style="font-size: 0.7em;color: #808080;">
+                            <p v-for="(d,index) in item.Details" :key="index">
+                                {{d}}
+                            </p>
+                        </i-col>
+                    </i-row>
+                </TimelineItem>
+            </i-timeline>
+        </i-col>
+    </i-row>
 </template>
 
 <script>
+    const axios = require("axios");
     const regex = require("@/regex.js");
     export default {
         props: {
@@ -66,6 +84,14 @@
             resetFields () {
                 let form = this.$refs["Form"];
                 form.resetFields();
+            },
+            submit (departId, callback) {
+                axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId, position: "指导老师"}, msg => {
+                    this.resetFields();
+                    if (msg.success) {
+                        callback();
+                    }
+                })
             }
         }
     }

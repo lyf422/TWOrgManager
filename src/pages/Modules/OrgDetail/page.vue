@@ -287,7 +287,7 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal v-model="modalShow" title="添加/修改成员" width="768" @on-ok="submit()" @on-cancel="cancel()">
+        <i-modal :z-index="10" v-model="modalShow" title="添加/修改成员" @on-ok="submit()" @on-cancel="cancel()">
             <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"></component>
         </i-modal>
     </i-row>
@@ -512,9 +512,11 @@ export default {
                 this.orgInfo = msg.data;
                 this.teachers = msg.teachers;
                 this.users = msg.users;
-                this.orgInfo.HaveLeagueBranch = Boolean(this.orgInfo.HaveLeagueBranch);
-                this.orgInfo.HaveCPCBranch = Boolean(this.orgInfo.HaveCPCBranch);
+                // 弥补接口错误
+                this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
+                this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
                 this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
+                // 至此结束
                 this.logs = msg.changeLogs.data.reverse();
                 this.level = msg.level;
                 // 获取其他Tab页信息

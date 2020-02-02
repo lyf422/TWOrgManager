@@ -266,7 +266,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索活动"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary">添加活动</i-button>
+                                        <i-button type="primary" @click="addActivity">添加活动</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>

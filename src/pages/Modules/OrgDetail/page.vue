@@ -400,6 +400,15 @@ export default {
             this.callbackFunc = this.getMemberTable;
             this.modalShow = true;
         },
+        addActivity () {
+            axios.post("/api/org/Applicate", {id: this.orgInfo.ID}, msg => {
+                if (msg.success) {
+                    window.open("/manage/org/activityform?instanceId=" + msg.instanceId + '&stepId=' + msg.stepId);
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
+        },
         delMember (row) {
              axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId}, msg => {
                 this.getMemberTable();

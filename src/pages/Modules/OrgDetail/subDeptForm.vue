@@ -46,11 +46,10 @@
             submit (departId, callback) {
                 axios.post("/api/security/SaveDepartV2", this.modalData, msg => {
                     this.resetFields();
-                    callback();
-                    if (msg.success === false) {
-                        this.$Message.warning(msg.msg);
+                    if (msg.success) {
+                        callback(msg);
                     } else {
-                        window.open("/manage/org/detail?id=" + msg.id);
+                        this.$Message.warning(msg.msg);
                     }
                 });
             }

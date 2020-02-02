@@ -13,8 +13,8 @@ let tableCol = {
             key: 'Mobile'
         },
         {
-            title: '邮箱',
-            key: 'Email'
+            title: '所属社团',
+            key: 'departName'
         },
         {
             title: '生源地',

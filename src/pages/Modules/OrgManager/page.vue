@@ -164,6 +164,30 @@ export default {
                         }
                     },
                     icon: "md-information"
+                },
+                {
+                    title: "我创建的",
+                    routerTo: {
+                        name: "MyFlow",
+                        params: {}
+                    },
+                    icon: "md-information"
+                },
+                {
+                    title: "我参与的",
+                    routerTo: {
+                        name: "MyAttend",
+                        params: {}
+                    },
+                    icon: "md-information"
+                },
+                {
+                    title: "所有流程",
+                    routerTo: {
+                        name: "AllFlow",
+                        params: {}
+                    },
+                    icon: "md-information"
                 }
             ],
             entrForTeacher: [
@@ -198,12 +222,26 @@ export default {
                     icon: "logo-buffer"
                 },
                 {
-                    title: "基本信息",
+                    title: "我创建的",
                     routerTo: {
-                        name: "OrgDetail",
-                        params: {
-                            tabSelect: "basicInfo"
-                        }
+                        name: "MyFlow",
+                        params: {}
+                    },
+                    icon: "md-information"
+                },
+                {
+                    title: "我参与的",
+                    routerTo: {
+                        name: "MyAttend",
+                        params: {}
+                    },
+                    icon: "md-information"
+                },
+                {
+                    title: "所有流程",
+                    routerTo: {
+                        name: "AllFlow",
+                        params: {}
                     },
                     icon: "md-information"
                 }
@@ -215,7 +253,6 @@ export default {
         this.getDashBoard();
         this.judgeTime();
         this.getPending();
-        // this.$router.push({name: 'OrgDetail'});
     },
     methods: {
         getDashBoard () {
@@ -224,15 +261,6 @@ export default {
                 console.log(this.dashBoard["teachers"]);
                 app.departType = msg.DepartType;
             });
-            /* this.dashBoard = {
-                users: 0,
-                teachers: ["赵江声", "黄玺"],
-                Name: "轻乳酪蛋糕制作方法研究社团",
-                children: 0,
-                StrType: "社会实践类",
-                DepartType: 1,
-                BirthTime: "2020年1月17日"
-            }; */
         },
         judgeTime () {
             let day2 = new Date();
@@ -245,46 +273,10 @@ export default {
             else if (s2 < 24) this.time = "晚上";
         },
         getPending () {
-            axios.post("/api/workflow/pending", {}, msg => {
+            axios.post("/api/workflow/Pending", {}, msg => {
                 this.messageNum = msg.totalRow;
                 this.message = msg.data;
             })
-            /* this.message = [
-                {
-                    instanceId: 123456789123456789123456789,
-                    stepId: 321654987987321654987987321654987987,
-                    workflowName: "活动申请",
-                    Version: "1.0",
-                    Owner: "宋润涵",
-                    StepName: "新建活动",
-                    State: 0,
-                    ExecStatus: 0,
-                    ArriveOn: "2020/1/18"
-                },
-                {
-                    instanceId: 123456789123456789123456789456,
-                    stepId: 321654987987321654987987321654987945687,
-                    workflowName: "活动申请",
-                    Version: "1.0",
-                    Owner: "宋润涵",
-                    StepName: "审批活动",
-                    State: 0,
-                    ExecStatus: 0,
-                    ArriveOn: "2020/1/18"
-                },
-                {
-                    instanceId: 123456781239123456789123456789456,
-                    stepId: 321654564987987321654987987321654987945687,
-                    workflowName: "活动申请",
-                    Version: "1.0",
-                    Owner: "宋润涵",
-                    StepName: "活动终审",
-                    State: 0,
-                    ExecStatus: 0,
-                    ArriveOn: "2020/1/18"
-                }
-            ];
-            this.messageNum = 3; */
         },
         dealWorkflow (instanceId, stepId) {
 
@@ -320,6 +312,7 @@ export default {
         margin: 10px;
     }
     .layout-con {
+        margin-bottom: 24px;
         text-align: center;
         color: #515a6e;
     }

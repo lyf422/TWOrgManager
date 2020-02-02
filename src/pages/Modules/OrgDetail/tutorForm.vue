@@ -86,7 +86,7 @@
                 form.resetFields();
             },
             submit (departId, callback) {
-                axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId}, msg => {
+                axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId, position: "指导老师"}, msg => {
                     this.resetFields();
                     if (msg.success) {
                         if (this.modalData.user.ID !== undefined) {

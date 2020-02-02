@@ -89,11 +89,8 @@
                 axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId, position: "指导老师"}, msg => {
                     this.resetFields();
                     if (msg.success) {
-                        if (this.modalData.user.ID !== undefined) {
-                            this.$Message.info('修改成功');
-                        }
+                        callback();
                     }
-                    callback(this.modalData.user, departId);
                 })
             }
         }

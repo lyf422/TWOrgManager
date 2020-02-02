@@ -388,6 +388,15 @@ export default {
                 user: {},
                 changeLogs: []
             };
+            this.callbackFunc = this.getTutorTable;
+            this.modalShow = true;
+        },
+        addMember () {
+            this.recordData = {
+                user: {},
+                changeLogs: []
+            };
+            this.callbackFunc = this.getMemberTable;
             this.modalShow = true;
         },
         delMember (row) {
@@ -431,13 +440,6 @@ export default {
         },
         modifyTableItem () {
 
-        },
-        addMember () {
-            this.recordData = {
-                user: {},
-                changeLogs: []
-            };
-            this.modalShow = true;
         },
         setPositon (userId, position) {
             axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {

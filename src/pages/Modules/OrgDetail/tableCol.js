@@ -108,23 +108,23 @@ let tableCol = {
     ],
     operation: [
         {
-            title: 'MethodName',
+            title: '操作',
             key: 'MethodName'
         },
         {
-            title: 'CreatedBy',
+            title: '操作人员',
             key: 'CreatedBy'
         },
         {
-            title: 'Description',
+            title: '具体描述',
             key: 'Description'
         },
         {
-            title: 'IPAddress',
+            title: 'IP地址',
             key: 'IPAddress'
         },
         {
-            title: 'CreatedOn',
+            title: '记录时间',
             key: 'CreatedOn'
         }
     ]

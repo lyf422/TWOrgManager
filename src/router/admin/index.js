@@ -19,6 +19,21 @@ module.exports = {
     WorkflowConfig: {
         path: "/manage/wwf/config",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/WorkflowConfig")
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/WorkflowConfig")
+    },
+    AllFlow: {
+        path: "/manage/wwf/allflow",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/AllFlow")
+    },
+    MyAttend: {
+        path: "/manage/wwf/myattend",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyAttend")
+    },
+    MyFlow: {
+        path: "/manage/wwf/myflow",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyFlow")
     }
 };

@@ -16,7 +16,7 @@
             <i-tabs v-model="tabSelect">
                 <i-tab-pane label="基本信息" name="basicInfo">
                     <i-row>
-                        <i-spin fix size="large" v-show="spinShow"></i-spin>
+                        <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-col span="16">
                             <i-form :model="orgInfo">
                                 <i-row type="flex" justify="space-between">
@@ -126,7 +126,7 @@
                                     <i-input type="textarea" v-model="orgInfo.Remark"/>
                                 </i-form-item>
                             </i-form>
-                            <i-button type="primary" @click="saveOrgDetail()">保存</i-button>
+                            <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
                         </i-col>
                         <i-col span="7" offset="1">
                             <i-timeline style="overflow-y:scroll; height:900px; padding-top: 10px;">
@@ -170,7 +170,7 @@
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
                                     <i-button :disabled="row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
-                                <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row,'管理员')">设置管理员</i-button>
+                                <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer v-model="visible" v-if="row.isAdmin">
                                     <i-button v-if="(level === 3)&&row.isAdmin">设置密码</i-button>
                                     <i-row slot="title">您正在更改社团管理员密码</i-row>
@@ -189,8 +189,8 @@
                         </i-table>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type===1" label="子部门" name="subDept">
-                    <i-card dis-hover>
+                <i-tab-pane :disabled="orgInfo.Type === 1" label="子部门" name="subDept">
+                    <i-card dis-hover >
                         <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
                                 <i-row type="flex" align="middle" :gutter="16">
@@ -213,15 +213,15 @@
                         </i-row>
                         <i-row>
                             <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData.subDept" :loading="tableLoading">
-                                <template slot="Action" slot-scope="{index, row}">
-                                    <i-button @click="modifySubDepart(index, row)">管理</i-button>
-                                    <i-button @click="delSubDepart(index, row)">删除</i-button>
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="modifySubDepart(row)">管理</i-button>
+                                    <i-button @click="delSubDepart(row)">删除</i-button>
                                 </template>
                             </i-table>
                         </i-row>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type===0" label="指导老师" name="tutor">
+                <i-tab-pane :disabled="orgInfo.Type === 0" label="指导老师" name="tutor">
                     <i-card dis-hover>
                         <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
@@ -236,7 +236,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索老师" v-model="keyword" @keyup.enter.native="getTutorTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addTutor">添加老师</i-button>
+                                        <i-button type="primary" @click="addTutor()">添加老师</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -311,18 +311,13 @@ export default {
     methods: {
         submit () {
             let form = this.$refs["Form"];
-            if (this.tabSelect === "subDept") {
-                this.callbackFunc = this.getDeptTable;
-            }
-            if (this.tabSelect === "tutor") {
-                this.callbackFunc = this.getTutorTable;
-            }
             form.submit(this.orgInfo.ID, this.callbackFunc);
             form.resetFields();
         },
         cancel () {
         },
         saveOrgDetail () {
+            this.isSaving = true;
             axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                 if (msg.success) {
                     this.$Message.success("部门信息保存成功");
@@ -330,10 +325,11 @@ export default {
                     this.$Message.warning(msg.msg);
                 }
                 this.getOrgDetail();
+                this.isSaving = false;
             });
         },
         getOrgDetail () {
-            this.spinShow = true;
+            this.tableLoading = true;
             axios.post("/api/security/GetOrgDetail", {id: this.orgInfo.ID}, msg => {
                 if (msg.success) {
                     this.orgInfo = msg.data;
@@ -349,75 +345,31 @@ export default {
                 } else {
                     this.$Message.warning(msg.msg);
                 }
-                this.spinShow = false;
-            })
-        },
-        addSubDepart () {
-            this.modalShow = true;
-        },
-        addTutor () {
-            this.recordData = {
-                RealName: "",
-                user: {},
-                changeLogs: []
-            };
-            this.modalShow = true;
-        },
-        addActivity () {
-            axios.post("/api/org/Applicate", {id: this.orgInfo.ID}, msg => {
-                if (msg.success) {
-                   window.open("/manage/org/activityform?instanceId=" + msg.instanceId + '&stepId=' + msg.stepId);
-                } else {
-                    this.$Message.warning(msg.msg);
-                }
+                this.tableLoading = false;
             })
         },
         getMemberTable () {
             this.tableLoading = true;
-            let userName = this.keyword ? this.keyword : undefined;
-            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name: userName}, msg => {
+            let name = this.keyword ? this.keyword : undefined;
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name}, msg => {
                 this.tableData.member = msg.data;
                 this.tableLoading = false;
             });
         },
-        getTutorTable (user, departId) {
-            if (user !== undefined && user.ID === undefined) {
-                this.getNewTutor(user.RealName, departId);
-            }
+        getTutorTable () {
             this.tableLoading = true;
-            let userName = this.keyword ? this.keyword : undefined;
-            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name: userName, position: "指导老师"}, msg => {
+            let name = this.keyword ? this.keyword : undefined;
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name, position: "指导老师"}, msg => {
                 this.tableData.tutor = msg.data;
                 this.tableLoading = false;
             });
         },
-        getNewTutor (realName, departId) {
-            axios.post("/api/security/GetUsersByDepartId", {name: realName, departId: departId}, msg => {
-                if (msg.success) {
-                    let param = msg.data[0];
-                    this.setTutor(param, departId);
-                }
-            })
-        },
-        setTutor (param, departId) {
-            axios.post("/api/security/SetPositionV2", {userId: param.ID, departId: departId, position: "指导老师"}, msg => {
-                if (msg.success) {
-                    this.$Message.info('创建成功');
-                    this.getTutorTable();
-                }
-            })
-        },
         getDeptTable () {
+            if (this.orgInfo.Type !== 0) return;
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children;
-                this.tableData.subDept.map(e => {
-                    if (e.Type === 0) {
-                        e.Type = "挂靠单位";
-                    } else {
-                        e.Type = "社团";
-                    }
-                })
+                this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"))
                 this.tableLoading = false;
             });
         },
@@ -427,6 +379,26 @@ export default {
                 this.tableData.operation = msg.data;
                 this.tableLoading = false;
             });
+        },
+        addSubDepart () {
+            this.callbackFunc = this.modifySubDepart;
+            this.modalShow = true;
+        },
+        addTutor () {
+            this.recordData = {
+                user: {},
+                changeLogs: []
+            };
+            this.callbackFunc = this.getTutorTable;
+            this.modalShow = true;
+        },
+        addMember () {
+            this.recordData = {
+                user: {},
+                changeLogs: []
+            };
+            this.callbackFunc = this.getMemberTable;
+            this.modalShow = true;
         },
         delMember (row) {
              axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId}, msg => {
@@ -438,12 +410,13 @@ export default {
                 this.getTutorTable();
             })
         },
-        delSubDepart (index, row) {
+        delSubDepart (row) {
             axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
-                if (msg.success === false) {
-                        this.$Message.warning(msg.msg);
-                } else {
+                if (msg.success) {
                     this.getDeptTable();
+                    this.$Message.success("删除成功");
+                } else {
+                    this.$Message.warning(msg.msg);
                 }
             })
         },
@@ -463,23 +436,16 @@ export default {
                 this.callbackFunc = this.getTutorTable;
             });
         },
-        modifySubDepart (index, row) {
+        modifySubDepart (row) {
             window.open("/manage/org/detail?id=" + row.id);
         },
         modifyTableItem () {
 
         },
-        addMember () {
-            this.recordData = {
-                RealName: "",
-                user: {},
-                changeLogs: []
-            };
-            this.modalShow = true;
-        },
-        setPositon (row, position) {
-            axios.post("/api/security/SetPositionV2", {userId: row.ID, departId: this.orgInfo.ID, position}, msg => {
+        setPositon (userId, position) {
+            axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
                 this.getMemberTable();
+                this.getTutorTable();
             })
         },
         setPassword (row) {
@@ -558,7 +524,7 @@ export default {
                 this.getOptTable();
             }
             this.$Spin.hide();
-            this.tabSelect = this.$route.params.tabSelect || "basicInfo";
+            this.tabSelect = this.$route.query.tabSelect || "basicInfo";
         });
     },
     data () {
@@ -572,10 +538,9 @@ export default {
             teachers: [],
             users: 0,
             tabSelect: "",
-            spinShow: false,
+            isSaving: false,
             tableLoading: false,
             recordData: {
-                RealName: "",
                 user: {},
                 changeLogs: []
             },

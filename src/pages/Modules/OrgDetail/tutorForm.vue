@@ -100,7 +100,7 @@
 </script>
 <style lang="less">
 .timeline{
-    padding:0.8em 0px 0px 5px;    
+    padding:0.8em 0px 0px 5px;
     .time{
         font-size: 14px;
         font-weight: bold;

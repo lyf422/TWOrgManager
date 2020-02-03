@@ -137,20 +137,18 @@
                             <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
                         </i-col>
                         <i-col span="7" offset="1">
-                            <i-card :title="logs.length === 0 ? '暂无修改记录' : '修改记录'" :bordered="false" dis-hover>
-                                <i-timeline style="overflow-y:auto; height:900px; padding-top: 10px;">
-                                    <TimelineItem v-for="(item,index) in logs" :key="index">
-                                        <i-row>
-                                            <p class="time">{{item.OperateOn}} {{item.Operator}}</p>
-                                            <p class="content">
-                                                <i-row v-for="(d,index) in item.Details" :key="index">
-                                                    {{d}}
-                                                </i-row>
-                                            </p>
-                                        </i-row>
-                                    </TimelineItem>
-                                </i-timeline>
-                            </i-card>
+                            <i-timeline class="timeline i-scrollbar-hide">
+                                <TimelineItem v-for="(item,index) in logs" :key="index">
+                                    <i-row>
+                                        <p class="time">{{item.OperateOn}} {{item.Operator}}</p>
+                                        <p class="content">
+                                            <i-row v-for="(d,index) in item.Details" :key="index">
+                                                {{d}}
+                                            </i-row>
+                                        </p>
+                                    </i-row>
+                                </TimelineItem>
+                            </i-timeline>
                         </i-col>
                     </i-row>
                 </i-tab-pane>
@@ -351,6 +349,7 @@ export default {
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                     // 至此结束
                     this.level = msg.level;
+                    this.logs = msg.changeLogs.data;
                 } else {
                     this.$Message.warning(msg.msg);
                 }
@@ -511,6 +510,7 @@ export default {
         }
     },
     mounted () {
+        app.title = "社团管理";
         this.$Spin.show({
             render: (h) => {
                 return h('div', [
@@ -536,6 +536,7 @@ export default {
                 this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                 // 至此结束
                 this.level = msg.level;
+                this.logs = msg.changeLogs.data;
                 // 获取其他Tab页信息
                 this.getMemberTable();
                 this.getTutorTable();
@@ -602,12 +603,17 @@ export default {
 .ivu-form-item .ivu-date-picker{
     width: 100%;
 }
-.time{
-    font-size: 14px;
-    font-weight: bold;
-}
-.content{
-    padding-left: 5px;
+.timeline{
+    height: 100vh;
+    padding-top: 10px;
+    overflow: auto;
+    .time{
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .content{
+        padding-left: 5px;
+    }
 }
 .spin-icon-load{
     animation: ani-demo-spin 1s linear infinite;

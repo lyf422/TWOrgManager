@@ -5,19 +5,12 @@
                 <i-row>
                     <div class="welcome">{{time}}好，{{userInfo.realName}}</div>
                 </i-row>
-                <!--List v-if="messageNum<=0" :header="`您有${messageNum}条待办事项`" >
-                    <ListItem>XXX的XX流程已到达您的步骤
-                        <div slot="action">123</div>
-                    </ListItem>
-                    <ListItem>XXX的XX流程已到达您的步骤</ListItem>
-                    <ListItem>XXX的XX流程已到达您的步骤</ListItem>
-                </List-->
                 <List v-if="messageNum>0" :header="`您有${messageNum}条待办事项`">
                     <template v-for="(item,index) in message" >
                         <ListItem :key="index">
-                            <ListItemMeta :title="`${item.Owner}提交的${item.workflowName}流程已到达您的步骤`" :description="`到达时间:${item.ArriveOn}`"></ListItemMeta>
+                            <ListItemMeta :title="`${item.Owner}提交的${item.WorkflowName}流程已到达您的步骤`" :description="`到达时间:${item.ArriveOn}`"></ListItemMeta>
                             <template slot="action">
-                                <li @click="dealWorkflow(item.instanceId,item.stepId)"><a>{{item.StepName}}</a></li>
+                                <li @click="dealWorkflow(item.InstanceId, item.StepId)"><a>{{item.StepName}}</a></li>
                             </template>
                         </ListItem>
                     </template>
@@ -26,12 +19,6 @@
                     <i-row class="tip">您目前没有待办事项</i-row>
                     <i-row class="layout-con"><img :src="pic" /></i-row>
                 </template>
-                <!--i-row v-if="messageNum>0">
-                    <i-row v-for="(item,index) in message" @click="dealWorkflow(item.instanceId,item.stepId)" :key="index">
-                        <div>{{item.Owner}}的{{item.workflowName}}流程已经到了您的步骤:{{item.StepName}}</div>
-                    </i-row>
-                </i-row-->
-                <!--i-divider /-->
                 <i-row class="title">常用入口</i-row>
                 <i-row type="flex" justify="space-between">
                     <template v-if="dashBoard.DepartType===1">
@@ -279,7 +266,7 @@ export default {
             })
         },
         dealWorkflow (instanceId, stepId) {
-
+            window.open("/manage/org/activityform?instanceId=" + instanceId + '&stepId=' + stepId);
         },
         navTo (url) {
             this.$router.push({name: 'OrgDetail'});

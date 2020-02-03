@@ -40,7 +40,7 @@ export default {
     },
     methods: {
         getFlows () {
-            axios.post("/api/workflow/AllFlow", {}, msg => {
+            axios.post("/api/workflow/AllFlow", {name: "社团活动申请"}, msg => {
                 this.tableData = msg.data;
             });
         },

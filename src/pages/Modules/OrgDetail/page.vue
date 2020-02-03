@@ -136,7 +136,7 @@
                             </i-form>
                             <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
                         </i-col>
-                        <i-col span="7" offset="1" class="i-scrollbar-hide">
+                        <i-col span="7" offset="1">
                             <i-timeline class="timeline i-scrollbar-hide">
                                 <TimelineItem v-for="(item,index) in logs" :key="index">
                                     <i-row>
@@ -510,6 +510,7 @@ export default {
         }
     },
     mounted () {
+        app.title = "社团管理";
         this.$Spin.show({
             render: (h) => {
                 return h('div', [

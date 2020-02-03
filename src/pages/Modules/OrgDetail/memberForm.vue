@@ -79,7 +79,7 @@
                 <i-button @click="showLog = true" type="text" style="float:right; padding: 0;">查看修改记录</i-button>
             </i-form>
         </i-col>
-        <i-drawer title="Basic Drawer" v-model="showLog" scrollable width="20">
+        <i-drawer title="修改记录" v-model="showLog" scrollable width="20">
             <i-timeline class="timeline">
                 <TimelineItem v-for="(item,index) in modalData.changeLogs.data" :key="index">
                     <i-row>

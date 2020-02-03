@@ -350,7 +350,6 @@ export default {
                     this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
                     this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                     // 至此结束
-                    this.logs = msg.changeLogs.data.reverse();
                     this.level = msg.level;
                 } else {
                     this.$Message.warning(msg.msg);
@@ -536,6 +535,7 @@ export default {
                 this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
                 this.orgInfo.HaveDepartRule = Boolean(this.orgInfo.HaveDepartRule);
                 // 至此结束
+                this.level = msg.level;
                 // 获取其他Tab页信息
                 this.getMemberTable();
                 this.getTutorTable();

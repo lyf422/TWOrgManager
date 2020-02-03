@@ -6,10 +6,10 @@
             </i-form-item>
             <i-form-item prop="password">
                 <i-input placeholder="密码" @keyup.enter.native="submit()" @input="isPwd=true" prefix="ios-lock" size="large" type="password" v-model="passwordModel.password" />
-                <i-checkbox v-model="isRemember" style="float:left;">记住密码</i-checkbox>
-                <router-link class="forgot-link" :to="{name:'Forgot'}">忘记密码?</router-link>
             </i-form-item>
             <i-form-item>
+                <i-checkbox v-model="isRemember" style="float:left;">记住密码</i-checkbox>
+                <router-link class="forgot-link" :to="{name:'Forgot'}">忘记密码?</router-link>
                 <i-button long size="large" type="primary" @click="submit()" :loading="isloading">登 录</i-button>
                 <a v-if="app.webInfo.nmsOpen" href="javascript:;" class="to-mobile" @click="method='mobile'">使用手机短信登录</a>
             </i-form-item>

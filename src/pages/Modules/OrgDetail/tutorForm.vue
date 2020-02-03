@@ -1,6 +1,6 @@
 <template>
     <i-row>
-        <i-col span="15">
+        <i-col style="padding: 0px 10%">
             <i-form :model="modalData" ref="Form" :rules="ruleForMem">
                 <i-form-item label="姓名" prop="RealName">
                     <i-input v-model="modalData.user.RealName" />
@@ -11,10 +11,11 @@
                 <i-form-item label="手机" prop="Mobile">
                     <i-input v-model="modalData.user.Mobile" />
                 </i-form-item>
+                <i-button @click="showLog = true" type="text" style="float:right; padding: 0;">查看修改记录</i-button>
             </i-form>
         </i-col>
-        <i-col span="7" offset="2">
-            <i-timeline style="overflow-y:scroll; height:600px; padding-top: 10px;">
+        <i-drawer title="修改记录" v-model="showLog" scrollable width="20">
+            <i-timeline class="timeline">
                 <TimelineItem v-for="(item,index) in modalData.changeLogs.data" :key="index">
                     <i-row>
                         <i-col>
@@ -22,8 +23,8 @@
                             <p class="content">{{item.Operator}}{{item.Abstract}}</p>
                         </i-col>
                     </i-row>
-                    <i-row span="15">
-                        <i-col style="font-size: 0.7em;color: #808080;">
+                    <i-row>
+                        <i-col class="detail">
                             <p v-for="(d,index) in item.Details" :key="index">
                                 {{d}}
                             </p>
@@ -31,7 +32,7 @@
                     </i-row>
                 </TimelineItem>
             </i-timeline>
-        </i-col>
+        </i-drawer>
     </i-row>
 </template>
 
@@ -47,6 +48,7 @@
         },
         data () {
             return {
+                showLog: false,
                 ruleForMem: {
                     RealName: [
                         {
@@ -96,3 +98,21 @@
         }
     }
 </script>
+<style lang="less">
+.timeline{
+    padding:0.8em 0px 0px 5px;
+    .time{
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .content{
+        padding: 2px 0px 2px 5px;
+    }
+    .detail{
+        padding-left: 5px;
+        font-size: 0.8em;
+        color: #808080;
+        line-height: 1.5em;
+    }
+}
+</style>

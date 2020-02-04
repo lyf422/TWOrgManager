@@ -347,13 +347,13 @@ export default {
 </script>
 
 <style lang="less">
-.opinionForm .ivu-input {
-    border:1px solid #dcdee2;
-}
-.ivu-input {
-    border:none
-}
 #activity-form {
+    .opinionForm .ivu-input {
+    border:1px solid #dcdee2;
+    }
+    .ivu-input {
+        border:none
+    }
     .paper {
         width: 795px;
         margin: 18px auto;

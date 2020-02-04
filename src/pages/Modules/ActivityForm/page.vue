@@ -245,24 +245,30 @@ const enums = require("@/config/enums");
 export default {
     data () {
         return {
-            executorList: [{
+            executorList: [
+                {
                 value: "指导老师",
                 label: "指导老师"
-            }, {
-            value: "挂靠单位",
-            label: "挂靠单位"
-            }, {
-            value: "学生联合会",
-            label: "学生联合会"
-            }, {
-            value: "校团委",
-            label: "校团委"
-            }],
+                },
+                {
+                value: "挂靠单位",
+                label: "挂靠单位"
+                },
+                {
+                value: "学生联合会",
+                label: "学生联合会"
+                },
+                {
+                value: "校团委",
+                label: "校团委"
+                }
+            ],
             model1: "",
             stepInfo: enums.stepInfo,
             showPicker: false,
             stepId: "",
             instanceId: "",
+            detailMode: true,
             nowDate: "",
             upLoad: [],
             io: {
@@ -287,18 +293,13 @@ export default {
     },
     methods: {
         getFromPrepage () {
-            var query = location.search.substring(1);
-            var values = query.split("&");
-            for (var i = 0; i < 2; i++) {
-                var pos = values[i].indexOf('=');
-                values[i] = values[i].substring(pos + 1);
-            }
-            this.instanceId = values[0];
-            this.stepId = values[1];
+            this.instanceId = this.$route.query.instanceId;
+            this.stepId = this.$route.query.stepId;
+            this.detailMode = Boolean(this.$route.query.detail);
             this.getFieldAccess();
         },
         getFieldAccess () {
-            axios.post("/api/workflow/LoadInstance", {instanceId: this.instanceId, stepId: this.stepId}, msg => {
+            axios.post("/api/workflow/LoadInstance", {instanceId: this.instanceId, stepId: this.stepId, detail: this.detailMode}, msg => {
                 if (msg.success) {
                     this.io = msg;
                 } else {
@@ -307,14 +308,6 @@ export default {
             })
         },
         submit () {
-            if (this.io.fieldAccess.StartDate === 'w' || this.io.isMyStep) {
-                let temp = this.io.data.StartDate.getMonth() + 1;
-                this.io.data.StartDate = this.io.data.StartDate.getFullYear() + '年' + temp + '月' + this.io.data.StartDate.getDate() + '日';
-            }
-            if (this.io.fieldAccess.EndDate === 'w' || this.io.isMyStep) {
-                let temp = this.io.data.EndDate.getMonth() + 1;
-                this.io.data.EndDate = this.io.data.EndDate.getFullYear() + '年' + temp + '月' + this.io.data.EndDate.getDate() + '日';
-            }
             this.io.shouldUpload.forEach(value => {
                 this.upLoad[value] = this.io[value] || this.io.data[value]
             });

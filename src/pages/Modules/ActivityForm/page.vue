@@ -344,20 +344,20 @@ export default {
 </script>
 
 <style lang="less">
-.time{
+#activity-form {
+    .opinionForm .ivu-input {
+    border:1px solid #dcdee2;
+    }
+    .ivu-input {
+        border:none
+    }
+    .time{
     font-weight: bold;
     color: #888;
-}
-.content{
-    padding-left: 5px;
-}
-.opinionForm .ivu-input {
-    border:1px solid #dcdee2;
-}
-.ivu-input {
-    border:none
-}
-#activity-form {
+    }
+    .content{
+        padding-left: 5px;
+    }
     .paper {
         width: 795px;
         margin: 18px auto;

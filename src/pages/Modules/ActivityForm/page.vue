@@ -7,14 +7,14 @@
                         <table border="0">
                             <tr>
                                 <td class="smallhang wen-zi-ju-you">执行人：</td>
-                                <td  colspan="2">
+                                <td colspan="2">
                                     <i-select v-model="model1" class="drop-down-box">
                                         <i-option v-for="item in executorList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
                                     </i-select>
                                 </td>
                                 <td class="smallhang"></td>
                                 <td class="smallhang wen-zi-ju-you">状态：</td>
-                                <td  colspan="2">
+                                <td colspan="2">
                                     <i-select v-model="model2" class="drop-down-box">
                                         <i-option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
                                     </i-select>

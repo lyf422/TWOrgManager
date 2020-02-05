@@ -11,7 +11,7 @@
         <i-divider />
         <i-table stripe :columns="columns" :data="data" row-key="ID">
             <template slot="action" slot-scope="{index, row}">
-                <i-button @click="modifyWorkFlow(index,row)">派生</i-button>
+                <i-button @click="modifyWorkFlow(index,row)">修改</i-button>
                 <i-button v-if="row.children" @click="reloadWorkFlow(row)">刷新</i-button>
             </template>
         </i-table>

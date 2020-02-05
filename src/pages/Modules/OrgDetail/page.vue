@@ -195,6 +195,7 @@
                                 </i-poptip>
                             </template>
                         </i-table>
+                        <i-page show-sizer :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane :disabled="orgInfo.Type === 1" label="子部门" name="subDept">
@@ -226,6 +227,7 @@
                                     <i-button @click="delSubDepart(row)">删除</i-button>
                                 </template>
                             </i-table>
+                            <i-page show-sizer :total="pager.subDept.total" @on-change="getDeptTable($event, null)" @on-page-size-change="getDeptTable(null, $event)" />
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -250,12 +252,13 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.tutor" :data="tableData.tutor" :loading="tableLoading">
-                            <template slot="Action" slot-scope="{row}">
-                                <i-button @click="modifyTutor(row)">修改</i-button>
-                                <i-button @click="delTutor(row)">删除</i-button>
-                            </template>
-                        </i-table>
+                            <i-table stripe :columns="tableCol.tutor" :data="tableData.tutor" :loading="tableLoading">
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="modifyTutor(row)">修改</i-button>
+                                    <i-button @click="delTutor(row)">删除</i-button>
+                                </template>
+                            </i-table>
+                            <i-page show-sizer :total="pager.tutor.total" @on-change="getTutorTable($event, null)" @on-page-size-change="getTutorTable(null, $event)" />
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -280,17 +283,19 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
-                            <template slot="Action" slot-scope="{row}">
-                                <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
-                            </template>
-                        </i-table>
+                            <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
+                                </template>
+                            </i-table>
+                            <i-page show-sizer :total="pager.activity.total" @on-change="getActivityTable($event, null)" @on-page-size-change="getActivityTable(null, $event)" />
                         </i-row>
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane label="操作日志" name="operation">
                     <i-table stripe :columns="tableCol.operation" :data="tableData.operation" :loading="tableLoading">
                     </i-table>
+                    <i-page show-sizer :total="pager.operation.total" @on-change="getOptTable($event, null)" @on-page-size-change="getOptTable(null, $event)" />
                 </i-tab-pane>
             </i-tabs>
         </i-card>
@@ -355,42 +360,64 @@ export default {
                 this.tableLoading = false;
             })
         },
-        getMemberTable () {
+        getMemberTable (page, pageSize) {
             this.tableLoading = true;
             let name = this.keyword ? this.keyword : undefined;
-            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name}, msg => {
+            this.pager.member.page = page || this.pager.member.page;
+            this.pager.member.pageSize = pageSize || this.pager.member.pageSize;
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name, page: this.pager.member.page, pageSize: this.pager.member.pageSize}, msg => {
                 this.tableData.member = msg.data;
+                this.pager.member.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
-        getTutorTable () {
+        getTutorTable (page, pageSize) {
             this.tableLoading = true;
             let name = this.keyword ? this.keyword : undefined;
-            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name, position: "指导老师"}, msg => {
+            this.pager.tutor.page = page || this.pager.tutor.page;
+            this.pager.tutor.pageSize = pageSize || this.pager.tutor.pageSize;
+            axios.post("/api/security/GetUsersByDepartId", {
+                departId: this.orgInfo.ID,
+                name,
+                position: "指导老师",
+                page: this.pager.tutor.page,
+                pageSize: this.pager.tutor.pageSize
+            }, msg => {
+                this.tableData.subDept = msg.data.children;
                 this.tableData.tutor = msg.data;
+                this.pager.tutor.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
-        getDeptTable () {
+        getDeptTable (page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
             this.tableLoading = true;
-            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
+            this.pager.subDept.page = page || this.pager.subDept.page;
+            this.pager.subDept.pageSize = pageSize || this.pager.subDept.pageSize;
+            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID, page: this.pager.subDept.page, pageSize: this.pager.subDept.pageSize}, msg => {
                 this.tableData.subDept = msg.data.children;
-                this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"))
+                this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"));
+                this.pager.subDept.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
-        getOptTable () {
+        getOptTable (page, pageSize) {
             this.tableLoading = true;
-            axios.post("/api/logs/GetLogsByDepartId", {departId: this.orgInfo.ID}, msg => {
+            this.pager.operation.page = page || this.pager.operation.page;
+            this.pager.operation.pageSize = pageSize || this.pager.operation.pageSize;
+            axios.post("/api/logs/GetLogsByDepartId", {departId: this.orgInfo.ID, page: this.pager.operation.page, pageSize: this.pager.operation.pageSize}, msg => {
                 this.tableData.operation = msg.data;
+                this.pager.operation.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
-        getActivityTable () {
+        getActivityTable (page, pageSize) {
             this.tableLoading = true;
-            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID}, msg => {
+            this.pager.activity.page = page || this.pager.activity.page;
+            this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
+            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
                 this.tableData.activity = msg.data;
+                this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
@@ -578,6 +605,33 @@ export default {
                 subDept: [],
                 tutor: [],
                 operation: []
+            },
+            pager: {
+                member: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                },
+                subDept: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                },
+                tutor: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                },
+                activity: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                },
+                operation: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                }
             },
             modalShow: false,
             componentDic: {

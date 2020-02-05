@@ -158,7 +158,7 @@ export default {
                         name: "MyFlow",
                         query: {}
                     },
-                    icon: "md-information"
+                    icon: "ios-add-circle"
                 },
                 {
                     title: "我参与的",
@@ -166,7 +166,7 @@ export default {
                         name: "MyAttend",
                         query: {}
                     },
-                    icon: "md-information"
+                    icon: "ios-contacts"
                 },
                 {
                     title: "所有流程",
@@ -174,7 +174,7 @@ export default {
                         name: "AllFlow",
                         query: {}
                     },
-                    icon: "md-information"
+                    icon: "md-eye"
                 }
             ],
             entrForTeacher: [

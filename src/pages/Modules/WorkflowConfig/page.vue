@@ -11,8 +11,8 @@
         <i-divider />
         <i-table stripe :columns="columns" :data="data" row-key="ID">
             <template slot="action" slot-scope="{index, row}">
-                <i-button @click="reloadWorkFlow(row)">刷新</i-button>
                 <i-button @click="modifyWorkFlow(index,row)">修改</i-button>
+                <i-button v-if="row.children" @click="reloadWorkFlow(row)">刷新</i-button>
             </template>
         </i-table>
         <i-modal title="新建/管理工作流" v-model="visible">
@@ -107,7 +107,7 @@ export default {
             this.getWorkFlows();
         },
         getWorkFlows () {
-            axios.post("/api/workflow/GetWorkflows", {}, msg => {
+            axios.postStream("/api/workflow/GetWorkflows", {}, msg => {
                 if (msg.success) {
                     this.data = msg.data;
                 } else {

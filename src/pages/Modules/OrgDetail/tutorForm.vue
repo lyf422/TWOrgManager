@@ -1,7 +1,7 @@
 <template>
     <i-row>
         <i-col style="padding: 0px 10%">
-            <i-form :model="modalData.user" ref="Form" :rules="ruleForMem">
+            <i-form :model="modalData" ref="Form" :rules="ruleForMem">
                 <i-form-item label="姓名" prop="RealName">
                     <i-input v-model="modalData.user.RealName" />
                 </i-form-item>
@@ -39,7 +39,6 @@
 <script>
     const axios = require("axios");
     const regex = require("@/regex.js");
-    let _ = require("lodash")
     export default {
         props: {
             modalData: {
@@ -48,10 +47,8 @@
             }
         },
         data () {
-            let THIS = this;
             return {
                 showLog: false,
-                mobileValidate: false,
                 ruleForMem: {
                     RealName: [
                         {
@@ -67,19 +64,20 @@
                             trigger: "blur"
                         }
                     ],
-                    "Mobile": [
-                        {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
-                        _.debounce(function (rule, value, cb) {
-                            let userId = THIS.modalData.user.ID;
-                            axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {
-                                if (msg.success) {
-                                    cb();
-                                    this.mobileValidate = !this.mobileValidate;
-                                } else {
-                                    cb(msg.remote);
-                                }
-                            })
-                        }, 500)
+                    Mobile: [
+                        {
+                            type: "string",
+                            pattern: regex.mobile,
+                            message: "电话格式不正确",
+                            trigger: "blur"
+                        }
+                    ],
+                    Source: [
+                        {
+                            required: true,
+                            message: "必须填写生源地",
+                            trigger: "blur"
+                        }
                     ]
                 }
             }
@@ -88,13 +86,6 @@
             resetFields () {
                 let form = this.$refs["Form"];
                 form.resetFields();
-            },
-            formValidate () {
-                let errors = [];
-                if (this.modalData.user.RealName === "" || this.modalData.user.Code === "" || !this.mobileValidate) {
-                    errors.push("表单填写错误,请检查是否未填写姓名,工号,手机号是否被注册");
-                }
-                return errors;
             },
             submit (departId, callback) {
                 axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId, position: "指导老师"}, msg => {

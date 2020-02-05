@@ -298,12 +298,8 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal :z-index="10" v-model="modalShow" title="添加/修改成员">
+        <i-modal :z-index="10" v-model="modalShow" title="添加/修改成员" @on-ok="submit()" @on-cancel="cancel()">
             <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"></component>
-            <div slot="footer">
-                <Button type="text" size="large" @click="cancel()">取消</Button>
-                <Button type="primary" size="large" @click="submit()">确定</Button>
-            </div>
         </i-modal>
     </i-row>
 </template>
@@ -326,43 +322,22 @@ export default {
     methods: {
         submit () {
             let form = this.$refs["Form"];
-            let errors = form.formValidate();
-            if (errors.length > 0) {
-                this.$Message.warning(errors[0]);
-                this.modalShow = true;
-            } else {
-                form.submit(this.orgInfo.ID, this.callbackFunc);
-                form.resetFields();
-                this.modalShow = false;
-            }
+            form.submit(this.orgInfo.ID, this.callbackFunc);
+            form.resetFields();
         },
         cancel () {
-            this.modalShow = false;
         },
         saveOrgDetail () {
             this.isSaving = true;
-            let errors = this.formValidate();
-            if (errors.length > 0) {
-                this.$Message.warning(errors[0]);
-                this.isSaving = false;
-            } else {
-                axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
-                    if (msg.success) {
-                        this.$Message.success("部门信息保存成功");
-                    } else {
-                        this.$Message.warning(msg.msg);
-                    }
-                    this.getOrgDetail();
-                    this.isSaving = false;
-                });
+            axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
+                if (msg.success) {
+                    this.$Message.success("部门信息保存成功");
+                } else {
+                    this.$Message.warning(msg.msg);
                 }
-        },
-        formValidate () {
-            let errors = [];
-            if (this.orgInfo.Name === "" || this.orgInfo.DepartType === "" || this.orgInfo.BirthTime === "") {
-                errors.push("表单验证失败,请查看如社团名称,社团类型以及成立时间是否为空");
-            }
-            return errors;
+                this.getOrgDetail();
+                this.isSaving = false;
+            });
         },
         getOrgDetail () {
             this.tableLoading = true;
@@ -445,11 +420,6 @@ export default {
             });
         },
         addSubDepart () {
-            this.recordData = {
-                name: "",
-                changeLogs: [],
-                ParentId: ""
-            };
             this.callbackFunc = this.modifySubDepart;
             this.modalShow = true;
         },

@@ -102,7 +102,6 @@
 </template>
 
 <script>
-    let _ = require("lodash")
     const axios = require("axios");
     const regex = require("@/regex.js");
     export default {
@@ -121,12 +120,10 @@
             }
         },
         data () {
-            let THIS = this;
             return {
                 showLog: false,
                 haveJoinCPC: false,
                 haveJoinCCYL: false,
-                mobileValidate: false,
                 ruleForMem: {
                     RealName: [
                         {
@@ -142,19 +139,13 @@
                             trigger: "blur"
                         }
                     ],
-                    "Mobile": [
-                        {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
-                        _.debounce(function (rule, value, cb) {
-                            let userId = THIS.modalData.user.ID;
-                            axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {
-                                if (msg.success) {
-                                    cb();
-                                    this.mobileValidate = !this.mobileValidate;
-                                } else {
-                                    cb(msg.remote);
-                                }
-                            })
-                        }, 500)
+                    Mobile: [
+                        {
+                            type: "string",
+                            pattern: regex.mobile,
+                            message: "电话格式不正确",
+                            trigger: "blur"
+                        }
                     ]
                 }
             }
@@ -163,23 +154,16 @@
             resetFields () {
                 this.$refs["Form"].resetFields();
             },
-            formValidate () {
-                let errors = [];
-                if (this.modalData.user.RealName === "" || this.modalData.user.Code === "" || !this.mobileValidate) {
-                    errors.push("表单填写错误,请检查是否未填写姓名,学号,手机号是否被注册");
-                }
-                return errors;
-            },
             submit (departId, callback) {
-                    axios.post("/api/security/SaveUserV2", {
-                        ...this.modalData.user,
-                        JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
-                        JoinCCYLTime: this.haveJoinCCYL ? this.modalData.user.JoinCCYLTime : "1900-01-01",
-                        departId
-                        }, msg => {
-                        this.resetFields();
-                        callback();
-                    })
+                axios.post("/api/security/SaveUserV2", {
+                    ...this.modalData.user,
+                    JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
+                    JoinCCYLTime: this.haveJoinCCYL ? this.modalData.user.JoinCCYLTime : "1900-01-01",
+                    departId
+                    }, msg => {
+                    this.resetFields();
+                    callback();
+                })
             }
         }
     }

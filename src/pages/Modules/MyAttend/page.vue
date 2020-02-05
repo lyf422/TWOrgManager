@@ -1,7 +1,7 @@
 <template>
     <i-table :columns="columns" :data="tableData">
         <template slot="Action" slot-scope="{row}">
-            <i-button @click="dealWorkflow(row.InstanceId, row.StepId)">执行</i-button>
+            <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
         </template>
     </i-table>
 </template>
@@ -44,8 +44,8 @@ export default {
                 this.tableData = msg.data;
             });
         },
-        dealWorkflow (instanceId, stepId) {
-            window.open("/manage/org/activityform?instanceId=" + instanceId + '&stepId=' + stepId);
+        checkWorkflow (instanceId, stepId) {
+            window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
         }
     }
 }

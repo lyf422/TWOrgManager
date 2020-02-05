@@ -7,14 +7,14 @@
                         <table border="0">
                             <tr>
                                 <td class="smallhang wen-zi-ju-you">执行人：</td>
-                                <td  colspan="2">
+                                <td colspan="2">
                                     <i-select v-model="model1" class="drop-down-box">
                                         <i-option v-for="item in executorList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
                                     </i-select>
                                 </td>
                                 <td class="smallhang"></td>
                                 <td class="smallhang wen-zi-ju-you">状态：</td>
-                                <td  colspan="2">
+                                <td colspan="2">
                                     <i-select v-model="model2" class="drop-down-box">
                                         <i-option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
                                     </i-select>
@@ -61,7 +61,7 @@
                                         </td>
                                         <td class="smallhang">活动人数</td>
                                         <td colspan="2" width="200">
-                                            <i-input  v-if="io.fieldAccess.AttendanceFigures === 'w' || io.isMyStep" v-model="io.data.AttendanceFigures"/>
+                                            <i-input v-if="io.fieldAccess.AttendanceFigures === 'w' || io.isMyStep" v-model="io.data.AttendanceFigures"/>
                                             <p v-else>{{io.data.AttendanceFigures}}</p>人
                                         </td>
                                     </tr>
@@ -102,9 +102,9 @@
                                     <tr>
                                         <td class="smallhang" rowspan="2">活动内容</td>
                                         <td class="longhang" colspan="4">
-                                                <i-upload action="//jsonplaceholder.typicode.com/posts/">
-                                                    <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">上传文件</i-button>
-                                                </i-upload>
+                                            <i-upload action="//jsonplaceholder.typicode.com/posts/">
+                                                <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">上传文件</i-button>
+                                            </i-upload>
                                         </td>
                                     </tr>
                                     <tr>

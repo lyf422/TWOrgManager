@@ -281,9 +281,8 @@
                         </i-row>
                         <i-row>
                         <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
-                            <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
-                                <i-button @click="delTableItem(index)">删除</i-button>
+                            <template slot="Action" slot-scope="{row}">
+                                <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
                             </template>
                         </i-table>
                         </i-row>
@@ -388,6 +387,13 @@ export default {
                 this.tableLoading = false;
             });
         },
+        getActivityTable () {
+            this.tableLoading = true;
+            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID}, msg => {
+                this.tableData.activity = msg.data;
+                this.tableLoading = false;
+            });
+        },
         addSubDepart () {
             this.callbackFunc = this.modifySubDepart;
             this.modalShow = true;
@@ -456,8 +462,8 @@ export default {
         modifySubDepart (row) {
             window.open("/manage/org/detail?id=" + row.id);
         },
-        modifyTableItem () {
-
+        checkWorkflow (instanceId, stepId) {
+            window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
         },
         setPositon (userId, position) {
             axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
@@ -542,6 +548,7 @@ export default {
                 this.getTutorTable();
                 this.getDeptTable();
                 this.getOptTable();
+                this.getActivityTable();
             }
             this.$Spin.hide();
             this.tabSelect = this.$route.query.tabSelect || "basicInfo";

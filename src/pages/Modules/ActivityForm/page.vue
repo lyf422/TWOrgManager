@@ -25,7 +25,7 @@
                                 <td colspan="2"></td>
                                 <td class="smallhang"></td>
                                 <td colspan="2">
-                                    <i-button type="primary" size="small" class="button-position" @click="submit">确认</i-button>
+                                    <i-button type="primary" size="small" class="button-position">确认</i-button>
                                 </td>
                             </tr>
                         </table>
@@ -35,172 +35,174 @@
                         <i-col>
                             <p class="headline">社团活动申请表</p>
                             <p class="date">填表时间：{{nowDate}}</p>
-                                <table border="1">
-                                    <tr>
-                                        <td class="smallhang">社团名称</td>
-                                        <td class="longhang wen-zi-ju-zhong" colspan="4">
-                                            <i-input  v-if="io.fieldAccess.DepartName === 'w' || io.isMyStep" v-model="io.data.DepartName"/>
-                                            <p v-else>{{io.data.DepartName}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="smallhang">活动名称</td>
-                                        <td class="longhang wen-zi-ju-zhong" colspan="4">
-                                            <i-input  v-if="io.fieldAccess.ActivityName === 'w' || io.isMyStep" v-model="io.data.ActivityName"/>
-                                            <p v-else>{{io.data.ActivityName}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="smallhang" style="height:76px;">活动时间</td>
-                                        <td colspan="2" width="200" style="letter-spacing: 2px;">
-                                            <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.StartDate === 'w' || io.isMyStep" v-model="io.data.StartDate"/>
-                                            <p v-else>{{io.data.StartDate}}</p>
-                                            至
-                                            <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.EndDate === 'w' || io.isMyStep" v-model="io.data.EndDate"/>
-                                            <p v-else>{{io.data.EndDate}}</p>
-                                        </td>
-                                        <td class="smallhang">活动人数</td>
-                                        <td colspan="2" width="200">
-                                            <i-input v-if="io.fieldAccess.AttendanceFigures === 'w' || io.isMyStep" v-model="io.data.AttendanceFigures"/>
-                                            <p v-else>{{io.data.AttendanceFigures}}</p>人
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="smallhang">活动地点</td>
-                                        <td class="longhang wen-zi-ju-zhong" colspan="4">
-                                            <i-input type="textarea" v-if="io.fieldAccess.Address === 'w' || io.isMyStep" v-model="io.data.Address"/>
-                                            <p v-else>{{io.data.Address}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="smallhang">负责人员</td>
-                                        <td colspan="2">
-                                            <i-input type="textarea" v-if="io.fieldAccess.Leader === 'w' || io.isMyStep" v-model="io.data.Leader"/>
-                                            <p v-else>{{io.data.Leader}}</p>
-                                        </td>
-                                        <td class="smallhang">联系方式</td>
-                                        <td colspan="2">
-                                            <i-input type="textarea" v-if="io.fieldAccess.Telephone === 'w' || io.isMyStep" v-model="io.data.Telephone"/>
-                                            <p v-else>{{io.data.Telephone}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="smallhang" rowspan="2">面向范围</td>
-                                        <td class="longhang" colspan="4" >活动类型：
-                                            <i-radio-group v-model="io.data.ActivityType">
-                                                <i-radio label="社团内部活动" class="iview-type-size" :disabled="io.fieldAccess.ActivityType === 'r' || !io.isMyStep">社团内部活动</i-radio>
-                                                <i-radio label="公开活动" class="iview-type-size" :disabled="io.fieldAccess.ActivityType === 'r' || !io.isMyStep">公开活动</i-radio>
-                                            </i-radio-group>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="longhang" colspan="4">
-                                            <i-input type="textarea" class="opinionForm" v-model="io.data.FaceTo" :rows="3" v-if="io.fieldAccess.FaceTo === 'w' || io.isMyStep" placeholder="（如为公开活动可具体描写面向范围如：面向全体学生/面向校内外人员等，可给出示例填写）"/>
-                                            <p v-else>{{io.data.FaceTo}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="smallhang" rowspan="2">活动内容</td>
-                                        <td class="longhang" colspan="4">
+                            <table border="1">
+                                <tr>
+                                    <td class="smallhang">社团名称</td>
+                                    <td class="longhang wen-zi-ju-zhong" colspan="4">
+                                        <i-input  v-if="io.fieldAccess.DepartName === 'w' || io.isMyStep" v-model="io.data.DepartName"/>
+                                        <p v-else>{{io.data.DepartName}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang">活动名称</td>
+                                    <td class="longhang wen-zi-ju-zhong" colspan="4">
+                                        <i-input  v-if="io.fieldAccess.ActivityName === 'w' || io.isMyStep" v-model="io.data.ActivityName"/>
+                                        <p v-else>{{io.data.ActivityName}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang" style="height:76px;">活动时间</td>
+                                    <td colspan="2" width="200" style="letter-spacing: 2px;">
+                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.StartDate === 'w' || io.isMyStep" v-model="io.data.StartDate"/>
+                                        <p v-else>{{io.data.StartDate}}</p>
+                                        至
+                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.EndDate === 'w' || io.isMyStep" v-model="io.data.EndDate"/>
+                                        <p v-else>{{io.data.EndDate}}</p>
+                                    </td>
+                                    <td class="smallhang">活动人数</td>
+                                    <td colspan="2" width="200">
+                                        <i-input  v-if="io.fieldAccess.AttendanceFigures === 'w' || io.isMyStep" v-model="io.data.AttendanceFigures"/>
+                                        <p v-else>{{io.data.AttendanceFigures}}</p>人
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang">活动地点</td>
+                                    <td class="longhang wen-zi-ju-zhong" colspan="4">
+                                        <i-input type="textarea" v-if="io.fieldAccess.Address === 'w' || io.isMyStep" v-model="io.data.Address"/>
+                                        <p v-else>{{io.data.Address}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang">负责人员</td>
+                                    <td colspan="2">
+                                        <i-input type="textarea" v-if="io.fieldAccess.Leader === 'w' || io.isMyStep" v-model="io.data.Leader"/>
+                                        <p v-else>{{io.data.Leader}}</p>
+                                    </td>
+                                    <td class="smallhang">联系方式</td>
+                                    <td colspan="2">
+                                        <i-input type="textarea" v-if="io.fieldAccess.Telephone === 'w' || io.isMyStep" v-model="io.data.Telephone"/>
+                                        <p v-else>{{io.data.Telephone}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang" rowspan="2">面向范围</td>
+                                    <td class="longhang" colspan="4" >活动类型：
+                                        <i-radio-group v-model="io.data.ActivityType">
+                                            <i-radio label="社团内部活动" class="iview-type-size" :disabled="io.fieldAccess.ActivityType === 'r' || !io.isMyStep">社团内部活动</i-radio>
+                                            <i-radio label="公开活动" class="iview-type-size" :disabled="io.fieldAccess.ActivityType === 'r' || !io.isMyStep">公开活动</i-radio>
+                                        </i-radio-group>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="longhang" colspan="4">
+                                        <i-input type="textarea" class="opinionForm" v-model="io.data.FaceTo" :rows="3" v-if="io.fieldAccess.FaceTo === 'w' || io.isMyStep" placeholder="（如为公开活动可具体描写面向范围如：面向全体学生/面向校内外人员等，可给出示例填写）"/>
+                                        <p v-else>{{io.data.FaceTo}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang" rowspan="2">活动内容</td>
+                                    <td class="longhang" colspan="4">
                                             <i-upload action="//jsonplaceholder.typicode.com/posts/">
                                                 <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">上传文件</i-button>
                                             </i-upload>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="longhang" colspan="4">
-                                            <i-input type="textarea" class="opinionForm" :rows="3" placeholder="" v-if="io.fieldAccess.Description === 'w' || io.isMyStep" v-model="io.data.Description"/>
-                                            <p v-else>{{io.data.Description}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr v-show="io.fieldAccess.GuideTeacherOpinion">
-                                        <td class="smallhang">指导老师审核意见</td>
-                                        <td class="longhang" colspan="4">
-                                            <div v-show="io.fieldAccess.GuideTeacherIsPass">
-                                                是否通过：
-                                                <i-radio-group v-model="io.data.GuideTeacherIsPass">
-                                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep"> 是</i-radio>
-                                                    <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep">否</i-radio>
-                                                </i-radio-group>
-                                                <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
-                                            </div>
-                                            <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.GuideTeacherOpinion" v-if="io.fieldAccess.GuideTeacherOpinion === 'w' || io.isMyStep"/>
-                                            <p v-else>{{io.data.GuideTeacherOpinion}}</p>
-                                            <div class="wen-zi-ju-you">
-                                                <p >审核人（签名）：<i-input v-model="io.data.GuideTeacher" v-if="io.fieldAccess.GuideTeacher === 'w' || io.isMyStep"/>
-                                                    <span v-else>{{io.data.GuideTeacher}}</span>
-                                                </p>
-                                                <i-date-picker type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-model="io.data.GuideTeacherTime" v-if="io.fieldAccess.GuideTeacherTime === 'w' || io.isMyStep"/>
-                                                <p v-else>{{io.data.GuideTeacherTime}}</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr v-show="io.fieldAccess.AffiliatedDepartOpinion">
-                                        <td class="smallhang">挂靠单位意见</td>
-                                        <td class="longhang" colspan="4">
-                                            <div v-show="io.fieldAccess.AffiliatedDepartIsPass">
-                                                是否通过：
-                                                <i-radio-group v-model="io.data.AffiliatedDepartIsPass">
-                                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep"> 是</i-radio>
-                                                    <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep">否</i-radio>
-                                                </i-radio-group>
-                                                <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
-                                            </div>
-                                            <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.AffiliatedDepartOpinion" v-if="io.fieldAccess.AffiliatedDepartOpinion === 'w' || io.isMyStep"/>
-                                            <p v-else>{{io.data.AffiliatedDepartOpinion}}</p>
-                                            <div class="wen-zi-ju-you">
-                                                <p>审核人（签名）：<i-input v-model="io.data.AffiliatedDepart" v-if="io.fieldAccess.AffiliatedDepart === 'w' || io.isMyStep"/>
-                                                    <span v-else>{{io.data.AffiliatedDepart}}</span>
-                                                </p>
-                                                <i-date-picker v-model="io.data.AffiliatedDepartTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.AffiliatedDepartTime === 'w' || io.isMyStep"/>
-                                                <p v-else>{{io.data.AffiliatedDepartTime}}</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr v-show="io.fieldAccess.SauOpinion">
-                                        <td class="smallhang">学生社团联合会意见</td>
-                                        <td class="longhang" colspan="4">
-                                            <div v-show="io.fieldAccess.SauIsPass">
-                                                是否通过：
-                                                <i-radio-group v-model="io.data.SauIsPass">
-                                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep"> 是</i-radio>
-                                                    <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep">否</i-radio>
-                                                </i-radio-group>
-                                                <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
-                                            </div>
-                                            <i-input v-model="io.data.SauOpinion" type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-if="io.fieldAccess.SauOpinion === 'w' || io.isMyStep"/>
-                                            <p v-else>{{io.data.SauOpinion}}</p>
-                                            <div class="wen-zi-ju-you">
-                                                <p >审核人（签名）：<i-input v-model="io.data.Sau" v-if="io.fieldAccess.Sau === 'w' || io.isMyStep"/><span v-else>{{io.data.Sau}}</span>
-                                                </p>
-                                                <i-date-picker v-model="io.data.SauTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.SauTime === 'w' || io.isMyStep"/>
-                                                <p v-else>{{io.data.SauTime}}</p>
-                                        </div>
-                                        </td>
-                                    </tr>
-                                    <tr v-show="io.fieldAccess.YlcOpinion">
-                                        <td class="smallhang">校团委意见</td>
-                                        <td class="longhang" colspan="4">
-                                        <div v-show="io.fieldAccess.YlcIsPass">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="longhang" colspan="4">
+                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="" v-if="io.fieldAccess.Description === 'w' || io.isMyStep" v-model="io.data.Description"/>
+                                        <p v-else>{{io.data.Description}}</p>
+                                    </td>
+                                </tr>
+                                <tr v-show="io.fieldAccess.GuideTeacherOpinion">
+                                    <td class="smallhang">指导老师审核意见</td>
+                                    <td class="longhang" colspan="4">
+                                        <div v-show="io.fieldAccess.GuideTeacherIsPass">
                                             是否通过：
-                                            <i-radio-group v-model="io.data.YlcIsPass">
-                                                <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep">是</i-radio>
-                                                <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep">否</i-radio>
+                                            <i-radio-group v-model="io.data.GuideTeacherIsPass">
+                                                <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                                                <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep">否</i-radio>
                                             </i-radio-group>
-                                            <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                                            <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
                                         </div>
-                                        <i-input v-model="io.data.YlcOpinion" type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-if="io.fieldAccess.YlcOpinion === 'w' || io.isMyStep"/>
-                                        <p v-else>{{io.data.YlcOpinion}}</p>
+                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.GuideTeacherOpinion" v-if="io.fieldAccess.GuideTeacherOpinion === 'w' || io.isMyStep"/>
+                                        <p v-else>{{io.data.GuideTeacherOpinion}}</p>
                                         <div class="wen-zi-ju-you">
-                                            <p >审核人（签名）：<i-input v-model="io.data.Ylc" v-if="io.fieldAccess.Ylc === 'w' || io.isMyStep"/><span v-else>{{io.data.Ylc}}</span></p>
-                                            <i-date-picker v-model="io.data.YlcTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.YlcTime === 'w' || io.isMyStep"/>
-                                            <p v-else>{{io.data.YlcTime}}</p>
+                                            <p >审核人（签名）：<i-input v-model="io.data.GuideTeacher" v-if="io.fieldAccess.GuideTeacher === 'w' || io.isMyStep"/>
+                                                <span v-else>{{io.data.GuideTeacher}}</span>
+                                            </p>
+                                            <i-date-picker type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-model="io.data.GuideTeacherTime" v-if="io.fieldAccess.GuideTeacherTime === 'w' || io.isMyStep"/>
+                                            <p v-else>{{io.data.GuideTeacherTime}}</p>
                                         </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            <div class="add1"></div>
+                                    </td>
+                                </tr>
+                                <tr v-show="io.fieldAccess.AffiliatedDepartOpinion">
+                                    <td class="smallhang">挂靠单位意见</td>
+                                    <td class="longhang" colspan="4">
+                                        <div v-show="io.fieldAccess.AffiliatedDepartIsPass">
+                                            是否通过：
+                                            <i-radio-group v-model="io.data.AffiliatedDepartIsPass">
+                                                <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                                                <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep">否</i-radio>
+                                            </i-radio-group>
+                                            <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                                        </div>
+                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.AffiliatedDepartOpinion" v-if="io.fieldAccess.AffiliatedDepartOpinion === 'w' || io.isMyStep"/>
+                                        <p v-else>{{io.data.AffiliatedDepartOpinion}}</p>
+                                        <div class="wen-zi-ju-you">
+                                            <p>审核人（签名）：<i-input v-model="io.data.AffiliatedDepart" v-if="io.fieldAccess.AffiliatedDepart === 'w' || io.isMyStep"/>
+                                                <span v-else>{{io.data.AffiliatedDepart}}</span>
+                                            </p>
+                                            <i-date-picker v-model="io.data.AffiliatedDepartTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.AffiliatedDepartTime === 'w' || io.isMyStep"/>
+                                            <p v-else>{{io.data.AffiliatedDepartTime}}</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr v-show="io.fieldAccess.SauOpinion">
+                                    <td class="smallhang">学生社团联合会意见</td>
+                                    <td class="longhang" colspan="4">
+                                        <div v-show="io.fieldAccess.SauIsPass">
+                                            是否通过：
+                                            <i-radio-group v-model="io.data.SauIsPass">
+                                                <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                                                <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep">否</i-radio>
+                                            </i-radio-group>
+                                            <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                                        </div>
+                                        <i-input v-model="io.data.SauOpinion" type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-if="io.fieldAccess.SauOpinion === 'w' || io.isMyStep"/>
+                                        <p v-else>{{io.data.SauOpinion}}</p>
+                                        <div class="wen-zi-ju-you">
+                                            <p >审核人（签名）：<i-input v-model="io.data.Sau" v-if="io.fieldAccess.Sau === 'w' || io.isMyStep"/><span v-else>{{io.data.Sau}}</span>
+                                            </p>
+                                            <i-date-picker v-model="io.data.SauTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.SauTime === 'w' || io.isMyStep"/>
+                                            <p v-else>{{io.data.SauTime}}</p>
+                                    </div>
+                                    </td>
+                                </tr>
+                                <tr v-show="io.fieldAccess.YlcOpinion">
+                                    <td class="smallhang">校团委意见</td>
+                                    <td class="longhang" colspan="4">
+                                    <div v-show="io.fieldAccess.YlcIsPass">
+                                        是否通过：
+                                        <i-radio-group v-model="io.data.YlcIsPass">
+                                            <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep">是</i-radio>
+                                            <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep">否</i-radio>
+                                        </i-radio-group>
+                                        <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                                    </div>
+                                    <i-input v-model="io.data.YlcOpinion" type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-if="io.fieldAccess.YlcOpinion === 'w' || io.isMyStep"/>
+                                    <p v-else>{{io.data.YlcOpinion}}</p>
+                                    <div class="wen-zi-ju-you">
+                                        <p >审核人（签名）：<i-input v-model="io.data.Ylc" v-if="io.fieldAccess.Ylc === 'w' || io.isMyStep"/><span v-else>{{io.data.Ylc}}</span></p>
+                                        <i-date-picker v-model="io.data.YlcTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.YlcTime === 'w' || io.isMyStep"/>
+                                        <p v-else>{{io.data.YlcTime}}</p>
+                                    </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </i-col>
+                    </i-row>
+                    <i-row class="add1 headline">
+                        <i-button  v-show="io.currentStep==='填写申请表'" style="width: 200px;margin: 18px auto;" type="primary" size="small" @click="submit">确认</i-button>
                     </i-row>
                 </div>
             </div>
@@ -279,7 +281,8 @@ export default {
                 allSteps: [],
                 isMyStep: false,
                 timelines: [],
-                intstanceState: ''
+                intstanceState: '',
+                currentStep: ''
             },
             stateList: [{
                 value: "审核通过",

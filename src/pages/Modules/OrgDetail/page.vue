@@ -158,7 +158,6 @@
                             <i-col>
                                 <i-row type="flex" align="middle" :gutter="16">
                                     <i-col>社团成员</i-col>
-                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
                                 </i-row>
                             </i-col>
                             <i-col>
@@ -195,7 +194,8 @@
                                 </i-poptip>
                             </template>
                         </i-table>
-                        <i-page show-sizer :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
+                        <br/>
+                        <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane :disabled="orgInfo.Type === 1" label="子部门" name="subDept">
@@ -204,7 +204,6 @@
                             <i-col>
                                 <i-row type="flex" align="middle" :gutter="16">
                                     <i-col>子部门</i-col>
-                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
                                 </i-row>
                             </i-col>
                             <i-col>
@@ -227,7 +226,8 @@
                                     <i-button @click="delSubDepart(row)">删除</i-button>
                                 </template>
                             </i-table>
-                            <i-page show-sizer :total="pager.subDept.total" @on-change="getDeptTable($event, null)" @on-page-size-change="getDeptTable(null, $event)" />
+                            <br/>
+                            <i-page show-sizer show-total :total="pager.subDept.total" @on-change="getDeptTable($event, null)" @on-page-size-change="getDeptTable(null, $event)" />
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -237,7 +237,6 @@
                             <i-col>
                                 <i-row type="flex" align="middle" :gutter="16">
                                     <i-col>指导老师</i-col>
-                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
                                 </i-row>
                             </i-col>
                             <i-col>
@@ -258,7 +257,8 @@
                                     <i-button @click="delTutor(row)">删除</i-button>
                                 </template>
                             </i-table>
-                            <i-page show-sizer :total="pager.tutor.total" @on-change="getTutorTable($event, null)" @on-page-size-change="getTutorTable(null, $event)" />
+                            <br/>
+                            <i-page show-sizer show-total :total="pager.tutor.total" @on-change="getTutorTable($event, null)" @on-page-size-change="getTutorTable(null, $event)" />
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -274,9 +274,6 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索活动"/>
-                                    </i-col>
-                                    <i-col>
                                         <i-button type="primary" @click="addActivity">添加活动</i-button>
                                     </i-col>
                                 </i-row>
@@ -288,14 +285,16 @@
                                     <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
                                 </template>
                             </i-table>
-                            <i-page show-sizer :total="pager.activity.total" @on-change="getActivityTable($event, null)" @on-page-size-change="getActivityTable(null, $event)" />
+                            <br/>
+                            <i-page show-sizer show-total :total="pager.activity.total" @on-change="getActivityTable($event, null)" @on-page-size-change="getActivityTable(null, $event)" />
                         </i-row>
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane label="操作日志" name="operation">
                     <i-table stripe :columns="tableCol.operation" :data="tableData.operation" :loading="tableLoading">
                     </i-table>
-                    <i-page show-sizer :total="pager.operation.total" @on-change="getOptTable($event, null)" @on-page-size-change="getOptTable(null, $event)" />
+                    <br/>
+                    <i-page show-sizer show-total :total="pager.operation.total" @on-change="getOptTable($event, null)" @on-page-size-change="getOptTable(null, $event)" />
                 </i-tab-pane>
             </i-tabs>
         </i-card>

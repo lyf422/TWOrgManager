@@ -119,7 +119,7 @@
                                             <div v-show="io.fieldAccess.GuideTeacherIsPass">
                                                 是否通过：
                                                 <i-radio-group v-model="io.data.GuideTeacherIsPass">
-                                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep">是</i-radio>
                                                     <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep">否</i-radio>
                                                 </i-radio-group>
                                                 <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
@@ -141,7 +141,7 @@
                                             <div v-show="io.fieldAccess.AffiliatedDepartIsPass">
                                                 是否通过：
                                                 <i-radio-group v-model="io.data.AffiliatedDepartIsPass">
-                                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep">是</i-radio>
                                                     <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep">否</i-radio>
                                                 </i-radio-group>
                                                 <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
@@ -163,7 +163,7 @@
                                             <div v-show="io.fieldAccess.SauIsPass">
                                                 是否通过：
                                                 <i-radio-group v-model="io.data.SauIsPass">
-                                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep">是</i-radio>
                                                     <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep">否</i-radio>
                                                 </i-radio-group>
                                                 <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>

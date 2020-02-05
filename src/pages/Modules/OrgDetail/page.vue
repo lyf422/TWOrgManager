@@ -382,7 +382,6 @@ export default {
                 page: this.pager.tutor.page,
                 pageSize: this.pager.tutor.pageSize
             }, msg => {
-                this.tableData.subDept = msg.data.children;
                 this.tableData.tutor = msg.data;
                 this.pager.tutor.total = msg.totalRow;
                 this.tableLoading = false;

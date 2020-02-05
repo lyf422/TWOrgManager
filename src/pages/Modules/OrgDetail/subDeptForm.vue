@@ -1,5 +1,5 @@
 <template>
-    <i-form :model="modalData" ref="Form" :rules="ruleForSubDep">
+    <i-form :model="modalData" ref="form" :rules="rules">
         <i-row type="flex" justify="space-between">
             <i-col span="24">
                 <i-form-item label="部门名称" prop="name">
@@ -36,7 +36,7 @@
         },
         data () {
             return {
-                ruleForSubDep: {
+                rules: {
                     name: [
                         {
                             required: true,
@@ -49,25 +49,22 @@
         },
         methods: {
             resetFields () {
-                let form = this.$refs["Form"];
+                let form = this.$refs["form"];
                 form.resetFields();
             },
-            formValidate () {
-                let errors = [];
-                if (this.modalData.name === "" || this.modalData.ParentId === "") {
-                    errors.push("表单填写错误,请检查部门名称,挂靠单位是否为空");
-                }
-                return errors;
-            },
             submit (departId, callback) {
-                axios.post("/api/security/SaveDepartV2", this.modalData, msg => {
-                    this.resetFields();
-                    if (msg.success) {
-                        callback(msg);
-                    } else {
-                        this.$Message.warning(msg.msg);
-                    }
-                });
+                let form = this.$refs["form"];
+                form.validate(res => {
+                    if (!res) return;
+                    axios.post("/api/security/SaveDepartV2", this.modalData, msg => {
+                        this.resetFields();
+                        if (msg.success) {
+                            callback(msg);
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                    });
+                })
             }
         }
     }

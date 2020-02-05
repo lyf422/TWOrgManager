@@ -202,7 +202,7 @@
                         </i-col>
                     </i-row>
                     <i-row class="add1 headline">
-                        <i-button style="width: 200px;margin: 18px auto;" type="primary" size="small" @click="submit">确认</i-button>
+                        <i-button  v-show="io.currentStep==='填写申请表'" style="width: 200px;margin: 18px auto;" type="primary" size="small" @click="submit">确认</i-button>
                     </i-row>
                 </div>
             </div>
@@ -281,7 +281,8 @@ export default {
                 allSteps: [],
                 isMyStep: false,
                 timelines: [],
-                intstanceState: ''
+                intstanceState: '',
+                currentStep: ''
             },
             stateList: [{
                 value: "审核通过",

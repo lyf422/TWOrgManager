@@ -37,6 +37,7 @@
 </template>
 
 <script>
+    let _ = require("lodash");
     const axios = require("axios");
     const regex = require("@/regex.js");
     export default {
@@ -47,6 +48,7 @@
             }
         },
         data () {
+            let THIS = this;
             return {
                 showLog: false,
                 ruleForMem: {
@@ -60,24 +62,22 @@
                     Code: [
                         {
                             required: true,
-                            message: "必须填写学号",
+                            message: "必须填写工号",
                             trigger: "blur"
                         }
                     ],
-                    Mobile: [
-                        {
-                            type: "string",
-                            pattern: regex.mobile,
-                            message: "电话格式不正确",
-                            trigger: "blur"
-                        }
-                    ],
-                    Source: [
-                        {
-                            required: true,
-                            message: "必须填写生源地",
-                            trigger: "blur"
-                        }
+                    "Mobile": [
+                        {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
+                        _.debounce(function (rule, value, cb) {
+                            let userId = THIS.modalData.user.ID;
+                            axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {
+                                if (msg.success) {
+                                    cb();
+                                } else {
+                                    cb(msg.remote);
+                                }
+                            })
+                        }, 500)
                     ]
                 }
             }
@@ -88,11 +88,15 @@
                 form.resetFields();
             },
             submit (departId, callback) {
-                axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId, position: "指导老师"}, msg => {
-                    this.resetFields();
-                    if (msg.success) {
-                        callback();
-                    }
+                let form = this.$refs["Form"];
+                form.validate(res => {
+                    if (!res) return;
+                    axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId, position: "指导老师"}, msg => {
+                        this.resetFields();
+                        if (msg.success) {
+                            callback();
+                        }
+                    })
                 })
             }
         }

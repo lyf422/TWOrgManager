@@ -18,22 +18,22 @@
                     <i-row>
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-col span="16">
-                            <i-form :model="orgInfo">
+                            <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="22">
-                                        <i-form-item label="社团名称" span="8">
+                                        <i-form-item label="社团名称" span="8" prop="Name">
                                             <i-input v-model="orgInfo.Name"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="10">
-                                        <i-form-item label="社团类型">
+                                        <i-form-item label="社团类型" prop="DepartType">
                                             <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="10" offset="2">
-                                        <i-form-item label="成立时间">
+                                        <i-form-item label="成立时间" prop="BirthTime">
                                             <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
                                         </i-form-item>
                                     </i-col>
@@ -328,15 +328,19 @@ export default {
         },
         saveOrgDetail () {
             this.isSaving = true;
-            axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
-                if (msg.success) {
-                    this.$Message.success("部门信息保存成功");
-                } else {
-                    this.$Message.warning(msg.msg);
-                }
-                this.getOrgDetail();
-                this.isSaving = false;
-            });
+            let form = this.$refs["form"];
+            form.validate(res => {
+                    if (!res) return;
+                    axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
+                    if (msg.success) {
+                        this.$Message.success("部门信息保存成功");
+                    } else {
+                        this.$Message.warning(msg.msg);
+                    }
+                    this.getOrgDetail();
+                });
+            })
+            this.isSaving = false;
         },
         getOrgDetail () {
             this.tableLoading = true;
@@ -603,6 +607,30 @@ export default {
                 subDept: [],
                 tutor: [],
                 operation: []
+            },
+            ruleForBasic: {
+                Name: [
+                        {
+                            required: true,
+                            message: "必须填写社团名称",
+                            trigger: "blur"
+                        }
+                    ],
+                DepartType: [
+                        {
+                            required: true,
+                            message: "必须填写社团类型",
+                            trigger: "change"
+                        }
+                    ],
+                BirthTime: [
+                    {
+                            required: true,
+                            type: "date",
+                            message: "必须填写成立时间",
+                            trigger: "change"
+                    }
+                ]
             },
             pager: {
                 member: {

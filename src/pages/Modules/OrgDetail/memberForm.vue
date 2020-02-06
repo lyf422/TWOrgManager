@@ -102,6 +102,7 @@
 </template>
 
 <script>
+    let _ = require("lodash");
     const axios = require("axios");
     const regex = require("@/regex.js");
     export default {
@@ -120,6 +121,7 @@
             }
         },
         data () {
+            let THIS = this;
             return {
                 showLog: false,
                 haveJoinCPC: false,
@@ -139,13 +141,18 @@
                             trigger: "blur"
                         }
                     ],
-                    Mobile: [
-                        {
-                            type: "string",
-                            pattern: regex.mobile,
-                            message: "电话格式不正确",
-                            trigger: "blur"
-                        }
+                    "Mobile": [
+                        {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
+                        _.debounce(function (rule, value, cb) {
+                            let userId = THIS.modalData.user.ID;
+                            axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {
+                                if (msg.success) {
+                                    cb();
+                                } else {
+                                    cb(msg.remote);
+                                }
+                            })
+                        }, 500)
                     ]
                 }
             }
@@ -155,14 +162,18 @@
                 this.$refs["Form"].resetFields();
             },
             submit (departId, callback) {
-                axios.post("/api/security/SaveUserV2", {
-                    ...this.modalData.user,
-                    JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
-                    JoinCCYLTime: this.haveJoinCCYL ? this.modalData.user.JoinCCYLTime : "1900-01-01",
-                    departId
-                    }, msg => {
-                    this.resetFields();
-                    callback();
+                let form = this.$refs["Form"];
+                form.validate(res => {
+                    if (!res) return;
+                    axios.post("/api/security/SaveUserV2", {
+                        ...this.modalData.user,
+                        JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
+                        JoinCCYLTime: this.haveJoinCCYL ? this.modalData.user.JoinCCYLTime : "1900-01-01",
+                        departId
+                        }, msg => {
+                        this.resetFields();
+                        callback();
+                    });
                 })
             }
         }

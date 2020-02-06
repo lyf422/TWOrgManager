@@ -87,19 +87,23 @@ let tableCol = {
     activity: [
         {
             title: '活动名称',
-            key: 'Name'
+            key: 'ActivityName'
         },
         {
             title: '活动类型',
-            key: 'Category'
+            key: 'ActivityType'
         },
         {
-            title: '活动时间',
-            key: 'Time'
+            title: '当前进度',
+            key: 'CurrentStep'
         },
         {
-            title: '活动地点',
-            key: 'Location'
+            title: '活动负责人',
+            key: 'Owner'
+        },
+        {
+            title: '活动开始时间',
+            key: 'StartDate'
         },
         {
             title: '操作',

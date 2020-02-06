@@ -18,22 +18,22 @@
                     <i-row>
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-col span="16">
-                            <i-form :model="orgInfo">
+                            <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="22">
-                                        <i-form-item label="社团名称" span="8">
+                                        <i-form-item label="社团名称" span="8" prop="Name">
                                             <i-input v-model="orgInfo.Name"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="10">
-                                        <i-form-item label="社团类型">
+                                        <i-form-item label="社团类型" prop="DepartType">
                                             <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="10" offset="2">
-                                        <i-form-item label="成立时间">
+                                        <i-form-item label="成立时间" prop="BirthTime">
                                             <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
                                         </i-form-item>
                                     </i-col>
@@ -123,6 +123,18 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
+                                <i-row type="flex" v-if="level > 1">
+                                    <i-col span="10">
+                                        <i-form-item label="指导老师产生方式">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="10" offset="2">
+                                        <i-form-item label="指导老师有无激励">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
                                 <i-row type="flex">
                                     <i-col span="22">
                                         <i-form-item label="备注1">
@@ -158,7 +170,6 @@
                             <i-col>
                                 <i-row type="flex" align="middle" :gutter="16">
                                     <i-col>社团成员</i-col>
-                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
                                 </i-row>
                             </i-col>
                             <i-col>
@@ -195,6 +206,8 @@
                                 </i-poptip>
                             </template>
                         </i-table>
+                        <br/>
+                        <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane :disabled="orgInfo.Type === 1" label="子部门" name="subDept">
@@ -203,7 +216,6 @@
                             <i-col>
                                 <i-row type="flex" align="middle" :gutter="16">
                                     <i-col>子部门</i-col>
-                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
                                 </i-row>
                             </i-col>
                             <i-col>
@@ -226,6 +238,8 @@
                                     <i-button @click="delSubDepart(row)">删除</i-button>
                                 </template>
                             </i-table>
+                            <br/>
+                            <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -235,7 +249,6 @@
                             <i-col>
                                 <i-row type="flex" align="middle" :gutter="16">
                                     <i-col>指导老师</i-col>
-                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
                                 </i-row>
                             </i-col>
                             <i-col>
@@ -250,12 +263,14 @@
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.tutor" :data="tableData.tutor" :loading="tableLoading">
-                            <template slot="Action" slot-scope="{row}">
-                                <i-button @click="modifyTutor(row)">修改</i-button>
-                                <i-button @click="delTutor(row)">删除</i-button>
-                            </template>
-                        </i-table>
+                            <i-table stripe :columns="tableCol.tutor" :data="tableData.tutor" :loading="tableLoading">
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="modifyTutor(row)">修改</i-button>
+                                    <i-button @click="delTutor(row)">删除</i-button>
+                                </template>
+                            </i-table>
+                            <br/>
+                            <i-page show-sizer show-total :total="pager.tutor.total" @on-change="getTutorTable($event, null)" @on-page-size-change="getTutorTable(null, $event)" />
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -271,27 +286,27 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索活动"/>
-                                    </i-col>
-                                    <i-col>
                                         <i-button type="primary" @click="addActivity">添加活动</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
                         </i-row>
                         <i-row>
-                        <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
-                            <template slot="Action" slot-scope="{index, row}">
-                                <i-button @click="modifyTableItem(index, row)">修改</i-button>
-                                <i-button @click="delTableItem(index)">删除</i-button>
-                            </template>
-                        </i-table>
+                            <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
+                                </template>
+                            </i-table>
+                            <br/>
+                            <i-page show-sizer show-total :total="pager.activity.total" @on-change="getActivityTable($event, null)" @on-page-size-change="getActivityTable(null, $event)" />
                         </i-row>
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane label="操作日志" name="operation">
                     <i-table stripe :columns="tableCol.operation" :data="tableData.operation" :loading="tableLoading">
                     </i-table>
+                    <br/>
+                    <i-page show-sizer show-total :total="pager.operation.total" @on-change="getOptTable($event, null)" @on-page-size-change="getOptTable(null, $event)" />
                 </i-tab-pane>
             </i-tabs>
         </i-card>
@@ -320,21 +335,24 @@ export default {
         submit () {
             let form = this.$refs["Form"];
             form.submit(this.orgInfo.ID, this.callbackFunc);
-            form.resetFields();
         },
         cancel () {
         },
         saveOrgDetail () {
             this.isSaving = true;
-            axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
-                if (msg.success) {
-                    this.$Message.success("部门信息保存成功");
-                } else {
-                    this.$Message.warning(msg.msg);
-                }
-                this.getOrgDetail();
-                this.isSaving = false;
-            });
+            let form = this.$refs["form"];
+            form.validate(res => {
+                    if (!res) return;
+                    axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
+                    if (msg.success) {
+                        this.$Message.success("部门信息保存成功");
+                    } else {
+                        this.$Message.warning(msg.msg);
+                    }
+                    this.getOrgDetail();
+                });
+            })
+            this.isSaving = false;
         },
         getOrgDetail () {
             this.tableLoading = true;
@@ -356,39 +374,65 @@ export default {
                 this.tableLoading = false;
             })
         },
-        getMemberTable () {
+        getMemberTable (page, pageSize) {
             this.tableLoading = true;
             let name = this.keyword ? this.keyword : undefined;
-            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name}, msg => {
+            this.pager.member.page = page || this.pager.member.page;
+            this.pager.member.pageSize = pageSize || this.pager.member.pageSize;
+            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name, page: this.pager.member.page, pageSize: this.pager.member.pageSize}, msg => {
                 this.tableData.member = msg.data;
+                this.pager.member.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
-        getTutorTable () {
+        getTutorTable (page, pageSize) {
             this.tableLoading = true;
             let name = this.keyword ? this.keyword : undefined;
-            axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name, position: "指导老师"}, msg => {
+            this.pager.tutor.page = page || this.pager.tutor.page;
+            this.pager.tutor.pageSize = pageSize || this.pager.tutor.pageSize;
+            axios.post("/api/security/GetUsersByDepartId", {
+                departId: this.orgInfo.ID,
+                name,
+                position: "指导老师",
+                page: this.pager.tutor.page,
+                pageSize: this.pager.tutor.pageSize
+            }, msg => {
                 this.tableData.tutor = msg.data;
+                this.pager.tutor.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
-        getDeptTable () {
+        getDeptTable (page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children;
-                this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"))
+                this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"));
                 this.tableLoading = false;
             });
         },
-        getOptTable () {
+        getOptTable (page, pageSize) {
             this.tableLoading = true;
-            axios.post("/api/logs/GetLogsByDepartId", {departId: this.orgInfo.ID}, msg => {
+            this.pager.operation.page = page || this.pager.operation.page;
+            this.pager.operation.pageSize = pageSize || this.pager.operation.pageSize;
+            axios.post("/api/logs/GetLogsByDepartId", {departId: this.orgInfo.ID, page: this.pager.operation.page, pageSize: this.pager.operation.pageSize}, msg => {
                 this.tableData.operation = msg.data;
+                this.pager.operation.total = msg.totalRow;
+                this.tableLoading = false;
+            });
+        },
+        getActivityTable (page, pageSize) {
+            this.tableLoading = true;
+            this.pager.activity.page = page || this.pager.activity.page;
+            this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
+            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+                this.tableData.activity = msg.data;
+                this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
         addSubDepart () {
+            this.recordData = {};
             this.callbackFunc = this.modifySubDepart;
             this.modalShow = true;
         },
@@ -456,8 +500,8 @@ export default {
         modifySubDepart (row) {
             window.open("/manage/org/detail?id=" + row.id);
         },
-        modifyTableItem () {
-
+        checkWorkflow (instanceId, stepId) {
+            window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
         },
         setPositon (userId, position) {
             axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
@@ -542,6 +586,7 @@ export default {
                 this.getTutorTable();
                 this.getDeptTable();
                 this.getOptTable();
+                this.getActivityTable();
             }
             this.$Spin.hide();
             this.tabSelect = this.$route.query.tabSelect || "basicInfo";
@@ -571,6 +616,52 @@ export default {
                 subDept: [],
                 tutor: [],
                 operation: []
+            },
+            ruleForBasic: {
+                Name: [
+                        {
+                            required: true,
+                            message: "必须填写社团名称",
+                            trigger: "blur"
+                        }
+                    ],
+                DepartType: [
+                        {
+                            required: true,
+                            message: "必须填写社团类型",
+                            trigger: "change"
+                        }
+                    ],
+                BirthTime: [
+                    {
+                            required: true,
+                            type: "date",
+                            message: "必须填写成立时间",
+                            trigger: "change"
+                    }
+                ]
+            },
+            pager: {
+                member: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                },
+                tutor: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                },
+                activity: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                },
+                operation: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                }
             },
             modalShow: false,
             componentDic: {

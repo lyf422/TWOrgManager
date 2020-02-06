@@ -323,7 +323,6 @@ export default {
         submit () {
             let form = this.$refs["Form"];
             form.submit(this.orgInfo.ID, this.callbackFunc);
-            form.resetFields();
         },
         cancel () {
         },
@@ -420,6 +419,7 @@ export default {
             });
         },
         addSubDepart () {
+            this.recordData = {};
             this.callbackFunc = this.modifySubDepart;
             this.modalShow = true;
         },

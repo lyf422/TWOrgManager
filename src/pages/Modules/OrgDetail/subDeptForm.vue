@@ -1,8 +1,8 @@
 <template>
-    <i-form :model="modalData" ref="Form">
+    <i-form :model="modalData" ref="form" :rules="rules">
         <i-row type="flex" justify="space-between">
             <i-col span="24">
-                <i-form-item label="部门名称">
+                <i-form-item label="部门名称" prop="name">
                     <i-input v-model="modalData.name"/>
                 </i-form-item>
             </i-col>
@@ -36,22 +36,35 @@
         },
         data () {
             return {
+                rules: {
+                    name: [
+                        {
+                            required: true,
+                            message: "必须填写部门名称",
+                            trigger: "blur"
+                        }
+                    ]
+                }
             }
         },
         methods: {
             resetFields () {
-                let form = this.$refs["Form"];
+                let form = this.$refs["form"];
                 form.resetFields();
             },
             submit (departId, callback) {
-                axios.post("/api/security/SaveDepartV2", this.modalData, msg => {
-                    this.resetFields();
-                    if (msg.success) {
-                        callback(msg);
-                    } else {
-                        this.$Message.warning(msg.msg);
-                    }
-                });
+                let form = this.$refs["form"];
+                form.validate(res => {
+                    if (!res) return;
+                    axios.post("/api/security/SaveDepartV2", this.modalData, msg => {
+                        this.resetFields();
+                        if (msg.success) {
+                            callback(msg);
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                    });
+                })
             }
         }
     }

@@ -123,6 +123,18 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
+                                <i-row type="flex" v-if="level > 1">
+                                    <i-col span="10">
+                                        <i-form-item label="指导老师产生方式">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="10" offset="2">
+                                        <i-form-item label="指导老师有无激励">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
                                 <i-row type="flex">
                                     <i-col span="22">
                                         <i-form-item label="备注1">

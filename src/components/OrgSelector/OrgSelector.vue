@@ -125,7 +125,25 @@ export default {
 
                     return true;
                 });
-                if (!this.orgTree.length) this.emptyText = "暂无数据";
+
+                if (!this.orgTree.length) {
+                    this.emptyText = "暂无数据";
+                }
+
+                if (this.init) {
+                    this.$nextTick(() => {
+                        let control = this.$refs.select;
+                        control.values = this.multiple ? [] : "";
+                        let v = this.value;
+                        let arry = Array.isArray(v) ? v : [v];
+                        arry.map(e => {
+                            this.orgRoot.map(x => {
+                                x.node.selected = (e === x.node.id) || x.node.selected;
+                            })
+                        });
+                        this.select(true);
+                    });
+                }
             })
         },
         getChildTree (item, cb) {
@@ -212,6 +230,7 @@ export default {
             emptyText: "正在加载中...",
             orgTree: [],
             orgRoot: [],
+            init: false,
             innerValue: this.value,
             isChangeValue: false,
             app
@@ -223,17 +242,18 @@ export default {
                 this.getDepartTree();
             }
         },
-        value (v) {
+        async value (v) {
             if (!this.isChangeValue) {
                 // 外部赋值
                 let control = this.$refs.select;
                 control.values = this.multiple ? [] : "";
-                let arry = Array.isArray(v) ? v : [v]
+                let arry = Array.isArray(v) ? v : [v];
                 arry.map(e => {
                     this.orgRoot.map(x => {
                         x.node.selected = (e === x.node.id) || x.node.selected;
                     })
                 })
+                this.init = true;
                 this.select(true);
             } else {
                 this.isChangeValue = false;

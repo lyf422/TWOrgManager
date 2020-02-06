@@ -27,6 +27,7 @@
 
 <script>
     const axios = require("axios");
+    const guidEmpty = "00000000-0000-0000-0000-000000000000";
     export default {
         props: {
             modalData: {
@@ -35,6 +36,13 @@
             }
         },
         data () {
+            const validate = (rule, value, callback) => {
+                if (this.modalData.ParentId === guidEmpty) {
+                    callback(new Error('必须填写挂靠单位'));
+                } else {
+                    callback();
+                }
+            }
             return {
                 rules: {
                     name: [
@@ -42,6 +50,12 @@
                             required: true,
                             message: "必须填写部门名称",
                             trigger: "blur"
+                        }
+                    ],
+                    ParentId: [
+                        {
+                            validator: validate,
+                            trigger: 'change'
                         }
                     ]
                 }

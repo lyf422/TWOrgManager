@@ -18,22 +18,22 @@
                     <i-row>
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-col span="16">
-                            <i-form :model="orgInfo">
+                            <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="22">
-                                        <i-form-item label="社团名称" span="8">
+                                        <i-form-item label="社团名称" span="8" prop="Name">
                                             <i-input v-model="orgInfo.Name"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="10">
-                                        <i-form-item label="社团类型">
+                                        <i-form-item label="社团类型" prop="DepartType">
                                             <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="10" offset="2">
-                                        <i-form-item label="成立时间">
+                                        <i-form-item label="成立时间" prop="BirthTime">
                                             <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
                                         </i-form-item>
                                     </i-col>
@@ -120,6 +120,18 @@
                                     <i-col span="10" offset="2">
                                         <i-form-item label="经费来源">
                                             <i-input v-model="orgInfo.ChannelForFunds"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex" v-if="level > 1">
+                                    <i-col span="10">
+                                        <i-form-item label="指导老师产生方式">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="10" offset="2">
+                                        <i-form-item label="指导老师有无激励">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -227,7 +239,7 @@
                                 </template>
                             </i-table>
                             <br/>
-                            <i-page show-sizer show-total :total="pager.subDept.total" @on-change="getDeptTable($event, null)" @on-page-size-change="getDeptTable(null, $event)" />
+                            <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -328,15 +340,19 @@ export default {
         },
         saveOrgDetail () {
             this.isSaving = true;
-            axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
-                if (msg.success) {
-                    this.$Message.success("部门信息保存成功");
-                } else {
-                    this.$Message.warning(msg.msg);
-                }
-                this.getOrgDetail();
-                this.isSaving = false;
-            });
+            let form = this.$refs["form"];
+            form.validate(res => {
+                    if (!res) return;
+                    axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
+                    if (msg.success) {
+                        this.$Message.success("部门信息保存成功");
+                    } else {
+                        this.$Message.warning(msg.msg);
+                    }
+                    this.getOrgDetail();
+                });
+            })
+            this.isSaving = false;
         },
         getOrgDetail () {
             this.tableLoading = true;
@@ -389,12 +405,9 @@ export default {
         getDeptTable (page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
             this.tableLoading = true;
-            this.pager.subDept.page = page || this.pager.subDept.page;
-            this.pager.subDept.pageSize = pageSize || this.pager.subDept.pageSize;
-            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID, page: this.pager.subDept.page, pageSize: this.pager.subDept.pageSize}, msg => {
+            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children;
                 this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"));
-                this.pager.subDept.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
@@ -604,13 +617,32 @@ export default {
                 tutor: [],
                 operation: []
             },
+            ruleForBasic: {
+                Name: [
+                        {
+                            required: true,
+                            message: "必须填写社团名称",
+                            trigger: "blur"
+                        }
+                    ],
+                DepartType: [
+                        {
+                            required: true,
+                            message: "必须填写社团类型",
+                            trigger: "change"
+                        }
+                    ],
+                BirthTime: [
+                    {
+                            required: true,
+                            type: "date",
+                            message: "必须填写成立时间",
+                            trigger: "change"
+                    }
+                ]
+            },
             pager: {
                 member: {
-                    total: 0,
-                    page: 1,
-                    pageSize: 10
-                },
-                subDept: {
                     total: 0,
                     page: 1,
                     pageSize: 10

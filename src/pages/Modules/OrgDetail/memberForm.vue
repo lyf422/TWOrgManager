@@ -169,7 +169,8 @@
                         ...this.modalData.user,
                         JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
                         JoinCCYLTime: this.haveJoinCCYL ? this.modalData.user.JoinCCYLTime : "1900-01-01",
-                        departId
+                        departId,
+                        position: this.modalData.position
                         }, msg => {
                         this.resetFields();
                         callback();

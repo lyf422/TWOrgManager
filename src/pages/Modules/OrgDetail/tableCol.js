@@ -40,8 +40,8 @@ let tableCol = {
             key: 'Type'
         },
         {
-            title: '管理员姓名',
-            key: 'admin'
+            title: '管理员',
+            slot: 'admin'
         },
         {
             title: '操作',

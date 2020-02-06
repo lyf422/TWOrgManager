@@ -10,6 +10,7 @@ import axios from 'axios';
 export default {
     data () {
         return {
+            loading: false,
             tableData: [],
             columns: [
                 {

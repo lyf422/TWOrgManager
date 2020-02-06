@@ -227,7 +227,7 @@
                                 </template>
                             </i-table>
                             <br/>
-                            <i-page show-sizer show-total :total="pager.subDept.total" @on-change="getDeptTable($event, null)" @on-page-size-change="getDeptTable(null, $event)" />
+                            <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -393,12 +393,9 @@ export default {
         getDeptTable (page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
             this.tableLoading = true;
-            this.pager.subDept.page = page || this.pager.subDept.page;
-            this.pager.subDept.pageSize = pageSize || this.pager.subDept.pageSize;
-            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID, page: this.pager.subDept.page, pageSize: this.pager.subDept.pageSize}, msg => {
+            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children;
                 this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"));
-                this.pager.subDept.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
@@ -634,11 +631,6 @@ export default {
             },
             pager: {
                 member: {
-                    total: 0,
-                    page: 1,
-                    pageSize: 10
-                },
-                subDept: {
                     total: 0,
                     page: 1,
                     pageSize: 10

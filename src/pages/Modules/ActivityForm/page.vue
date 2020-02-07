@@ -212,7 +212,7 @@
                     </i-row>
                 </div>
             </div>
-            <div class="paper">
+            <div class="paper" v-if="io.timelines.length > 0">
                 <p class="smallhang"/>
                 <p class="headline">流程执行步骤</p>
                 <i-timeline style="padding: 20px;">

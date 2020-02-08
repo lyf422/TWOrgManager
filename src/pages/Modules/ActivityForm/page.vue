@@ -4,16 +4,16 @@
             <div class="paper">
                 <div>
                     <div class="status-bar">
+                        <p class="smallhang"/>
+                        <p class="headline">强制执行</p>
                         <table border="0">
                             <tr>
                                 <td class="smallhang wen-zi-ju-you">执行人：</td>
                                 <td colspan="2">
-                                    <i-select v-model="model1" class="drop-down-box">
-                                        <i-option v-for="item in executorList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
-                                    </i-select>
+                                    <user-selector v-model="model1"/>
                                 </td>
                                 <td class="smallhang"></td>
-                                <td class="smallhang wen-zi-ju-you">状态：</td>
+                                <td class="smallhang wen-zi-ju-you">步骤：</td>
                                 <td colspan="2">
                                     <i-select v-model="model2" class="drop-down-box">
                                         <i-option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
@@ -39,77 +39,83 @@
                                 <tr>
                                     <td class="smallhang">社团名称</td>
                                     <td class="longhang wen-zi-ju-zhong" colspan="4">
-                                        <i-input  v-if="io.fieldAccess.DepartName === 'w' || io.isMyStep" v-model="io.data.DepartName"/>
+                                        <i-input  v-if="io.fieldAccess.DepartName === 'w' && io.isMyStep" v-model="io.data.DepartName"/>
                                         <p v-else>{{io.data.DepartName}}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="smallhang">活动名称</td>
                                     <td class="longhang wen-zi-ju-zhong" colspan="4">
-                                        <i-input  v-if="io.fieldAccess.ActivityName === 'w' || io.isMyStep" v-model="io.data.ActivityName"/>
+                                        <i-input  v-if="io.fieldAccess.ActivityName === 'w' && io.isMyStep" v-model="io.data.ActivityName"/>
                                         <p v-else>{{io.data.ActivityName}}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="smallhang" style="height:76px;">活动时间</td>
                                     <td colspan="2" width="200" style="letter-spacing: 2px;">
-                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.StartDate === 'w' || io.isMyStep" v-model="io.data.StartDate"/>
+                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.StartDate === 'w' && io.isMyStep" v-model="io.data.StartDate"/>
                                         <p v-else>{{io.data.StartDate}}</p>
                                         至
-                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.EndDate === 'w' || io.isMyStep" v-model="io.data.EndDate"/>
+                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.EndDate === 'w' && io.isMyStep" v-model="io.data.EndDate"/>
                                         <p v-else>{{io.data.EndDate}}</p>
                                     </td>
                                     <td class="smallhang">活动人数</td>
                                     <td colspan="2" width="200">
-                                        <i-input  v-if="io.fieldAccess.AttendanceFigures === 'w' || io.isMyStep" v-model="io.data.AttendanceFigures"/>
-                                        <p v-else>{{io.data.AttendanceFigures}}</p>人
+                                        <i-input  v-if="io.fieldAccess.AttendanceFigures === 'w' && io.isMyStep" v-model="io.data.AttendanceFigures"/>
+                                        <p v-else>{{io.data.AttendanceFigures}}人</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="smallhang">活动地点</td>
                                     <td class="longhang wen-zi-ju-zhong" colspan="4">
-                                        <i-input type="textarea" v-if="io.fieldAccess.Address === 'w' || io.isMyStep" v-model="io.data.Address"/>
+                                        <i-input type="textarea" v-if="io.fieldAccess.Address === 'w' && io.isMyStep" v-model="io.data.Address"/>
                                         <p v-else>{{io.data.Address}}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="smallhang">负责人员</td>
                                     <td colspan="2">
-                                        <i-input type="textarea" v-if="io.fieldAccess.Leader === 'w' || io.isMyStep" v-model="io.data.Leader"/>
+                                        <i-input type="textarea" v-if="io.fieldAccess.Leader === 'w' && io.isMyStep" v-model="io.data.Leader"/>
                                         <p v-else>{{io.data.Leader}}</p>
                                     </td>
                                     <td class="smallhang">联系方式</td>
                                     <td colspan="2">
-                                        <i-input type="textarea" v-if="io.fieldAccess.Telephone === 'w' || io.isMyStep" v-model="io.data.Telephone"/>
+                                        <i-input type="textarea" v-if="io.fieldAccess.Telephone === 'w' && io.isMyStep" v-model="io.data.Telephone"/>
                                         <p v-else>{{io.data.Telephone}}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="smallhang" rowspan="2">面向范围</td>
-                                    <td class="longhang" colspan="4" >活动类型：
+                                    <td class="longhang" colspan="4"  v-if="!io.data.ActivityType">活动类型：
                                         <i-radio-group v-model="io.data.ActivityType">
-                                            <i-radio label="社团内部活动" class="iview-type-size" :disabled="io.fieldAccess.ActivityType === 'r' || !io.isMyStep">社团内部活动</i-radio>
-                                            <i-radio label="公开活动" class="iview-type-size" :disabled="io.fieldAccess.ActivityType === 'r' || !io.isMyStep">公开活动</i-radio>
+                                            <i-radio label="社团内部活动" class="iview-type-size" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">社团内部活动</i-radio>
+                                            <i-radio label="公开活动" class="iview-type-size" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">公开活动</i-radio>
                                         </i-radio-group>
+                                    </td>
+                                    <td class="longhang" v-else colspan="4">
+                                        <p>活动类型：<Icon type="ios-checkbox-outline" />{{io.data.ActivityType}}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="longhang" colspan="4">
-                                        <i-input type="textarea" class="opinionForm" v-model="io.data.FaceTo" :rows="3" v-if="io.fieldAccess.FaceTo === 'w' || io.isMyStep" placeholder="（如为公开活动可具体描写面向范围如：面向全体学生/面向校内外人员等，可给出示例填写）"/>
+                                        <i-input type="textarea" class="opinionForm" v-model="io.data.FaceTo" :rows="3" v-if="io.fieldAccess.FaceTo === 'w' && io.isMyStep" placeholder="（如为公开活动可具体描写面向范围如：面向全体学生/面向校内外人员等，可给出示例填写）"/>
                                         <p v-else>{{io.data.FaceTo}}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="smallhang" rowspan="2">活动内容</td>
-                                    <td class="longhang" colspan="4">
-                                            <i-upload action="//jsonplaceholder.typicode.com/posts/">
-                                                <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">上传文件</i-button>
-                                            </i-upload>
+                                    <td class="longhang" colspan="4" v-if="io.currentStep === '填写申请表'">
+                                        <i-upload action="//jsonplaceholder.typicode.com/posts/">
+                                            <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">上传文件</i-button>
+                                        </i-upload>
+                                    </td>
+                                    <td class="longhang" colspan="4" v-else>
+                                        <p>无附件</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="longhang" colspan="4">
-                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="" v-if="io.fieldAccess.Description === 'w' || io.isMyStep" v-model="io.data.Description"/>
+                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="" v-if="io.fieldAccess.Description === 'w' && io.isMyStep" v-model="io.data.Description"/>
                                         <p v-else>{{io.data.Description}}</p>
                                     </td>
                                 </tr>
@@ -124,13 +130,13 @@
                                             </i-radio-group>
                                             <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
                                         </div>
-                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.GuideTeacherOpinion" v-if="io.fieldAccess.GuideTeacherOpinion === 'w' || io.isMyStep"/>
+                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.GuideTeacherOpinion" v-if="io.fieldAccess.GuideTeacherOpinion === 'w' && io.isMyStep"/>
                                         <p v-else>{{io.data.GuideTeacherOpinion}}</p>
                                         <div class="wen-zi-ju-you">
-                                            <p >审核人（签名）：<i-input v-model="io.data.GuideTeacher" v-if="io.fieldAccess.GuideTeacher === 'w' || io.isMyStep"/>
+                                            <p >审核人（签名）：<i-input v-model="io.data.GuideTeacher" v-if="io.fieldAccess.GuideTeacher === 'w' && io.isMyStep"/>
                                                 <span v-else>{{io.data.GuideTeacher}}</span>
                                             </p>
-                                            <i-date-picker type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-model="io.data.GuideTeacherTime" v-if="io.fieldAccess.GuideTeacherTime === 'w' || io.isMyStep"/>
+                                            <i-date-picker type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-model="io.data.GuideTeacherTime" v-if="io.fieldAccess.GuideTeacherTime === 'w' && io.isMyStep"/>
                                             <p v-else>{{io.data.GuideTeacherTime}}</p>
                                         </div>
                                     </td>
@@ -146,13 +152,13 @@
                                             </i-radio-group>
                                             <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
                                         </div>
-                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.AffiliatedDepartOpinion" v-if="io.fieldAccess.AffiliatedDepartOpinion === 'w' || io.isMyStep"/>
+                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.AffiliatedDepartOpinion" v-if="io.fieldAccess.AffiliatedDepartOpinion === 'w' && io.isMyStep"/>
                                         <p v-else>{{io.data.AffiliatedDepartOpinion}}</p>
                                         <div class="wen-zi-ju-you">
-                                            <p>审核人（签名）：<i-input v-model="io.data.AffiliatedDepart" v-if="io.fieldAccess.AffiliatedDepart === 'w' || io.isMyStep"/>
+                                            <p>审核人（签名）：<i-input v-model="io.data.AffiliatedDepart" v-if="io.fieldAccess.AffiliatedDepart === 'w' && io.isMyStep"/>
                                                 <span v-else>{{io.data.AffiliatedDepart}}</span>
                                             </p>
-                                            <i-date-picker v-model="io.data.AffiliatedDepartTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.AffiliatedDepartTime === 'w' || io.isMyStep"/>
+                                            <i-date-picker v-model="io.data.AffiliatedDepartTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.AffiliatedDepartTime === 'w' && io.isMyStep"/>
                                             <p v-else>{{io.data.AffiliatedDepartTime}}</p>
                                         </div>
                                     </td>
@@ -168,12 +174,12 @@
                                             </i-radio-group>
                                             <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
                                         </div>
-                                        <i-input v-model="io.data.SauOpinion" type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-if="io.fieldAccess.SauOpinion === 'w' || io.isMyStep"/>
+                                        <i-input v-model="io.data.SauOpinion" type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-if="io.fieldAccess.SauOpinion === 'w' && io.isMyStep"/>
                                         <p v-else>{{io.data.SauOpinion}}</p>
                                         <div class="wen-zi-ju-you">
-                                            <p >审核人（签名）：<i-input v-model="io.data.Sau" v-if="io.fieldAccess.Sau === 'w' || io.isMyStep"/><span v-else>{{io.data.Sau}}</span>
+                                            <p >审核人（签名）：<i-input v-model="io.data.Sau" v-if="io.fieldAccess.Sau === 'w' && io.isMyStep"/><span v-else>{{io.data.Sau}}</span>
                                             </p>
-                                            <i-date-picker v-model="io.data.SauTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.SauTime === 'w' || io.isMyStep"/>
+                                            <i-date-picker v-model="io.data.SauTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.SauTime === 'w' && io.isMyStep"/>
                                             <p v-else>{{io.data.SauTime}}</p>
                                     </div>
                                     </td>
@@ -189,11 +195,11 @@
                                         </i-radio-group>
                                         <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
                                     </div>
-                                    <i-input v-model="io.data.YlcOpinion" type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-if="io.fieldAccess.YlcOpinion === 'w' || io.isMyStep"/>
+                                    <i-input v-model="io.data.YlcOpinion" type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-if="io.fieldAccess.YlcOpinion === 'w' && io.isMyStep"/>
                                     <p v-else>{{io.data.YlcOpinion}}</p>
                                     <div class="wen-zi-ju-you">
-                                        <p >审核人（签名）：<i-input v-model="io.data.Ylc" v-if="io.fieldAccess.Ylc === 'w' || io.isMyStep"/><span v-else>{{io.data.Ylc}}</span></p>
-                                        <i-date-picker v-model="io.data.YlcTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.YlcTime === 'w' || io.isMyStep"/>
+                                        <p >审核人（签名）：<i-input v-model="io.data.Ylc" v-if="io.fieldAccess.Ylc === 'w' && io.isMyStep"/><span v-else>{{io.data.Ylc}}</span></p>
+                                        <i-date-picker v-model="io.data.YlcTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.YlcTime === 'w' && io.isMyStep"/>
                                         <p v-else>{{io.data.YlcTime}}</p>
                                     </div>
                                     </td>
@@ -202,12 +208,14 @@
                         </i-col>
                     </i-row>
                     <i-row class="add1 headline">
-                        <i-button  v-show="io.currentStep==='填写申请表'" style="width: 200px;margin: 18px auto;" type="primary" size="small" @click="submit">确认</i-button>
+                        <i-button  v-show="io.currentStep==='填写申请表'" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
                     </i-row>
                 </div>
             </div>
-            <div class="paper">
-                <i-timeline style="overflow-y:scroll; height:600px; padding: 20px;">
+            <div class="paper" v-if="io.timelines.length > 0">
+                <p class="smallhang"/>
+                <p class="headline">流程执行步骤</p>
+                <i-timeline style="padding: 20px;">
                     <TimelineItem v-for="(item,index) in io.timelines" :key="index">
                         <i-row class="time">
                             <i-col>
@@ -215,23 +223,8 @@
                             </i-col>
                         </i-row>
                         <i-row v-for="(item,index) in item.steps" :key="index" class="content">
-                            <i-col>
-                                <p><b>{{item.Time}} {{item.ExecutorName}}{{stepInfo[item.State]}}</b></p>
-                            </i-col>
-                            <i-col>
-                                <p>{{item.StepName}}</p>
-                            </i-col>
-                            <i-col>
-                                <p v-if="inStep([0, 1], item.State)">
-                                    {{ item.ExecutorName ? `${item.ExecutorName} 正在进行中` : "正在等待接手" }}
-                                </p>
-                                <p v-else-if="inStep([2], item.State)">
-                                    由{{ item.Operator }}于{{ item.CreatedOn }}完成
-                                </p>
-                                <p v-else>
-                                    由{{ item.Operator }}于{{ item.CreatedOn }}取消
-                                </p>
-                            </i-col>
+                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State - 1]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                            <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
                         </i-row>
                     </TimelineItem>
                 </i-timeline>
@@ -247,6 +240,14 @@ const enums = require("@/config/enums");
 export default {
     data () {
         return {
+            icons: [
+                "",
+                "",
+                "success",
+                "success",
+                "error",
+                "warning"
+            ],
             executorList: [
                 {
                 value: "指导老师",
@@ -284,13 +285,24 @@ export default {
                 intstanceState: '',
                 currentStep: ''
             },
-            stateList: [{
-                value: "审核通过",
-                label: "审核通过"
+            stateList: [
+                {
+                    value: "填写申请表",
+                    label: "填写申请表"
                 }, {
-                value: "审核不通过",
-                label: "审核不通过"
-            }],
+                    value: "指导老师审核",
+                    label: "指导老师审核"
+                }, {
+                    value: '挂靠单位审核',
+                    label: '挂靠单位审核'
+                }, {
+                    value: '学生联合会审核',
+                    label: '学生联合会审核'
+                }, {
+                    value: '校团委审核',
+                    label: '校团委审核'
+                }
+            ],
             model2: ""
         }
     },
@@ -350,6 +362,7 @@ export default {
     .time{
     font-weight: bold;
     color: #888;
+    margin-bottom: 10px;
     }
     .content{
         padding-left: 5px;

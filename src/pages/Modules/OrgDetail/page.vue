@@ -123,6 +123,18 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
+                                <i-row type="flex" v-if="level > 1">
+                                    <i-col span="10">
+                                        <i-form-item label="指导老师产生方式">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="10" offset="2">
+                                        <i-form-item label="指导老师有无激励">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
                                 <i-row type="flex">
                                     <i-col span="22">
                                         <i-form-item label="备注1">
@@ -166,7 +178,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addMember()">添加成员</i-button>
+                                        <i-button type="primary" @click="addMember('member', '成员')">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -225,9 +237,16 @@
                                     <i-button @click="modifySubDepart(row)">管理</i-button>
                                     <i-button @click="delSubDepart(row)">删除</i-button>
                                 </template>
+                                <template slot="admin" slot-scope="{row}">
+                                    {{row.admin}}
+                                    <i-button shape="circle" v-if="row.admin === ''" @click="addMember('member', '管理员', row.id)">添加管理员</i-button>
+                                </template>
+                                <template slot="Type" slot-scope="{row}">
+                                    {{row.Type === 0 ? "挂靠单位" : "社团"}}
+                                </template>
                             </i-table>
                             <br/>
-                            <i-page show-sizer show-total :total="pager.subDept.total" @on-change="getDeptTable($event, null)" @on-page-size-change="getDeptTable(null, $event)" />
+                            <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
                         </i-row>
                     </i-card>
                 </i-tab-pane>
@@ -245,7 +264,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索老师" v-model="keyword" @keyup.enter.native="getTutorTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addTutor()">添加老师</i-button>
+                                        <i-button type="primary" @click="addMember('tutor')">添加老师</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -298,8 +317,8 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal :z-index="10" v-model="modalShow" title="添加/修改成员" @on-ok="submit()" @on-cancel="cancel()">
-            <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"></component>
+        <i-modal :z-index="10" v-model="modalShow" :title="component.title || '暂无'" @on-ok="submit()" @on-cancel="cancel()">
+            <component :is="component.name" ref="Form" :modalData="recordData"></component>
         </i-modal>
     </i-row>
 </template>
@@ -322,7 +341,7 @@ export default {
     methods: {
         submit () {
             let form = this.$refs["Form"];
-            form.submit(this.orgInfo.ID, this.callbackFunc);
+            form.submit(this.newDptId || this.orgInfo.ID, this.callbackFunc);
         },
         cancel () {
         },
@@ -393,12 +412,8 @@ export default {
         getDeptTable (page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
             this.tableLoading = true;
-            this.pager.subDept.page = page || this.pager.subDept.page;
-            this.pager.subDept.pageSize = pageSize || this.pager.subDept.pageSize;
-            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID, page: this.pager.subDept.page, pageSize: this.pager.subDept.pageSize}, msg => {
-                this.tableData.subDept = msg.data.children;
-                this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"));
-                this.pager.subDept.total = msg.totalRow;
+            axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
+                this.tableData.subDept = msg.data.children || [];
                 this.tableLoading = false;
             });
         },
@@ -424,23 +439,26 @@ export default {
         },
         addSubDepart () {
             this.recordData = {};
+            this.component.name = "subDept-form";
+            this.component.title = "新建部门";
             this.callbackFunc = this.modifySubDepart;
             this.modalShow = true;
         },
-        addTutor () {
+        addMember (who, position, departId) {
+            this.component.name = who + "-form";
+            let dic = {
+                "tutor": "新建指导老师",
+                "member": "新建成员",
+                "admin": "新建管理员"
+            }
+            this.component.title = dic[who];
+            this.newDptId = departId;
             this.recordData = {
+                position,
                 user: {},
                 changeLogs: []
             };
-            this.callbackFunc = this.getTutorTable;
-            this.modalShow = true;
-        },
-        addMember () {
-            this.recordData = {
-                user: {},
-                changeLogs: []
-            };
-            this.callbackFunc = this.getMemberTable;
+            this.callbackFunc = who === "tutor" ? this.getTutorTable : this.getMemberTable;
             this.modalShow = true;
         },
         addActivity () {
@@ -476,6 +494,8 @@ export default {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.recordData.user = msg.user;
                 this.recordData.changeLogs = msg.changeLogs;
+                this.component.name = "member-form";
+                this.component.title = "修改成员"
                 this.modalShow = true;
                 this.callbackFunc = this.getMemberTable;
             });
@@ -484,6 +504,8 @@ export default {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.recordData.user = msg.user;
                 this.recordData.changeLogs = msg.changeLogs;
+                this.component.name = "tutor-form";
+                this.component.title = "修改指导老师"
                 this.modalShow = true;
                 this.callbackFunc = this.getTutorTable;
             });
@@ -497,7 +519,6 @@ export default {
         setPositon (userId, position) {
             axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
                 this.getMemberTable();
-                this.getTutorTable();
             })
         },
         setPassword (row) {
@@ -596,6 +617,11 @@ export default {
             tabSelect: "",
             isSaving: false,
             tableLoading: false,
+            newDptId: "",
+            component: {
+                name: "",
+                title: ""
+            },
             recordData: {
                 user: {},
                 changeLogs: []
@@ -638,11 +664,6 @@ export default {
                     page: 1,
                     pageSize: 10
                 },
-                subDept: {
-                    total: 0,
-                    page: 1,
-                    pageSize: 10
-                },
                 tutor: {
                     total: 0,
                     page: 1,
@@ -660,11 +681,6 @@ export default {
                 }
             },
             modalShow: false,
-            componentDic: {
-                member: "member-form",
-                tutor: "tutor-form",
-                subDept: "subDept-form"
-            },
             password: {},
             pwdRule: {
                 password: {

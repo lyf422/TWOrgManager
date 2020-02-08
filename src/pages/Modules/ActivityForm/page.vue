@@ -86,14 +86,14 @@
                                 </tr>
                                 <tr>
                                     <td class="smallhang" rowspan="2">面向范围</td>
-                                    <td class="longhang" colspan="4"  v-if="!io.data.ActivityType">活动类型：
+                                    <td class="longhang" colspan="4" v-if="io.fieldAccess.Description === 'w' && io.isMyStep">活动类型：
                                         <i-radio-group v-model="io.data.ActivityType">
-                                            <i-radio label="社团内部活动" class="iview-type-size" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">社团内部活动</i-radio>
-                                            <i-radio label="公开活动" class="iview-type-size" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">公开活动</i-radio>
+                                            <i-radio label="社团内部活动" class="iview-type-size">社团内部活动</i-radio>
+                                            <i-radio label="公开活动" class="iview-type-size">公开活动</i-radio>
                                         </i-radio-group>
                                     </td>
                                     <td class="longhang" v-else colspan="4">
-                                        <p>活动类型：<Icon type="ios-checkbox-outline" />{{io.data.ActivityType}}</p>
+                                        <p v-if="io.data.ActivityType">活动类型：<Icon type="ios-checkbox-outline" />{{io.data.ActivityType}}</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -122,7 +122,7 @@
                                 <tr v-show="io.fieldAccess.GuideTeacherOpinion">
                                     <td class="smallhang">指导老师审核意见</td>
                                     <td class="longhang" colspan="4">
-                                        <div v-show="io.fieldAccess.GuideTeacherIsPass">
+                                        <div v-show="io.fieldAccess.GuideTeacherIsPass === 'w' && io.isMyStep">
                                             是否通过：
                                             <i-radio-group v-model="io.data.GuideTeacherIsPass">
                                                 <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep"> 是</i-radio>
@@ -144,7 +144,7 @@
                                 <tr v-show="io.fieldAccess.AffiliatedDepartOpinion">
                                     <td class="smallhang">挂靠单位意见</td>
                                     <td class="longhang" colspan="4">
-                                        <div v-show="io.fieldAccess.AffiliatedDepartIsPass">
+                                        <div v-show="io.fieldAccess.AffiliatedDepartIsPass === 'w' && io.isMyStep">
                                             是否通过：
                                             <i-radio-group v-model="io.data.AffiliatedDepartIsPass">
                                                 <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep"> 是</i-radio>
@@ -166,7 +166,7 @@
                                 <tr v-show="io.fieldAccess.SauOpinion">
                                     <td class="smallhang">学生社团联合会意见</td>
                                     <td class="longhang" colspan="4">
-                                        <div v-show="io.fieldAccess.SauIsPass">
+                                        <div v-show="io.fieldAccess.SauIsPass === 'w' && io.isMyStep">
                                             是否通过：
                                             <i-radio-group v-model="io.data.SauIsPass">
                                                 <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep"> 是</i-radio>
@@ -187,7 +187,7 @@
                                 <tr v-show="io.fieldAccess.YlcOpinion">
                                     <td class="smallhang">校团委意见</td>
                                     <td class="longhang" colspan="4">
-                                    <div v-show="io.fieldAccess.YlcIsPass">
+                                    <div v-show="io.fieldAccess.YlcIsPass === 'w' && io.isMyStep">
                                         是否通过：
                                         <i-radio-group v-model="io.data.YlcIsPass">
                                             <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep">是</i-radio>
@@ -208,7 +208,7 @@
                         </i-col>
                     </i-row>
                     <i-row class="add1 headline">
-                        <i-button  v-show="io.currentStep==='填写申请表'" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
+                        <i-button  v-show="io.currentStep==='填写申请表' && io.isMyStep" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
                     </i-row>
                 </div>
             </div>

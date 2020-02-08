@@ -241,6 +241,9 @@
                                     {{row.admin}}
                                     <i-button shape="circle" v-if="row.admin === ''" @click="addMember('member', '管理员', row.id)">添加管理员</i-button>
                                 </template>
+                                <template slot="Type" slot-scope="{row}">
+                                    {{row.Type === 0 ? "挂靠单位" : "社团"}}
+                                </template>
                             </i-table>
                             <br/>
                             <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
@@ -411,7 +414,6 @@ export default {
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children || [];
-                this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"));
                 this.tableLoading = false;
             });
         },

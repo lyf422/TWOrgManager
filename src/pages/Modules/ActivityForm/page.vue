@@ -10,12 +10,12 @@
                             <tr>
                                 <td class="smallhang wen-zi-ju-you">执行人：</td>
                                 <td colspan="2">
-                                    <user-selector v-model="model1"/>
+                                    <user-selector v-model="userId"/>
                                 </td>
                                 <td class="smallhang"></td>
                                 <td class="smallhang wen-zi-ju-you">步骤：</td>
                                 <td colspan="2">
-                                    <i-select v-model="model2" class="drop-down-box">
+                                    <i-select v-model="nextStep" class="drop-down-box">
                                         <i-option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
                                     </i-select>
                                 </td>
@@ -25,7 +25,7 @@
                                 <td colspan="2"></td>
                                 <td class="smallhang"></td>
                                 <td colspan="2">
-                                    <i-button type="primary" size="small" class="button-position">确认</i-button>
+                                    <i-button type="primary" size="small" class="button-position" @click="gotoNextStep">确认</i-button>
                                 </td>
                             </tr>
                         </table>
@@ -266,7 +266,6 @@ export default {
                 label: "校团委"
                 }
             ],
-            model1: "",
             stepInfo: enums.stepInfo,
             showPicker: false,
             stepId: "",
@@ -303,10 +302,23 @@ export default {
                     label: '校团委审核'
                 }
             ],
-            model2: ""
+            userId: "00000000-0000-0000-0000-000000000000",
+            nextStep: ""
         }
     },
     methods: {
+        gotoNextStep () {
+            axios.post("/api/workflow/GotoStep", {instanceId: this.instanceId, stepId: this.stepId, userId: this.userId, nextStep: this.nextStep}, msg => {
+                if (msg.success) {
+                    if (msg.success) {
+                    this.io = msg;
+                    this.$Message.success("强制执行步骤成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                }
+            })
+        },
         getFromPrepage () {
             this.instanceId = this.$route.query.instanceId;
             this.stepId = this.$route.query.stepId;

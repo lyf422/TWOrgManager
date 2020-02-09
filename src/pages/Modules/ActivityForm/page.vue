@@ -3,7 +3,7 @@
         <div>
             <div class="paper">
                 <div>
-                    <div class="status-bar">
+                    <div class="status-bar" v-if="isAdmin">
                         <p class="smallhang"/>
                         <p class="headline">强制执行</p>
                         <table border="0">
@@ -260,6 +260,7 @@ const usage = "附件";
 export default {
     data () {
         return {
+            isAdmin: false,
             temp: null,
             loadingStatus: false,
             formData: null,
@@ -434,6 +435,11 @@ export default {
         const month = date.getMonth() + 1; // 获取当前月份(0-11,0代表1月所以要加1);
         const day = date.getDate();
         this.nowDate = `${year}年${month}月${day}日`; // 显示在最上方的填写日期
+        for (let index in app.userInfo.permissons) {
+            if (app.userInfo.permissons[index] === "Workflow.ManageAllWorkflow") {
+                this.isAdmin = true;
+            }
+        }
     }
 }
 </script>

@@ -104,13 +104,31 @@
                                 </tr>
                                 <tr>
                                     <td class="smallhang" rowspan="2">活动内容</td>
-                                    <td class="longhang" colspan="4" v-if="io.currentStep === '填写申请表'">
-                                        <i-upload action="//jsonplaceholder.typicode.com/posts/">
-                                            <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">上传文件</i-button>
+                                    <td class="longhang" colspan="4">
+                                        <i-upload  v-if="io.fieldAccess.Description === 'w' && io.isMyStep" action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
+                                            <i-button icon="ios-cloud-upload-outline" type="primary">上传文件</i-button>
                                         </i-upload>
-                                    </td>
-                                    <td class="longhang" colspan="4" v-else>
-                                        <p>无附件</p>
+                                        <div v-if="formData !== null">
+                                            <i-row>
+                                                <Button type="text" style="text-align: left;width: 300px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
+                                                <Button type="text" @click="uploadFile" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : '上传' }}</Button>
+                                                <Button type="text" @click="removeFormData"><Icon type="ios-close" /></Button>
+                                            </i-row>
+                                        </div>
+                                        <div v-if="files.length > 0">
+                                            <Divider />
+                                            <template v-for="(item, index) in files">
+                                                <i-row :key="index">
+                                                    <i-col span="3" v-if="index === 0">附件：</i-col>
+                                                    <i-col span="3" v-else><div style="width: 100%;height: 1px"></div></i-col>
+                                                    <i-col span="21">
+                                                        <Button @click="download(item.Download, item.DisplayName)" style="text-align: left;width: 300px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :disabled="!io.isMyStep" type="text">{{item.DisplayName}}</Button>
+                                                        <Button @click="removeFile(item)" v-if="io.currentStep==='填写申请表' && io.isMyStep" type="text"><Icon type="ios-close" /></Button>
+                                                    </i-col>
+                                                </i-row>
+                                            </template>
+                                        </div>
+                                        <div v-else>无附件</div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -237,9 +255,15 @@
 let app = require("@/config");
 const axios = require("axios");
 const enums = require("@/config/enums");
+const table = "ActivityApplication";
+const usage = "附件";
 export default {
     data () {
         return {
+            temp: null,
+            loadingStatus: false,
+            formData: null,
+            files: [],
             icons: [
                 "",
                 "",
@@ -302,11 +326,94 @@ export default {
                     label: '校团委审核'
                 }
             ],
-            userId: "00000000-0000-0000-0000-000000000000",
+            userId: "",
             nextStep: ""
         }
     },
     methods: {
+        /* getBlob (url, cb) {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.responseType = "blob";
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    cb(xhr.response);
+                }
+            };
+            xhr.send();
+        },
+        saveAs (blob, filename) {
+            if (window.navigator.msSaveOrOpenBlob) {
+                navigator.msSaveBlob(blob, filename);
+            } else {
+                let link = document.createElement("a");
+                let body = document.querySelector("body");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+                link.style.display = "none";
+                body.appendChild(link);
+                link.click();
+                body.removeChild(link);
+                window.URL.revokeObjectURL(link.href);
+            }
+        }, */
+        download (url, filename) {
+            window.open("http://stgl.ricebird.cn" + url);
+            /* let THIS = this;
+            this.getBlob("http://stgl.ricebird.cn" + url, function (blob) {
+                THIS.saveAs(blob, filename);
+            }) */
+        },
+        getFiles () {
+            axios.post("/api/cms/GetAttachments", {id: this.instanceId, relateTable: table, usage: usage}, msg => {
+                if (msg.success) {
+                    this.files = msg.data;
+                }
+            })
+        },
+        removeFile (file) {
+            axios.post("/api/cms/RemoveAttachment", {id: file.ID}, msg => {
+                if (msg.success) {
+                    this.$Message.success('删除文件成功');
+                    this.getFiles();
+                }
+            })
+        },
+        removeFormData () {
+            this.formData = null;
+        },
+        handleUpload (file) {
+            this.formData = file;
+            return false;
+        },
+        uploadFile () {
+            let param = new FormData();
+            param.append("file", this.formData);
+            param.append("id", this.instanceId);
+            param.append("relateTable", table);
+            param.append("usage", usage);
+            param.append("single", false);
+            param.append("fileName", this.formData.name);
+            this.temp = param.get("file");
+            let config = {
+                headers: {"Content-Type": "multipart/form-data"},
+                onUploadProgress: e => {
+                    let completeProgress = ((e.loaded / e.total * 100) | 0) + "%";
+                    this.progress = completeProgress;
+                }
+            };
+            this.loadingStatus = true;
+            axios._post("/api/cms/UploadFile", param, config).then((res) => {
+                this.loadingStatus = false;
+                if (res.data.success) {
+                    this.$Message.success('success');
+                    this.formData = null;
+                    this.getFiles();
+                } else {
+                    this.$Message.error(res.data.msg);
+                }
+            })
+        },
         gotoNextStep () {
             axios.post("/api/workflow/GotoStep", {instanceId: this.instanceId, stepId: this.stepId, userId: this.userId, nextStep: this.nextStep}, msg => {
                 if (msg.success) {
@@ -354,6 +461,7 @@ export default {
     mounted () {
         app.title = "社团活动";
         this.getFromPrepage();
+        this.getFiles();
         const date = new Date();
         const year = date.getFullYear(); // 获取当前年份
         const month = date.getMonth() + 1; // 获取当前月份(0-11,0代表1月所以要加1);

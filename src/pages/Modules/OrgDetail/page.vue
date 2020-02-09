@@ -472,24 +472,49 @@ export default {
             })
         },
         delMember (row) {
-             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId}, msg => {
-                this.getMemberTable();
-            })
+            this.$Modal.confirm({
+                title: "确认删除该成员？",
+                onOk: () => {
+                    axios.post("/api/security/RemoveUserV2", { userId: row.ID, departId: row.departId }, msg => {
+                        if (msg.success) {
+                            this.$Message.success("删除成功");
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                        this.getMemberTable();
+                    });
+                }
+            });
         },
         delTutor (row) {
-             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId, position: "指导老师"}, msg => {
-                this.getTutorTable();
-            })
+            this.$Modal.confirm({
+                title: "确认删除该指导老师？",
+                onOk: () => {
+                    axios.post("/api/security/RemoveUserV2", { userId: row.ID, departId: row.departId, position: "指导老师" }, msg => {
+                        if (msg.success) {
+                            this.$Message.success("删除成功");
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                        this.getTutorTable();
+                    });
+                }
+            });
         },
         delSubDepart (row) {
-            axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
-                if (msg.success) {
+            this.$Modal.confirm({
+                title: "确认删除该部门？",
+                onOk: () => {
+                    axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
+                        if (msg.success) {
+                            this.$Message.success("删除成功");
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                    });
                     this.getDeptTable();
-                    this.$Message.success("删除成功");
-                } else {
-                    this.$Message.warning(msg.msg);
                 }
-            })
+            });
         },
         modifyMember (row) {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {

@@ -349,16 +349,16 @@ export default {
             this.isSaving = true;
             let form = this.$refs["form"];
             form.validate(res => {
-                    if (!res) return;
-                    axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
-                        if (msg.success) {
-                            this.$Message.success("部门信息保存成功");
-                        } else {
-                            this.$Message.warning(msg.msg);
-                        }
-                        form.resetFields();
-                        this.isSaving = false;
-                        this.getOrgDetail();
+                if (!res) return;
+                axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
+                    if (msg.success) {
+                        this.$Message.success("部门信息保存成功");
+                    } else {
+                        this.$Message.warning(msg.msg);
+                    }
+                    form.resetFields();
+                    this.isSaving = false;
+                    this.getOrgDetail();
                 });
             })
         },

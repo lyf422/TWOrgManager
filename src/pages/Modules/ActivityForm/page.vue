@@ -122,8 +122,8 @@
                                                     <i-col span="3" v-if="index === 0">附件：</i-col>
                                                     <i-col span="3" v-else><div style="width: 100%;height: 1px"></div></i-col>
                                                     <i-col span="21">
-                                                        <Button @click="download(item.Download, item.DisplayName)" style="text-align: left;width: 300px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :disabled="!io.isMyStep" type="text">{{item.DisplayName}}</Button>
-                                                        <Button @click="removeFile(item)" v-if="io.currentStep==='填写申请表' && io.isMyStep" type="text"><Icon type="ios-close" /></Button>
+                                                        <a  style="display: inline-block;text-align: left;width: 300px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :href="'/api/cms/Download?id=' + item.ID" target="_blank">{{item.DisplayName}}</a>
+                                                        <Button @click="removeFile(item)" type="text" v-if="io.currentStep==='填写申请表' && io.isMyStep"><Icon type="ios-close" /></Button>
                                                     </i-col>
                                                 </i-row>
                                             </template>
@@ -331,39 +331,6 @@ export default {
         }
     },
     methods: {
-        /* getBlob (url, cb) {
-            let xhr = new XMLHttpRequest();
-            xhr.open("GET", url, true);
-            xhr.responseType = "blob";
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    cb(xhr.response);
-                }
-            };
-            xhr.send();
-        },
-        saveAs (blob, filename) {
-            if (window.navigator.msSaveOrOpenBlob) {
-                navigator.msSaveBlob(blob, filename);
-            } else {
-                let link = document.createElement("a");
-                let body = document.querySelector("body");
-                link.href = window.URL.createObjectURL(blob);
-                link.download = filename;
-                link.style.display = "none";
-                body.appendChild(link);
-                link.click();
-                body.removeChild(link);
-                window.URL.revokeObjectURL(link.href);
-            }
-        }, */
-        download (url, filename) {
-            window.open("http://stgl.ricebird.cn" + url);
-            /* let THIS = this;
-            this.getBlob("http://stgl.ricebird.cn" + url, function (blob) {
-                THIS.saveAs(blob, filename);
-            }) */
-        },
         getFiles () {
             axios.post("/api/cms/GetAttachments", {id: this.instanceId, relateTable: table, usage: usage}, msg => {
                 if (msg.success) {
